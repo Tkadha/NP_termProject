@@ -5,6 +5,7 @@
 class CGameFramework
 {
 	CPlayScene currentScene;
+	CLobbyScene lobbyScene;
 
 public:
 	CGameFramework() {};

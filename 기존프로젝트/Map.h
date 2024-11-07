@@ -21,3 +21,10 @@ public:
 
 	void Render(HDC& dc);
 };
+
+class CLobbyMap : public CMap
+{
+public:
+
+	void Render(HDC& dc);
+};

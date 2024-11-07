@@ -125,6 +125,8 @@ void CPlayScene::ObjectCollisionCheck()
 			double repulsion = -0.1;
 			CollisionUpdate(otherplayers, ball, repulsion);
 		}
+
+
 	}
 
 	// °ø <-> °ñ´ë
@@ -141,4 +143,14 @@ void CPlayScene::ObjectCollisionCheck()
 
 	// °ø <-> ¸Ê(º®)
 	MapCollisionCheck(ball, map, -1.0);
+}
+
+void CLobbyScene::Render(HDC& dc)
+{
+	lobbymap.Render(dc);
+}
+
+void CLobbyScene::Update()
+{
+
 }

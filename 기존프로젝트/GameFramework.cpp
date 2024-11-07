@@ -8,5 +8,6 @@ void CGameFramework::Update(BOOL KeyDownBuffer[])
 
 void CGameFramework::Render(HDC& dc)
 {
-	currentScene.Render(dc);
+	//currentScene.Render(dc);
+	lobbyScene.Render(dc);
 }
