@@ -3,10 +3,13 @@
 #include <winsock2.h> // 윈속2 메인 헤더
 #include <ws2tcpip.h> // 윈속2 확장 헤더
 #include <iostream>
-
+#include <thread>
+#include <array>
+#include "SESSION.h"
 #pragma comment(lib, "ws2_32") // ws2_32.lib 링크
 #define SERVERPORT 9000
-#define BUFSIZE    512
+#define MAXPLAYER  10
+
 
 
 // 소켓 함수 오류 출력 후 종료
@@ -48,6 +51,14 @@ void err_display(int errcode)
 	printf("[오류] %s\n", (char*)lpMsgBuf);
 	LocalFree(lpMsgBuf);
 }
+
+std::array <SESSION, MAXPLAYER> player;
+
+void PlayerThread(int id)
+{
+	player[id].DoRecv();
+}
+
 int main()
 {
 	int retval;
@@ -74,14 +85,22 @@ int main()
 	SOCKET client_sock;
 	struct sockaddr_in clientaddr;
 	int addrlen;
-	addrlen = sizeof(clientaddr);
-	client_sock = accept(listen_sock, (struct sockaddr*)&clientaddr, &addrlen);
-	if (client_sock == INVALID_SOCKET) {
-		err_display("accept()");
-		closesocket(client_sock);
-		closesocket(listen_sock);
-		WSACleanup();
-		return 0;
+	std::thread p_thread;
+	int id = 0;
+	while (1) {
+		addrlen = sizeof(clientaddr);
+		client_sock = accept(listen_sock, (struct sockaddr*)&clientaddr, &addrlen);
+		if (client_sock == INVALID_SOCKET) {
+			err_display("accept()");
+			closesocket(client_sock);
+			closesocket(listen_sock);
+			WSACleanup();
+			return 0;
+		}
+
+		p_thread = std::thread(PlayerThread, id);
+		++id;
+		
 	}
 
 	closesocket(client_sock);
