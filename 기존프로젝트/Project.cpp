@@ -1,4 +1,4 @@
-#include	"stdafx.h"
+#include "stdafx.h"
 #include "resource.h"
 #include "GameFramework.h"
 
@@ -365,6 +365,7 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		Ellipse(memdc, 0,0,100,100);
 		SelectObject(memdc, oldBrush);
 		DeleteObject(hBrush);
+
 		game.Render(memdc);
 		// 게임 진행
 		if (TopView) {

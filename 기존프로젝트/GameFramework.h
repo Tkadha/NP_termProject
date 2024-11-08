@@ -10,6 +10,6 @@ public:
 	CGameFramework() {};
 
 	void Update(BOOL KeyDownBuffer[]);
-	void Render(HDC dc);
+	void Render(HDC& dc);
 };
 

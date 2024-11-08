@@ -2,6 +2,17 @@
 #include "Object.h"
 #include <algorithm>
 
+CEllipseObject::CEllipseObject()
+{
+	position = { 0,0 };
+	velocity = { 0,0 };
+
+	team = RedTeam;
+
+	graphicsC = new EllipseComponent;
+}
+
+
 void CPlayer::Update(BOOL KeyDownBuffer[])
 {
 	inputC->Update(*this, KeyDownBuffer);
@@ -46,7 +57,7 @@ void CBall::Render(HDC dc)
 
 
 
-void CGoalpost::Render(HDC dc)
+void CGoalpost::Render(HDC& dc)
 {
 	graphicsC->Render(*this, dc);
 }
@@ -115,7 +126,7 @@ void PhysicsComponent::Update(CEllipseObject& player) {
 
 
 
-void EllipseComponent::Render(CEllipseObject& player, HDC dc)
+void EllipseComponent::Render(CEllipseObject& player, HDC& dc)
 {
 	if (player.team == Ball)
 		hBrush = CreateSolidBrush(RGB(255, 255, 255));

@@ -34,5 +34,5 @@ public:
 
 	void ObjectCollisionCheck();
 	void Update(BOOL KeyDownBuffer[]);
-	void Render(HDC dc);
+	void Render(HDC& dc);
 };

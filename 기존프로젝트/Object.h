@@ -21,7 +21,7 @@ public:
 
 	EllipseComponent* graphicsC;
 
-	CEllipseObject() {};
+	CEllipseObject();
 
 	virtual void Update(BOOL KeyDownBuffer[]) {};
 	virtual void Render(HDC dc) {};
@@ -77,7 +77,7 @@ public:
 
 	CGoalpost() {};
 
-	void Render(HDC dc);
+	void Render(HDC& dc);
 
 private:
 	//EllipseComponent graphicsC;
@@ -148,7 +148,7 @@ protected:
 public:
 	EllipseComponent() {};
 
-	void Render(CEllipseObject& player, HDC dc);
+	void Render(CEllipseObject& player, HDC& dc);
 };
 
 class RectangleComponent

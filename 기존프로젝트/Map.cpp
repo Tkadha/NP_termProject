@@ -30,7 +30,7 @@ CSoccerMap::CSoccerMap()
 	}
 }
 
-void CSoccerMap::Render(HDC dc)
+void CSoccerMap::Render(HDC& dc)
 {
 	hB = CreateSolidBrush(RGB(90, 160, 90));
 	oldB = (HBRUSH)SelectObject(dc, hB);
@@ -70,7 +70,7 @@ void CSoccerMap::Render(HDC dc)
 		RedGoalpost[i].Render(dc);
 	}
 
-	RedGoal.Render(dc);
-	BlueGoal.Render(dc);
+	//RedGoal.Render(dc);
+	//BlueGoal.Render(dc);
 }
 

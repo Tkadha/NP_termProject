@@ -66,13 +66,13 @@ void CPlayScene::Update(BOOL KeyDownBuffer[])
 	ball.Update(KeyDownBuffer);
 }
 
-void CPlayScene::Render(HDC dc)
+void CPlayScene::Render(HDC& dc)
 {
 	//soccerMap.Render(dc);
 	map.Render(dc);
-	ball.Render(dc);
-	player.Render(dc);
-	otherplayers.Render(dc);
+	//ball.Render(dc);
+	//player.Render(dc);
+	//otherplayers.Render(dc);
 }
 
 void CPlayScene::ObjectCollisionCheck()

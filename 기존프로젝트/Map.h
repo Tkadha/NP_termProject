@@ -19,5 +19,5 @@ public:
 
 	CSoccerMap();
 
-	void Render(HDC dc);
+	void Render(HDC& dc);
 };
