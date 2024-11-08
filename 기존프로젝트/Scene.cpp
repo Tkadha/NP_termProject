@@ -57,6 +57,17 @@ BOOL GoalCheck(CEllipseObject& ball, CSoccerGoal goal)
 
 
 
+CPlayScene::CPlayScene()
+{
+	player.SetTeam(RedTeam);
+	player.Reset({ 384,320 });
+
+	otherplayers.SetTeam(BlueTeam);
+	otherplayers.Reset({ 640,320 });
+
+	ball.team = Ball;
+	ball.position = { 512,320 };
+}
 
 void CPlayScene::Update(BOOL KeyDownBuffer[])
 {
@@ -70,9 +81,9 @@ void CPlayScene::Render(HDC& dc)
 {
 	//soccerMap.Render(dc);
 	map.Render(dc);
-	//ball.Render(dc);
-	//player.Render(dc);
-	//otherplayers.Render(dc);
+	ball.Render(dc);
+	player.Render(dc);
+	otherplayers.Render(dc);
 }
 
 void CPlayScene::ObjectCollisionCheck()

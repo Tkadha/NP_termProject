@@ -22,7 +22,7 @@ class CLobbyScene : CScene
 class CPlayScene :CScene
 {
 public:
-	CPlayScene() {};
+	CPlayScene();
 	//CSoccerMap soccerMap;
 
 	CPlayer player;					// ³ª

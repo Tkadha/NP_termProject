@@ -56,30 +56,39 @@ void CBall::Render(HDC dc)
 }
 
 
+void CGoalpost::BuildObject(int index)
+{
+
+}
 
 void CGoalpost::Render(HDC& dc)
 {
 	graphicsC->Render(*this, dc);
 }
 
-
+CSoccerGoal::CSoccerGoal()
+{
+	graphicsC = new RectangleComponent;
+}
 
 CSoccerGoal::CSoccerGoal(E_team team)
 {
 	if (team == RedTeam)
-		position = { 40,36 };
+		position = { 40,324 };
 	else if (team == BlueTeam)
-		position = { 976,36 };
+		position = { 976,324 };
 	size = { 80,152 };
 
 	Rect bb(position, size);
 
 	BoundingBox = bb;
+
+	graphicsC = new RectangleComponent;
 }
 
 void CSoccerGoal::Render(HDC dc)
 {
-	graphicsC->Render(*this, dc);
+	graphicsC->Render(*this, dc, false);
 }
 
 //------------------------------------Component-----------------------------------------------
@@ -129,6 +138,8 @@ void PhysicsComponent::Update(CEllipseObject& player) {
 void EllipseComponent::Render(CEllipseObject& player, HDC& dc)
 {
 	if (player.team == Ball)
+		hBrush = CreateSolidBrush(RGB(255, 255, 0));
+	else if (player.team == Object)
 		hBrush = CreateSolidBrush(RGB(255, 255, 255));
 	else if (player.team == RedTeam)
 		hBrush = CreateSolidBrush(RGB(255, 0, 0));
@@ -153,7 +164,7 @@ void EllipseComponent::Render(CEllipseObject& player, HDC& dc)
 	DeleteObject(hBrush);
 }
 
-void RectangleComponent::Render(CRectangleObject& object, HDC dc)
+void RectangleComponent::Render(CRectangleObject& object, HDC dc, BOOL fill)
 {
 	hBrush = CreateSolidBrush(RGB(100, 100, 100));
 
