@@ -13,6 +13,12 @@ CEllipseObject::CEllipseObject()
 }
 
 
+CPlayer::CPlayer()
+{
+	inputC = new InputComponent;
+	physicsC = new PhysicsComponent;
+}
+
 void CPlayer::Update(BOOL KeyDownBuffer[])
 {
 	inputC->Update(*this, KeyDownBuffer);
@@ -44,6 +50,11 @@ void CPlayer::BuildObject()
 
 
 //------------------------------------------------------------------------------
+
+CBall::CBall()
+{
+	physicsC = new PhysicsComponent;
+}
 
 void CBall::Update(BOOL KeyDownBuffer[])
 {

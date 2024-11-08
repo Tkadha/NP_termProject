@@ -760,6 +760,14 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		EndPaint(hwnd, &ps);
 		break;
+	case WM_KEYDOWN:									// Å°ÀÔ·Â
+		KeyDownBuffer[wParam] = TRUE;
+		InvalidateRect(hwnd, NULL, FALSE);
+		break;
+	case WM_KEYUP:
+		KeyDownBuffer[wParam] = FALSE;
+		InvalidateRect(hwnd, NULL, FALSE);
+		break;
 	case WM_LBUTTONDOWN:
 		LMouse = TRUE;
 		break;

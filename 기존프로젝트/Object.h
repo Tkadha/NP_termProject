@@ -36,7 +36,7 @@ public:
 
 	bool input{ false }, hasKicked{ false };
 
-	CPlayer() {};
+	CPlayer();
 
 	void Update(BOOL KeyDownBuffer[]);
 	void Render(HDC dc);
@@ -58,14 +58,13 @@ public:
 	// 반지름
 	int size = 14;
 	
-	CBall() {};
+	CBall();
 
 	void Update(BOOL KeyDownBuffer[]);
 	void Render(HDC dc);
 
 private:
 	PhysicsComponent* physicsC;
-	//EllipseComponent graphicsC;
 };
 
 class CGoalpost : public CEllipseObject			// 골대 동그란거

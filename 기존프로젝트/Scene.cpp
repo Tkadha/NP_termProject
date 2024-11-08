@@ -73,7 +73,7 @@ void CPlayScene::Update(BOOL KeyDownBuffer[])
 {
 	ObjectCollisionCheck();
 	player.Update(KeyDownBuffer);
-	otherplayers.Update(KeyDownBuffer);
+	//otherplayers.Update(KeyDownBuffer);
 	ball.Update(KeyDownBuffer);
 }
 
@@ -96,8 +96,8 @@ void CPlayScene::ObjectCollisionCheck()
 
 	// 플레이어 <-> 공
 	if (CollisionCheck(player, ball)) {
-		if (!player.hasKicked) {
-			if (player.input) {
+		if (player.input) {
+			if (!player.hasKicked) {
 				PlaySound(L"kick.wav", NULL, SND_ASYNC);
 				ball.velocity.x = (ball.position.x - player.position.x) / 100 * 16;
 				ball.velocity.y = (ball.position.y - player.position.y) / 100 * 16;
