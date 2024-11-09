@@ -30,3 +30,6 @@
 *.exe
 *.out
 *.app
+기존프로젝트/.vs/Refactoring/v17/ipch/AutoPCH/16c1735d79ce731/SCENE.ipch
+/기존프로젝트/.vs
+/기존프로젝트/Refactoring
