@@ -8,6 +8,7 @@ enum E_team {
 	RedTeam,
 	BlueTeam,
 	Ball,
+	Object
 };
 
 class XY

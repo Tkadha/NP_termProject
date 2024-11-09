@@ -21,7 +21,7 @@ public:
 
 	EllipseComponent* graphicsC;
 
-	CEllipseObject() {};
+	CEllipseObject();
 
 	virtual void Update(BOOL KeyDownBuffer[]) {};
 	virtual void Render(HDC dc) {};
@@ -31,13 +31,12 @@ public:
 class CPlayer : public CEllipseObject
 {
 public:
-	XY position, velocity;
 	XY maxVelocity{ 3,3 };
 	char name[20]{};
 
 	bool input{ false }, hasKicked{ false };
 
-	CPlayer() {};
+	CPlayer();
 
 	void Update(BOOL KeyDownBuffer[]);
 	void Render(HDC dc);
@@ -59,14 +58,13 @@ public:
 	// 반지름
 	int size = 14;
 	
-	CBall() {};
+	CBall();
 
 	void Update(BOOL KeyDownBuffer[]);
 	void Render(HDC dc);
 
 private:
 	PhysicsComponent* physicsC;
-	//EllipseComponent graphicsC;
 };
 
 class CGoalpost : public CEllipseObject			// 골대 동그란거
@@ -77,8 +75,8 @@ public:
 
 	CGoalpost() {};
 
-	void Render(HDC dc);
-
+	void Render(HDC& dc);
+	void BuildObject(int index);
 private:
 	//EllipseComponent graphicsC;
 };
@@ -96,7 +94,7 @@ public:
 
 
 
-class CSoccerGoal : CRectangleObject
+class CSoccerGoal : public CRectangleObject
 {
 	Rect BoundingBox;
 	
@@ -104,7 +102,7 @@ private:
 	RectangleComponent* graphicsC;
 
 public:
-	CSoccerGoal() {};
+	CSoccerGoal();
 	CSoccerGoal(E_team team);
 
 	void Render(HDC dc);
@@ -137,7 +135,7 @@ public:
 	GraphicsComponent() {};
 
 	virtual void Render(CEllipseObject& player, HDC dc) {};
-	virtual void Render(CRectangleObject& player, HDC dc) {};
+	virtual void Render(CRectangleObject& player, HDC dc, BOOL fill) {};
 };
 
 class EllipseComponent
@@ -148,7 +146,7 @@ protected:
 public:
 	EllipseComponent() {};
 
-	void Render(CEllipseObject& player, HDC dc);
+	void Render(CEllipseObject& player, HDC& dc);
 };
 
 class RectangleComponent
@@ -159,5 +157,5 @@ protected:
 public:
 	RectangleComponent() {};
 
-	void Render(CRectangleObject& player, HDC dc);
+	void Render(CRectangleObject& player, HDC dc, BOOL fill);
 };

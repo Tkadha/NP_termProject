@@ -1,4 +1,4 @@
-#include	"stdafx.h"
+#include "stdafx.h"
 #include "resource.h"
 #include "GameFramework.h"
 
@@ -365,6 +365,7 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		Ellipse(memdc, 0,0,100,100);
 		SelectObject(memdc, oldBrush);
 		DeleteObject(hBrush);
+
 		game.Render(memdc);
 		// 게임 진행
 		if (TopView) {
@@ -758,6 +759,14 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		DeleteDC(memdc);
 
 		EndPaint(hwnd, &ps);
+		break;
+	case WM_KEYDOWN:									// 키입력
+		KeyDownBuffer[wParam] = TRUE;
+		InvalidateRect(hwnd, NULL, FALSE);
+		break;
+	case WM_KEYUP:
+		KeyDownBuffer[wParam] = FALSE;
+		InvalidateRect(hwnd, NULL, FALSE);
 		break;
 	case WM_LBUTTONDOWN:
 		LMouse = TRUE;

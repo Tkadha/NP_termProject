@@ -22,7 +22,7 @@ class CLobbyScene : CScene
 class CPlayScene :CScene
 {
 public:
-	CPlayScene() {};
+	CPlayScene();
 	//CSoccerMap soccerMap;
 
 	CPlayer player;					// ³ª
@@ -34,5 +34,5 @@ public:
 
 	void ObjectCollisionCheck();
 	void Update(BOOL KeyDownBuffer[]);
-	void Render(HDC dc);
+	void Render(HDC& dc);
 };
