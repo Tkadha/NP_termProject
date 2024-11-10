@@ -54,9 +54,22 @@ void err_display(int errcode)
 
 std::array <SESSION, MAXPLAYER> player;
 
+void ProcessPacket(int id, char* packet)
+{
+	switch (packet[1])
+	{
+	case CS_TEAM_CHOICE:
+		TEAM_PACKET* p = reinterpret_cast<TEAM_PACKET*>(packet);
+		player[id].team_color = p->teamcolor;
+
+		break;
+	}
+}
+
 void PlayerThread(int id)
 {
 	player[id].DoRecv();
+	ProcessPacket(id, player[id].recv_buf);
 }
 
 int main()

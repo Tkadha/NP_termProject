@@ -1,7 +1,7 @@
 #pragma once
 constexpr int NAME_SIZE = 20;
 
-
+constexpr char CS_TEAM_CHOICE = 1;
 
 enum E_MAPTYPE { SOCCER, BASKETBALL };
 enum E_TEAMCOLOR { RED, BLUE };
