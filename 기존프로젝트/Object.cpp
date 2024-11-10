@@ -25,7 +25,7 @@ void CPlayer::Update(BOOL KeyDownBuffer[])
 	physicsC->Update(*this);
 }
 
-void CPlayer::Render(HDC dc)
+void CPlayer::Render(HDC& dc)
 {
 	graphicsC->Render(*this, dc);
 }
@@ -61,7 +61,7 @@ void CBall::Update(BOOL KeyDownBuffer[])
 	physicsC->Update(*this);
 }
 
-void CBall::Render(HDC dc)
+void CBall::Render(HDC& dc)
 {
 	graphicsC->Render(*this, dc);
 }
@@ -157,13 +157,13 @@ void EllipseComponent::Render(CEllipseObject& player, HDC& dc)
 	else if (player.team == BlueTeam)
 		hBrush = CreateSolidBrush(RGB(0, 0, 255));
 
-	if (dc == NULL) {
-		return;
-	}
 
-	if (!hBrush) {
-		// 에러 처리
-		return;
+	CPlayer* playerPtr = dynamic_cast<CPlayer*>(&player);
+	if (playerPtr) {
+		if (playerPtr->input) {
+			hPen = CreatePen(PS_SOLID, 3, RGB(255, 255, 255));
+			oldPen = (HPEN)SelectObject(dc, hPen);
+		}
 	}
 
 	oldBrush = (HBRUSH)SelectObject(dc, hBrush);
@@ -173,11 +173,17 @@ void EllipseComponent::Render(CEllipseObject& player, HDC& dc)
 		player.position.y + player.size);
 	SelectObject(dc, oldBrush);
 	DeleteObject(hBrush);
+
+	if (playerPtr) {
+		if (playerPtr->input) {
+			SelectObject(dc, oldPen);
+			DeleteObject(hPen);
+		}
+	}
 }
 
 void RectangleComponent::Render(CRectangleObject& object, HDC dc, BOOL fill)
 {
-	hBrush = CreateSolidBrush(RGB(100, 100, 100));
 
 	oldBrush = (HBRUSH)SelectObject(dc, hBrush);
 	Rectangle(dc, object.position.x - object.size.x / 2,

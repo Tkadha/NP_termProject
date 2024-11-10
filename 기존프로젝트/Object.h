@@ -39,7 +39,7 @@ public:
 	CPlayer();
 
 	void Update(BOOL KeyDownBuffer[]);
-	void Render(HDC dc);
+	void Render(HDC& dc);
 
 	void Reset(XY pos);		// ∞‘¿” Ω√¿€, ∞Ò µÈæÓ∞¨¿ª ∂ß
 	
@@ -61,7 +61,7 @@ public:
 	CBall();
 
 	void Update(BOOL KeyDownBuffer[]);
-	void Render(HDC dc);
+	void Render(HDC& dc);
 
 private:
 	PhysicsComponent* physicsC;
@@ -131,17 +131,20 @@ public:
 
 class GraphicsComponent
 {
+protected:
+	HBRUSH hBrush, oldBrush;
+	HPEN hPen, oldPen;
+
 public:
 	GraphicsComponent() {};
 
-	virtual void Render(CEllipseObject& player, HDC dc) {};
-	virtual void Render(CRectangleObject& player, HDC dc, BOOL fill) {};
+	virtual void Render(CEllipseObject& player, HDC& dc) {};
+	virtual void Render(CRectangleObject& player, HDC& dc, BOOL fill) {};
 };
 
-class EllipseComponent
+class EllipseComponent : GraphicsComponent
 {
 protected:
-	HBRUSH hBrush, oldBrush;
 
 public:
 	EllipseComponent() {};
@@ -149,10 +152,9 @@ public:
 	void Render(CEllipseObject& player, HDC& dc);
 };
 
-class RectangleComponent
+class RectangleComponent : GraphicsComponent
 {
 protected:
-	HBRUSH hBrush, oldBrush;
 
 public:
 	RectangleComponent() {};
