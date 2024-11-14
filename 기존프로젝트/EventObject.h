@@ -1,11 +1,23 @@
 #pragma once
 #include "Object.h"
 
-class CEventObject
+class CEventManager
 {
+public:
+	std::vector<CEventObject> eventobjects;
+
+	void CreateEventObject();
+	void UpdateEventObject();
 };
 
-class CWindObject : CEventObject, CObject
+class CEventObject
+{
+	std::chrono::steady_clock::time_point start;
+
+	float duration;
+};
+
+class CWindObject : public CEventObject, CObject
 {
 	XY direction;
 
@@ -13,7 +25,7 @@ public:
 	void Render(HDC& dc);
 };
 
-class CFloorObject : CEventObject, CObject
+class CFloorObject : public CEventObject, CObject
 {
 	int size;
 
@@ -21,9 +33,17 @@ public:
 	void Render(HDC& dc);
 };
 
-class CObstarcleObject : CEventObject, CObject
+class CObstarcleObject : public CEventObject, CObject
 {
 	int size;
+
+public:
+	void Render(HDC& dc);
+};
+
+class CItemObject : public CEventObject, CObject
+{
+	E_item type;
 
 public:
 	void Render(HDC& dc);
