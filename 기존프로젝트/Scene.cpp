@@ -150,3 +150,23 @@ void CPlayScene::ObjectCollisionCheck()
 	// °ø <-> ¸Ê(º®)
 	MapCollisionCheck(ball, map, -1.0);
 }
+
+
+
+//----------------------------------------------------------------------------
+void InputManager::Update(WPARAM wParam, UINT uMsg) {
+	switch (uMsg) {
+	case WM_KEYDOWN:
+		KeyDownBuffer[wParam] = TRUE;
+		break;
+		
+	case WM_KEYUP:
+		KeyDownBuffer[wParam] = FALSE;
+		break;
+	}
+}
+
+BOOL* InputManager::GetInput()
+{
+	return KeyDownBuffer;
+}

@@ -359,7 +359,7 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		}
 		*/
 
-		game.Update(KeyDownBuffer);
+		game.Update();
 		HBRUSH hBrush, oldBrush;
 
 		hBrush = CreateSolidBrush(RGB(255, 255, 255));
@@ -765,10 +765,12 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_KEYDOWN:									// Å°ÀÔ·Â
 		KeyDownBuffer[wParam] = TRUE;
+		game.inputManager.Update(wParam, uMsg);
 		InvalidateRect(hwnd, NULL, FALSE);
 		break;
 	case WM_KEYUP:
 		KeyDownBuffer[wParam] = FALSE;
+		game.inputManager.Update(wParam, uMsg);
 		InvalidateRect(hwnd, NULL, FALSE);
 		break;
 	case WM_LBUTTONDOWN:

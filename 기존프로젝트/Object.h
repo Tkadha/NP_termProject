@@ -9,10 +9,11 @@ class PhysicsComponent;
 
 class CObject
 {
+public:
 	XY position;
 };
 
-class CEllipseObject : CObject
+class CEllipseObject : public CObject
 {
 public:
 	XY velocity;

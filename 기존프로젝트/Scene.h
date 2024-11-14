@@ -1,5 +1,4 @@
 #pragma once
-//#include <vector>
 #include "Map.h"
 
 class CScene
@@ -36,4 +35,25 @@ public:
 	void Update(BOOL KeyDownBuffer[]);
 	void Update(BOOL KeyDownBuffer[], float timeElapsed);
 	void Render(HDC& dc);
+};
+
+
+
+class InputManager
+{
+	BOOL KeyDownBuffer[256];
+	
+public:
+	void Update(WPARAM wParam, UINT uMsg);
+	BOOL* GetInput();
+};
+
+class LobbyInputManager : InputManager
+{
+
+};
+
+class PlayInputManager : InputManager
+{
+
 };
