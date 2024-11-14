@@ -7,14 +7,15 @@ class RectangleComponent;
 class InputComponent;
 class PhysicsComponent;	
 
-class CObejct
+class CObject
 {
+	XY position;
 };
 
-class CEllipseObject
+class CEllipseObject : CObject
 {
 public:
-	XY position, velocity;
+	XY velocity;
 	double friction;		// ¸¶Âû °è¼ö
 	E_team team;
 	int size;
@@ -85,12 +86,12 @@ private:
 
 
 
-class CRectangleObject
+class CRectangleObject : CObject
 {
 public:
 	CRectangleObject() {};
 
-	XY position, size;
+	XY size;
 	//RGB color{ 100,100,100 };
 };
 
