@@ -1,13 +1,25 @@
 #include "SESSION.h"
-#include <winsock2.h> // 윈속2 메인 헤더
-#include <ws2tcpip.h> // 윈속2 확장 헤더
-#pragma comment(lib, "ws2_32") // ws2_32.lib 링크
 
 
 void SESSION::DoRecv()
 {
 	int retval;
+	memset(recv_buf, 0, sizeof(recv_buf));
 	retval = recv(sock, recv_buf, BUFSIZE, 0);
+	
+}
+
+bool SESSION::SendPlayerTeamPacket(int id, E_TEAMCOLOR color)
+{
+	TEAM_PACKET p;
+	p.size = sizeof(TEAM_PACKET);
+	p.teamcolor = color;
+	p.type = CS_TEAM_CHOICE;
+	p.id = id;
+	int retval;
+	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
+	if (retval == SOCKET_ERROR) return false;
+	return true;
 }
 
 

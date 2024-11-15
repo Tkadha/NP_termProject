@@ -58,19 +58,36 @@ void ProcessPacket(int id, char* packet)
 {
 	switch (packet[1])
 	{
-	case CS_TEAM_CHOICE:
+	case CS_TEAM_CHOICE: {
 		TEAM_PACKET* p = reinterpret_cast<TEAM_PACKET*>(packet);
 		player[id].team_color = p->teamcolor;
-
+		for (int i = 0; i < MAXPLAYER; ++i) {
+			if (player[i].state == E_OFFLINE) continue;
+			player[i].SendPlayerTeamPacket(id, player[id].team_color);
+		}
+	}
 		break;
+
+	case CS_MAP_CHOICE: {
+		MAP_PACKET* p = reinterpret_cast<MAP_PACKET*>(packet);
+		maptype = p->maptype;
+		
+		break;
+	}
 	}
 }
 
 void PlayerThread(int id)
 {
-	player[id].DoRecv();
-	ProcessPacket(id, player[id].recv_buf);
+	player[id].state = E_ONLINE;
+	printf("make thread\n");
+	while (1) {
+		player[id].DoRecv();
+		ProcessPacket(id, player[id].recv_buf);
+	}
 }
+
+E_MAPTYPE maptype = SOCCER;
 
 int main()
 {
@@ -110,8 +127,11 @@ int main()
 			WSACleanup();
 			return 0;
 		}
+		
+		player[id].state = E_ONLINE; 
+		player[id].sock = client_sock;
 
-		p_thread = std::thread(PlayerThread, id);
+		p_thread = std::thread(PlayerThread, id);	
 		++id;
 		
 	}
