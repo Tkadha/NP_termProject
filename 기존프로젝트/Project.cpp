@@ -1,6 +1,7 @@
-#include "stdafx.h"
+//#include "stdafx.h"
 #include "resource.h"
 #include "GameFramework.h"
+#include "ClientNetwork.h"
 
 #define ID_SOCCER 100
 #define ID_BasketBall_T 101
@@ -27,6 +28,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 LRESULT CALLBACK SoccerProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK LobbyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 //CGameFramework g_GameFramework;
+//NetWorkManager test;
 
 
 HWND hButtonRed, hButtonBlue, hButtonSoccer, hButtonBasketball, hButtonStart;
@@ -77,6 +79,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 		WindowWidth, WindowHeight,
 		NULL, (HMENU)NULL, hInstance, NULL);
 	ShowWindow(hWnd, nCmdShow);
+	//test.Connect();
 	UpdateWindow(hWnd);
 
 
@@ -240,6 +243,7 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	HFONT hF, oldF;
 
 	static CGameFramework game;
+	static NetWorkManager test;
 
 	//static Player p1 = { NULL }, p2 = { NULL }, ball = { NULL }, GoalPost[4], Rim[2];
 	static BOOL SoccerField[128][80] = { NULL }, T_BasketballField[128][80] = { NULL },
@@ -263,6 +267,7 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		LogFont.lfCharSet = HANGEUL_CHARSET;
 		LogFont.lfPitchAndFamily = VARIABLE_PITCH | FF_ROMAN;
 		lstrcpy(LogFont.lfFaceName, TEXT("ÈÞ¸Õ¸ÅÁ÷Ã¼"));
+		test.Con();
 		SetTimer(hwnd, 1, 5, NULL);
 		break;
 	case WM_TIMER:
