@@ -73,8 +73,16 @@ void CPlayScene::Update(BOOL KeyDownBuffer[])
 {
 	ObjectCollisionCheck();
 	player.Update(KeyDownBuffer);
-	//otherplayers.Update(KeyDownBuffer);
+	otherplayers.Update(KeyDownBuffer, true);
 	ball.Update(KeyDownBuffer);
+}
+
+void CPlayScene::Update(BOOL KeyDownBuffer[], float timeElapsed)
+{
+	ObjectCollisionCheck();
+	player.Update(KeyDownBuffer, timeElapsed);
+	otherplayers.Update(KeyDownBuffer, timeElapsed);
+	ball.Update(KeyDownBuffer, timeElapsed);	
 }
 
 void CPlayScene::Render(HDC& dc)
@@ -90,7 +98,7 @@ void CPlayScene::ObjectCollisionCheck()
 {
 	// 플레이어 <-> 플레이어
 	if (CollisionCheck(player, otherplayers)) {
-		double repulsion = -1.5;		// 반발력 계수?
+		double repulsion = -1.2;		// 반발력 계수?
 		CollisionUpdate(player, otherplayers, repulsion);
 	}
 
@@ -99,8 +107,8 @@ void CPlayScene::ObjectCollisionCheck()
 		if (player.input) {
 			if (!player.hasKicked) {
 				PlaySound(L"kick.wav", NULL, SND_ASYNC);
-				ball.velocity.x = (ball.position.x - player.position.x) / 100 * 16;
-				ball.velocity.y = (ball.position.y - player.position.y) / 100 * 16;
+				ball.velocity.x = (ball.position.x - player.position.x) / 100 * player.power * PixelPerMeter;
+				ball.velocity.y = (ball.position.y - player.position.y) / 100 * player.power * PixelPerMeter;
 				player.input = false;
 				player.hasKicked = true;
 			}
@@ -112,11 +120,11 @@ void CPlayScene::ObjectCollisionCheck()
 	}
 
 	if (CollisionCheck(otherplayers, ball)) {
-		if (!otherplayers.hasKicked) {
-			if (otherplayers.input) {
+		if (otherplayers.input) {
+			if (!otherplayers.hasKicked) {
 				PlaySound(L"kick.wav", NULL, SND_ASYNC);
-				ball.velocity.x = (ball.position.x - otherplayers.position.x) / 100 * 16;
-				ball.velocity.y = (ball.position.y - otherplayers.position.y) / 100 * 16;
+				ball.velocity.x = (ball.position.x - otherplayers.position.x) / 100 * otherplayers.power * PixelPerMeter;
+				ball.velocity.y = (ball.position.y - otherplayers.position.y) / 100 * otherplayers.power * PixelPerMeter;
 				otherplayers.input = false;
 				otherplayers.hasKicked = true;
 			}
@@ -141,4 +149,24 @@ void CPlayScene::ObjectCollisionCheck()
 
 	// 공 <-> 맵(벽)
 	MapCollisionCheck(ball, map, -1.0);
+}
+
+
+
+//----------------------------------------------------------------------------
+void InputManager::Update(WPARAM wParam, UINT uMsg) {
+	switch (uMsg) {
+	case WM_KEYDOWN:
+		KeyDownBuffer[wParam] = TRUE;
+		break;
+		
+	case WM_KEYUP:
+		KeyDownBuffer[wParam] = FALSE;
+		break;
+	}
+}
+
+BOOL* InputManager::GetInput()
+{
+	return KeyDownBuffer;
 }

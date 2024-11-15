@@ -3,12 +3,22 @@
 #include <tchar.h>
 #include <math.h>
 #include <mmsystem.h>
+#include <chrono>
+#include <vector>
 
+#define PixelPerMeter 12
+#define MeterPerPixel 1/12
 enum E_team {
 	RedTeam,
 	BlueTeam,
 	Ball,
 	Object
+};
+
+enum E_item {
+	Power,
+	Speed,
+	Size
 };
 
 class XY

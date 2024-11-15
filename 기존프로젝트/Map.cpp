@@ -49,7 +49,7 @@ void CSoccerMap::Render(HDC& dc)
 {
 	hB = CreateSolidBrush(RGB(90, 160, 90));
 	oldB = (HBRUSH)SelectObject(dc, hB);
-	Rectangle(dc, 0, 0, 1024, 640);
+	Rectangle(dc, 0, 0, 1440, 900);
 	SelectObject(dc, oldB);
 	DeleteObject(hB);
 	for (int i = 0; i < 128; ++i) {

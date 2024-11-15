@@ -15,6 +15,8 @@ CEllipseObject::CEllipseObject()
 
 CPlayer::CPlayer()
 {
+	friction = 1.05;
+	size = 20;
 	inputC = new InputComponent;
 	physicsC = new PhysicsComponent;
 }
@@ -25,7 +27,20 @@ void CPlayer::Update(BOOL KeyDownBuffer[])
 	physicsC->Update(*this);
 }
 
-void CPlayer::Render(HDC dc)
+void CPlayer::Update(BOOL KeyDownBuffer[],float timeElapsed)
+{
+	inputC->Update(*this, KeyDownBuffer);
+	physicsC->Update(*this, timeElapsed);
+}
+
+void CPlayer::Update(BOOL KeyDownBuffer[], bool test, float timeElapsed)
+{
+	if(!test)
+		inputC->Update(*this, KeyDownBuffer);
+	physicsC->Update(*this, timeElapsed);
+}
+
+void CPlayer::Render(HDC& dc)
 {
 	graphicsC->Render(*this, dc);
 }
@@ -53,6 +68,8 @@ void CPlayer::BuildObject()
 
 CBall::CBall()
 {
+	friction = 1.007;
+	size = 14;
 	physicsC = new PhysicsComponent;
 }
 
@@ -61,7 +78,12 @@ void CBall::Update(BOOL KeyDownBuffer[])
 	physicsC->Update(*this);
 }
 
-void CBall::Render(HDC dc)
+void CBall::Update(BOOL KeyDownBuffer[], float timeElapsed)
+{
+	physicsC->Update(*this, timeElapsed);
+}
+
+void CBall::Render(HDC& dc)
 {
 	graphicsC->Render(*this, dc);
 }
@@ -117,8 +139,32 @@ void InputComponent::Update(CPlayer& player, BOOL KeyDownBuffer[]) {
 		player.velocity.x += accelation.x;
 	}
 
-	std::clamp(player.velocity.x, -player.maxVelocity.x, player.maxVelocity.x);
-	std::clamp(player.velocity.y, -player.maxVelocity.y, player.maxVelocity.y);
+	/*플레이어가 스페이스를 꾹 눌러도 공은 한 번만 찰 수 있도록
+	hasKicked가 false일 때만 input을 받도록*/
+	if (KeyDownBuffer[VK_SPACE]) {
+		if (!player.hasKicked) {
+			player.input = true;
+		}
+	}
+	if (!KeyDownBuffer[VK_SPACE]) {
+		player.input = false;
+		player.hasKicked = false;
+	}
+}
+
+void InputComponent::Update(CPlayer& player, BOOL KeyDownBuffer[], float timerElapsed) {
+	if (KeyDownBuffer[VK_UP]) {
+		player.velocity.y -= accelation.y * timerElapsed;
+	}
+	if (KeyDownBuffer[VK_DOWN]) {
+		player.velocity.y += accelation.y * timerElapsed;
+	}
+	if (KeyDownBuffer[VK_LEFT]) {
+		player.velocity.x -= accelation.x * timerElapsed;
+	}
+	if (KeyDownBuffer[VK_RIGHT]) {
+		player.velocity.x += accelation.x * timerElapsed;
+	}
 
 	/*플레이어가 스페이스를 꾹 눌러도 공은 한 번만 찰 수 있도록
 	hasKicked가 false일 때만 input을 받도록*/
@@ -133,51 +179,80 @@ void InputComponent::Update(CPlayer& player, BOOL KeyDownBuffer[]) {
 	}
 }
 
-void PhysicsComponent::Update(CEllipseObject& player) {
+void PhysicsComponent::Update(CEllipseObject& object) {
 	// 이동
-	player.position.x += player.velocity.x;
-	player.position.y += player.velocity.y;
+	object.position.x += object.velocity.x;
+	object.position.y += object.velocity.y;
 
 
 	// 마찰력 적용
-	player.velocity.x /= player.friction;
-	player.velocity.y /= player.friction;
+	object.velocity.x /= object.friction;
+	object.velocity.y /= object.friction;
+
+	CPlayer* playerPtr = dynamic_cast<CPlayer*>(&object);
+	if (playerPtr) {
+		std::clamp(playerPtr->velocity.x, playerPtr->maxVelocity.x, playerPtr->maxVelocity.x);
+		std::clamp(playerPtr->velocity.y, playerPtr->maxVelocity.y, playerPtr->maxVelocity.y);
+	}
+}
+
+void PhysicsComponent::Update(CEllipseObject& object, float timeElapsed) {
+	// 이동
+	object.position.x += object.velocity.x * MeterPerPixel;
+	object.position.y += object.velocity.y * MeterPerPixel;
+
+
+	// 마찰력 적용
+	object.velocity.x /= object.friction;
+	object.velocity.y /= object.friction;
+
+	CPlayer* playerPtr = dynamic_cast<CPlayer*>(&object);
+	if (playerPtr) {
+		std::clamp(playerPtr->velocity.x, playerPtr->maxVelocity.x, playerPtr->maxVelocity.x);
+		std::clamp(playerPtr->velocity.y, playerPtr->maxVelocity.y, playerPtr->maxVelocity.y);
+	}
 }
 
 
 
-void EllipseComponent::Render(CEllipseObject& player, HDC& dc)
+void EllipseComponent::Render(CEllipseObject& object, HDC& dc)
 {
-	if (player.team == Ball)
+	if (object.team == Ball)
 		hBrush = CreateSolidBrush(RGB(255, 255, 0));
-	else if (player.team == Object)
+	else if (object.team == Object)
 		hBrush = CreateSolidBrush(RGB(255, 255, 255));
-	else if (player.team == RedTeam)
+	else if (object.team == RedTeam)
 		hBrush = CreateSolidBrush(RGB(255, 0, 0));
-	else if (player.team == BlueTeam)
+	else if (object.team == BlueTeam)
 		hBrush = CreateSolidBrush(RGB(0, 0, 255));
 
-	if (dc == NULL) {
-		return;
-	}
 
-	if (!hBrush) {
-		// 에러 처리
-		return;
+	CPlayer* playerPtr = dynamic_cast<CPlayer*>(&object);
+	if (playerPtr) {
+		if (playerPtr->input) {
+			hPen = CreatePen(PS_SOLID, 3, RGB(255, 255, 255));
+			oldPen = (HPEN)SelectObject(dc, hPen);
+		}
 	}
 
 	oldBrush = (HBRUSH)SelectObject(dc, hBrush);
-	Ellipse(dc, player.position.x - player.size,
-		player.position.y - player.size,
-		player.position.x + player.size,
-		player.position.y + player.size);
+	Ellipse(dc, object.position.x - object.size,
+		object.position.y - object.size,
+		object.position.x + object.size,
+		object.position.y + object.size);
 	SelectObject(dc, oldBrush);
 	DeleteObject(hBrush);
+
+	if (playerPtr) {
+		if (playerPtr->input) {
+			SelectObject(dc, oldPen);
+			DeleteObject(hPen);
+		}
+	}
 }
 
 void RectangleComponent::Render(CRectangleObject& object, HDC dc, BOOL fill)
 {
-	hBrush = CreateSolidBrush(RGB(100, 100, 100));
 
 	oldBrush = (HBRUSH)SelectObject(dc, hBrush);
 	Rectangle(dc, object.position.x - object.size.x / 2,
