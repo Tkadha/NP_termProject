@@ -24,6 +24,7 @@ int gCurrentState = 1; //0이 로비  1이 게임화면
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK SoccerProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK LobbyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+CGameFramework g_GameFramework;
 
 
 HWND hButtonRed, hButtonBlue, hButtonSoccer, hButtonBasketball, hButtonStart;
@@ -787,6 +788,7 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_KEYDOWN:									// 키입력
 		KeyDownBuffer[wParam] = TRUE;
+		g_GameFramework.SetScene(1);
 		InvalidateRect(hwnd, NULL, FALSE);
 		break;
 	case WM_KEYUP:

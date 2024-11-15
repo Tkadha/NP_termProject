@@ -133,6 +133,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ClientNetwork.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="GameFramework.h" />
     <ClInclude Include="Map.h" />
@@ -143,6 +144,7 @@
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ClientNetwork.cpp" />
     <ClCompile Include="GameFramework.cpp" />
     <ClCompile Include="Project.cpp" />
     <ClCompile Include="Map.cpp" />

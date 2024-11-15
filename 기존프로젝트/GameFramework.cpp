@@ -3,11 +3,20 @@
 
 void CGameFramework::Update(BOOL KeyDownBuffer[])
 {
-	currentScene.Update(KeyDownBuffer);
+	playScene.Update(KeyDownBuffer);
 }
 
 void CGameFramework::Render(HDC& dc)
 {
-	//currentScene.Render(dc);
-	lobbyScene.Render(dc);
+	if (currentScene == 0) {
+		lobbyScene.Render(dc);
+	}
+	else if (currentScene == 1) {
+		playScene.Render(dc);
+	}
+}
+
+void CGameFramework::SetScene(int i)
+{
+	currentScene = i;
 }
