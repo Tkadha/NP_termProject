@@ -9,6 +9,9 @@
 #define ID_MapEdit 104
 #define ID_MapClear 105
 
+#define WindowWidth 1440
+#define WindowHeight 900
+
 HINSTANCE g_hInst;
 LPCTSTR lpszClass = L"Window Class Name";
 LPCTSTR lpszWindowName = L"Window Programming Lab";
@@ -48,7 +51,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 		L"Hit Ball",
 		WS_CAPTION | WS_SYSMENU | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
 		0, 0,
-		1424 + 18, 790 + 41,
+		WindowWidth, WindowHeight,
 		NULL, (HMENU)NULL, hInstance, NULL);
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
@@ -106,7 +109,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_TIMER:
 		hdc = GetDC(hwnd);
 		if (hBit == NULL)
-			hBit = CreateCompatibleBitmap(hdc, 1442, 831);
+			hBit = CreateCompatibleBitmap(hdc, WindowWidth, WindowHeight);
 
 		memdc = CreateCompatibleDC(hdc);
 		oldBit = (HBITMAP)SelectObject(memdc, hBit);
@@ -240,7 +243,7 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_TIMER:
 		hdc = GetDC(hwnd);
 		if (hBit == NULL)
-			hBit = CreateCompatibleBitmap(hdc, 1024, 640);
+			hBit = CreateCompatibleBitmap(hdc, WindowWidth, WindowHeight);
 		memdc = CreateCompatibleDC(hdc);
 		oldBit = (HBITMAP)SelectObject(memdc, hBit);
 		/*
@@ -755,7 +758,7 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		hdc = BeginPaint(hwnd, &ps);
 		memdc = CreateCompatibleDC(hdc);
 		SelectObject(memdc, hBit);
-		BitBlt(hdc, 0, 0, 1024, 640, memdc, 0, 0, SRCCOPY);
+		BitBlt(hdc, 0, 0, WindowWidth, WindowHeight, memdc, 0, 0, SRCCOPY);
 		DeleteDC(memdc);
 
 		EndPaint(hwnd, &ps);
@@ -809,6 +812,7 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_DESTROY:
 		KillTimer(hwnd, 1);
+		PostQuitMessage(0);
 		break;
 	}
 	return DefWindowProc(hwnd, uMsg, wParam, lParam); // 위의 세 메시지 외의 나머지 메시지는 OS로

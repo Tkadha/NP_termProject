@@ -4,6 +4,8 @@
 #include <math.h>
 #include <mmsystem.h>
 
+#define PixelPerMeter 12
+#define MeterPerPixel 1/12
 enum E_team {
 	RedTeam,
 	BlueTeam,

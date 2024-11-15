@@ -5,7 +5,7 @@
 class EllipseComponent;
 class RectangleComponent;
 class InputComponent;
-class PhysicsComponent;
+class PhysicsComponent;	
 
 class CObejct
 {
@@ -15,15 +15,16 @@ class CEllipseObject
 {
 public:
 	XY position, velocity;
-	double friction = 1.05;		// 마찰 계수
+	double friction;		// 마찰 계수
 	E_team team;
-	int size = 20;
+	int size;
 
 	EllipseComponent* graphicsC;
 
 	CEllipseObject();
 
 	virtual void Update(BOOL KeyDownBuffer[]) {};
+	virtual void Update(BOOL KeyDownBuffer[], float timeElapsed) {};
 	virtual void Render(HDC dc) {};
 };
 
@@ -31,14 +32,17 @@ public:
 class CPlayer : public CEllipseObject
 {
 public:
-	XY maxVelocity{ 3,3 };
+	XY maxVelocity{ 50,50 };
 	char name[20]{};
+	double power = 16;
 
 	bool input{ false }, hasKicked{ false };
 
 	CPlayer();
 
 	void Update(BOOL KeyDownBuffer[]);
+	void Update(BOOL KeyDownBuffer[], bool, float timeElapsed);
+	void Update(BOOL KeyDownBuffer[], float timeElapsed);
 	void Render(HDC& dc);
 
 	void Reset(XY pos);		// 게임 시작, 골 들어갔을 때
@@ -55,12 +59,10 @@ private:
 class CBall : public CEllipseObject
 {
 public:
-	// 반지름
-	int size = 14;
-	
 	CBall();
 
 	void Update(BOOL KeyDownBuffer[]);
+	void Update(BOOL KeyDownBuffer[], float timeElapsed);
 	void Render(HDC& dc);
 
 private:
@@ -114,19 +116,21 @@ public:
 class InputComponent
 {
 public:
-	XY accelation{ 0.25,0.25 };	// 가속력
+	XY accelation{ 4.16666666,4.16666666 };	// 가속력
 
 	InputComponent() {};
 	InputComponent(double x, double y) : accelation(x, y) {};
 
 public:
 	void Update(CPlayer& player, BOOL KeyDownBuffer[]);
+	void Update(CPlayer& player, BOOL KeyDownBuffer[], float timeElapsed);
 };
 
 class PhysicsComponent
 {
 public:
 	void Update(CEllipseObject& player);
+	void Update(CEllipseObject& player, float timeElapsed);
 };
 
 class GraphicsComponent

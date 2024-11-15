@@ -26,7 +26,7 @@ public:
 	//CSoccerMap soccerMap;
 
 	CPlayer player;					// 나
-	CPlayer otherplayers;	// 다른 사람
+	CPlayer otherplayers;			// 다른 사람
 
 	CBall ball;						// 공
 
@@ -34,5 +34,6 @@ public:
 
 	void ObjectCollisionCheck();
 	void Update(BOOL KeyDownBuffer[]);
+	void Update(BOOL KeyDownBuffer[], float timeElapsed);
 	void Render(HDC& dc);
 };
