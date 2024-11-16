@@ -53,6 +53,7 @@ void err_display(int errcode)
 }
 
 std::array <SESSION, MAXPLAYER> player;
+E_MAPTYPE maptype = SOCCER;
 
 void ProcessPacket(int id, char* packet)
 {
@@ -71,7 +72,10 @@ void ProcessPacket(int id, char* packet)
 	case CS_MAP_CHOICE: {
 		MAP_PACKET* p = reinterpret_cast<MAP_PACKET*>(packet);
 		maptype = p->maptype;
-		
+		for (int i = 0; i < MAXPLAYER; ++i) {
+			if (player[i].state == E_OFFLINE) continue;
+			player[i].SendMapPacket(id, maptype);
+		}
 		break;
 	}
 	}
@@ -87,7 +91,6 @@ void PlayerThread(int id)
 	}
 }
 
-E_MAPTYPE maptype = SOCCER;
 
 int main()
 {

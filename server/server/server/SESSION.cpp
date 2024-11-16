@@ -14,7 +14,20 @@ bool SESSION::SendPlayerTeamPacket(int id, E_TEAMCOLOR color)
 	TEAM_PACKET p;
 	p.size = sizeof(TEAM_PACKET);
 	p.teamcolor = color;
-	p.type = CS_TEAM_CHOICE;
+	p.type = SC_MAP_CHOICE;
+	p.id = id;
+	int retval;
+	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
+	if (retval == SOCKET_ERROR) return false;
+	return true;
+}
+
+bool SESSION::SendMapPacket(int id, E_MAPTYPE maptype)
+{
+	MAP_PACKET p;
+	p.size = sizeof(TEAM_PACKET);
+	p.maptype = maptype;
+	p.type = SC_MAP_CHOICE;
 	p.id = id;
 	int retval;
 	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);

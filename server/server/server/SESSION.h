@@ -3,7 +3,6 @@
 #include <ws2tcpip.h> // 윈속2 확장 헤더
 #include "protocol.h"
 #pragma comment(lib, "ws2_32") // ws2_32.lib 링크
-#define BUFSIZE    512
 
 
 enum E_STATE {E_ONLINE, E_OFFLINE};
@@ -25,6 +24,7 @@ public:
 	}
 	void DoRecv();
 	bool SendPlayerTeamPacket(int id, E_TEAMCOLOR color);
+	bool SendMapPacket(int id, E_MAPTYPE maptype);
 };
 
 
