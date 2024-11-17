@@ -5,7 +5,7 @@
 void CGameFramework::Update()
 {
 	timer.Tick();
-	currentScene.Update(inputManager.GetInput(), timer.GetElapsedTime());
+	playScene.Update(inputManager.GetInput(), timer.GetElapsedTime());
 }
 
 void CGameFramework::Update(BOOL KeyDownBuffer[])

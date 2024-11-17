@@ -87,7 +87,7 @@ private:
 
 
 
-class CRectangleObject : CObject
+class CRectangleObject : public CObject
 {
 public:
 	CRectangleObject() {};

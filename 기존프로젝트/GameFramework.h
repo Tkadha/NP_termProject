@@ -18,7 +18,6 @@ public:
 
 	void Update();
 public:
-	CGameFramework() {};
 	int currentScene = 0;
 	void Update(BOOL KeyDownBuffer[]);
 	void Render(HDC& dc);

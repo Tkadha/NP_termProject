@@ -4,7 +4,7 @@
 class CEventManager
 {
 public:
-	std::vector<CEventObject> eventobjects;
+	//std::vector<CEventObject> eventobjects;
 
 	void CreateEventObject();
 	void UpdateEventObject();
