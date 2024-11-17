@@ -238,6 +238,8 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	static HWND SoccerWindow;
 	static LOGFONT LogFont;
 	HFONT hF, oldF;
+	int xPos; // 클릭한 x좌표
+	int yPos; // 클릭한 y좌표
 
 	static CGameFramework game;
 
@@ -791,7 +793,7 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_KEYDOWN:									// 키입력
 		KeyDownBuffer[wParam] = TRUE;
 		game.inputManager.Update(wParam, uMsg);
-		game.SetScene(1);
+		//game.SetScene(1);
 		InvalidateRect(hwnd, NULL, FALSE);
 		break;
 	case WM_KEYUP:
@@ -800,7 +802,34 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		InvalidateRect(hwnd, NULL, FALSE);
 		break;
 	case WM_LBUTTONDOWN:
-		LMouse = TRUE;
+		xPos = LOWORD(lParam); // 클릭한 x좌표
+		yPos = HIWORD(lParam); // 클릭한 y좌표
+
+		// Red 버튼 영역 확인
+		if (xPos >= 100 && xPos <= 240 && yPos >= 200 && yPos <= 260) {
+			MessageBox(hwnd, L"Red 버튼 클릭!", L"버튼 이벤트", MB_OK);
+		}
+
+		// Blue 버튼 영역 확인
+		if (xPos >= 250 && xPos <= 390 && yPos >= 200 && yPos <= 260) {
+			MessageBox(hwnd, L"Blue 버튼 클릭!", L"버튼 이벤트", MB_OK);
+		}
+
+		// Soccer 버튼 영역 확인
+		if (xPos >= 450 && xPos <= 680 && yPos >= 300 && yPos <= 420) {
+			MessageBox(hwnd, L"Soccer 버튼 클릭!", L"버튼 이벤트", MB_OK);
+		}
+
+		// Basketball 버튼 영역 확인
+		if (xPos >= 700 && xPos <= 930 && yPos >= 300 && yPos <= 420) {
+			MessageBox(hwnd, L"Basketball 버튼 클릭!", L"버튼 이벤트", MB_OK);
+		}
+
+		// Start 버튼 영역 확인
+		if (xPos >= 400 && xPos <= 624 && yPos >= 500 && yPos <= 570) {
+			game.SetScene(1);
+		}
+
 		break;
 	case WM_LBUTTONUP:
 		LMouse = FALSE;
