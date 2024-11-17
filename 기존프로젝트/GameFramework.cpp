@@ -25,13 +25,13 @@ void CGameFramework::SetScene(int i)
 
 }
 
-void CGameFramework::SwitchScene(CScene* newScene, HWND hWnd, HINSTANCE hInstance)
+void CGameFramework::SwitchScene(CScene* newScene)
 {
 	if (currentScene) {
 		currentScene->Exit();
 	}
 	currentScene = newScene;
 	if (currentScene) {
-		currentScene->Enter(hWnd, hInstance);
+		currentScene->Enter();
 	}
 }

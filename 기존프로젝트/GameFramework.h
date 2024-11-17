@@ -7,9 +7,6 @@
 
 class CGameFramework
 {
-	HWND hWnd;
-	HINSTANCE hInstance;
-
 	CScene* currentScene;
 	CTimer timer;
 
@@ -18,11 +15,7 @@ public:
 	CPlayScene playScene;
 	CLobbyScene lobbyScene;
 
-	CGameFramework(HWND hWnd, HINSTANCE hInstance) : hWnd(hWnd), hInstance(hInstance) { 
-		SwitchScene(&lobbyScene, hWnd, hInstance);
-		timer.Start(); 
-	};
-	CGameFramework() { timer.Start(); };
+	CGameFramework() { SwitchScene(&playScene); timer.Start(); };
 
 	void Update();
 public:
@@ -31,6 +24,6 @@ public:
 	void Render(HDC& dc);
 	void SetScene(int i);
 
-	void SwitchScene(CScene* newScene, HWND hWnd, HINSTANCE hInstance);
+	void SwitchScene(CScene* newScene);
 };
 

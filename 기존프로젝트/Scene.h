@@ -1,10 +1,13 @@
 #pragma once
 #include "Map.h"
+extern HWND hWnd;
+extern HINSTANCE g_hInst;
+
 
 class CScene
 {
 public:
-	virtual void Enter(HWND hWnd, HINSTANCE hInstance) {};
+	virtual void Enter() {};
 	virtual void Update() {};
 	virtual void Render(HDC& dc) {};
 	virtual void Exit() {};
@@ -25,14 +28,13 @@ private:
 
 public:
 	CLobbyScene() {};
-	//CLobbyScene(HWND hWnd, HINSTANCE hInstance) : hWnd(hWnd), hInstance(hInstance) {};
 
 	CLobbyMap lobbymap;
 
 	void Render(HDC& dc);
 	void Update();
 
-	void Enter(HWND hWnd, HINSTANCE hInstance);
+	void Enter() {};
 	void Exit();
 };
 
@@ -54,7 +56,7 @@ public:
 	void Update(BOOL KeyDownBuffer[], float timeElapsed);
 	void Render(HDC& dc);
 
-	void Enter(HWND hWnd, HINSTANCE hInstance) {};
+	void Enter() {};
 	void Exit() {};
 };
 

@@ -176,28 +176,6 @@ BOOL* InputManager::GetInput()
 
 
 //----------------------------------------------------------------------------
-void CLobbyScene::Enter(HWND hWnd, HINSTANCE hInstance)
-{
-	// 버튼 만들려다가 실패 나중에 다시 함
-	
-	//if (hWnd == nullptr) {
-	//	return;
-	//}
-
-	//buttonRed = CreateWindow(L"button", NULL,
-	//	WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
-	//	100, 200, 240, 260,
-	//	hWnd, // 메인 윈도우 핸들
-	//	(HMENU)ID_RED_BUTTON,
-	//	hInstance,
-	//	NULL);
-
-	//if (!buttonRed) {
-	//	DWORD error = GetLastError();
-	//	// error 값 출력 또는 디버그 로깅
-	//}
-}
-
 void CLobbyScene::Update()
 {
 
@@ -213,6 +191,5 @@ void CLobbyScene::Exit()
 
 void CLobbyScene::Render(HDC& dc)
 {
-	lobbymap.Render(dc);
-	ShowWindow(buttonRed, SW_SHOW);
+	//lobbymap.Render(dc);
 }

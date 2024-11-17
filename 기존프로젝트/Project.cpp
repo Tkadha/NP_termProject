@@ -20,7 +20,6 @@
 
 HINSTANCE g_hInst;
 LPCTSTR lpszClass = L"Window Class Name";
-int gCurrentState = 1; //0이 로비  1이 게임화면
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK SoccerProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
@@ -28,25 +27,20 @@ LRESULT CALLBACK LobbyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 //CGameFramework g_GameFramework;
 
 
+HWND hWnd, lobbyWnd, playWnd;
 HWND hButtonRed, hButtonBlue, hButtonSoccer, hButtonBasketball, hButtonStart;
 
 
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
-	HWND hWnd;
 	MSG Message;
 	WNDCLASSEX WndClass;
 	g_hInst = hInstance;
 
 	WndClass.cbSize = sizeof(WndClass);
 	WndClass.style = CS_HREDRAW | CS_VREDRAW;
-	if (gCurrentState == 1) {
-		WndClass.lpfnWndProc = (WNDPROC)SoccerProc;
-	}
-	else {
-		WndClass.lpfnWndProc = (WNDPROC)LobbyProc;
-	}
+	WndClass.lpfnWndProc = (WNDPROC)WndProc;
 	WndClass.cbClsExtra = 0;
 	WndClass.cbWndExtra = 0;
 	WndClass.hInstance = hInstance;
@@ -58,15 +52,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	WndClass.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 	RegisterClassEx(&WndClass);
 
-	WndClass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
-	WndClass.lpszClassName = L"SoccerField";
-	if (gCurrentState == 1) {
-		WndClass.lpfnWndProc = (WNDPROC)SoccerProc;
-	}
-	else {
-		WndClass.lpfnWndProc = (WNDPROC)LobbyProc;
-	}
+	WndClass.lpszClassName = L"LobbyScene";
+	WndClass.lpfnWndProc = (WNDPROC)LobbyProc;
 	RegisterClassEx(&WndClass);
+
+	WndClass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
+	WndClass.lpszClassName = L"PlayScene";
+	WndClass.lpfnWndProc = (WNDPROC)SoccerProc;
+	RegisterClassEx(&WndClass);
+
 
 	hWnd = CreateWindow(
 		lpszClass,
@@ -86,20 +80,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	return Message.wParam;
 }
 
-
-//
-//typedef struct BLOCK {
-//	BOOL spawn;
-//	//struct BLOCK* next;
-//}Block;
-//
-//typedef struct MODE {
-//	BOOL Soccer, T_Basketball, S_Basketball, Volleyball, Edit, change;
-//}Mode;
-
-static BOOL KeyDownBuffer[256], Clear;
-//static Mode mode = { FALSE };
-static int ChangeTo = 0;
+static BOOL KeyDownBuffer[256];
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -128,7 +109,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		LogFont.lfCharSet = HANGEUL_CHARSET;
 		LogFont.lfPitchAndFamily = VARIABLE_PITCH | FF_ROMAN;
 		lstrcpy(LogFont.lfFaceName, TEXT("휴먼매직체"));
-		SetTimer(hwnd, 1, 100, NULL);
+		//SetTimer(hwnd, 1, 100, NULL);
+
+		lobbyWnd = CreateWindow(L"LobbyScene", NULL, WS_CHILD | WS_VISIBLE, 0, 0, WindowWidth, WindowHeight, hwnd, NULL, g_hInst, NULL);
 		break;
 	case WM_TIMER:
 		hdc = GetDC(hwnd);
@@ -139,53 +122,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		oldBit = (HBITMAP)SelectObject(memdc, hBit);
 
 
-		if (Play == FALSE) {
-			mem1dc = CreateCompatibleDC(memdc);
-			oldBit = (HBITMAP)SelectObject(mem1dc, startBit);
-			StretchBlt(memdc, 0, 0, 1442, 831, mem1dc, 0, 0, 960, 450, SRCCOPY);
-			SelectObject(mem1dc, oldBit);
-			DeleteDC(mem1dc);
-			mem1dc = CreateCompatibleDC(memdc);
-			oldBit = (HBITMAP)SelectObject(mem1dc, titlemask);
-			StretchBlt(memdc, 450, 100, 500, 130, mem1dc, 0, 0, 288, 75, SRCAND);
-			SelectObject(mem1dc, oldBit);
-			DeleteDC(mem1dc);
-			mem1dc = CreateCompatibleDC(memdc);
-			oldBit = (HBITMAP)SelectObject(mem1dc, titleBit);
-			StretchBlt(memdc, 450, 100, 500, 130, mem1dc, 0, 0, 288, 75, SRCPAINT);
-			SelectObject(mem1dc, oldBit);
-			DeleteDC(mem1dc);
-
-			Count++;
-			if (Count < 8) {
-				hF = CreateFontIndirect(&LogFont);
-				oldF = (HFONT)SelectObject(memdc, hF);
-				SetTextColor(memdc, RGB(255, 255, 255));
-				SetBkMode(memdc, 1);
-				TextOut(memdc, 470, 600, L"- Press Enter -", lstrlen(L"- Press Enter -"));
-				SelectObject(memdc, oldF);
-				DeleteObject(hF);
-			}
-			if (Count == 8) {
-				mem1dc = CreateCompatibleDC(memdc);
-				oldBit = (HBITMAP)SelectObject(mem1dc, startBit);
-				StretchBlt(memdc, 0, 0, 1442, 831, mem1dc, 0, 0, 960, 450, SRCCOPY);
-				SelectObject(mem1dc, oldBit);
-				DeleteDC(mem1dc);
-				mem1dc = CreateCompatibleDC(memdc);
-				oldBit = (HBITMAP)SelectObject(mem1dc, titlemask);
-				StretchBlt(memdc, 450, 100, 500, 130, mem1dc, 0, 0, 288, 75, SRCAND);
-				SelectObject(mem1dc, oldBit);
-				DeleteDC(mem1dc);
-				mem1dc = CreateCompatibleDC(memdc);
-				oldBit = (HBITMAP)SelectObject(mem1dc, titleBit);
-				StretchBlt(memdc, 450, 100, 500, 130, mem1dc, 0, 0, 288, 75, SRCPAINT);
-				SelectObject(mem1dc, oldBit);
-				DeleteDC(mem1dc);
-			}
-			if (Count == 16)
-				Count = -1;
-		}
 		InvalidateRect(hwnd, NULL, FALSE);
 		SelectObject(memdc, oldBit);
 		DeleteDC(memdc);
@@ -195,9 +131,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		hdc = BeginPaint(hwnd, &ps);
 		memdc = CreateCompatibleDC(hdc);
 
-		SelectObject(memdc, hBit);
+		//SelectObject(memdc, hBit);
 
-		BitBlt(hdc, 0, 0, 1442, 831, memdc, 0, 0, SRCCOPY);
+		//BitBlt(hdc, 0, 0, 1442, 831, memdc, 0, 0, SRCCOPY);
 		DeleteDC(memdc);
 		EndPaint(hwnd, &ps);
 		break;
@@ -234,30 +170,17 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	HDC hdc, memdc;
 	static HBITMAP hBit;
 	HBITMAP oldBit;
-	static HWND SoccerWindow;
 	static LOGFONT LogFont;
-	HFONT hF, oldF;
 	int xPos; // 클릭한 x좌표
 	int yPos; // 클릭한 y좌표
 
-	static CGameFramework game{ hwnd, g_hInst };
+	static CGameFramework game{};
 
-	//static Player p1 = { NULL }, p2 = { NULL }, ball = { NULL }, GoalPost[4], Rim[2];
-	static BOOL SoccerField[128][80] = { NULL }, T_BasketballField[128][80] = { NULL },
-		VolleyBallField[128][80] = { NULL }, S_BasketballField[128][80] = { NULL }
-	, Goal, TopView, SideView, RedGoal, BlueGoal, LMouse, RMouse;
-
-	//BOOL moveX, moveY;
-
-	//static int Size, BallSize, BlockSize, GoalPostSize, RimSize, MaxSpeed;
-	static int GoalCount, TextX, ChangeAnimation;
+	static BOOL LMouse, RMouse;
 
 	// 메시지 처리하기
 	switch (uMsg) {
 	case WM_CREATE:
-		//mode.Soccer = TRUE;
-		// 플레이어 등등 초기화
-
 		ZeroMemory(&LogFont, sizeof(LOGFONT));
 		LogFont.lfHeight = 100;
 		LogFont.lfWeight = 100;
@@ -286,7 +209,7 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		game.Render(memdc);
 		
 		SelectObject(memdc, oldBit);
-		DeleteDC(memdc);
+		DeleteDC(memdc);              
 		InvalidateRect(hwnd, NULL, FALSE);
 		ReleaseDC(hwnd, hdc);
 		break;
@@ -302,7 +225,16 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_KEYDOWN:									// 키입력
 		KeyDownBuffer[wParam] = TRUE;
 		game.inputManager.Update(wParam, uMsg);
-		//game.SetScene(1);
+		
+		if (wParam == VK_RETURN) {
+			ShowWindow(playWnd, SW_HIDE);
+			ShowWindow(lobbyWnd, SW_SHOW);
+			//DestroyWindow(playWnd);
+			SetFocus(lobbyWnd);
+		}
+		break;
+
+
 		InvalidateRect(hwnd, NULL, FALSE);
 		break;
 	case WM_KEYUP:
@@ -336,7 +268,8 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		// Start 버튼 영역 확인
 		if (xPos >= 400 && xPos <= 624 && yPos >= 500 && yPos <= 570) {
-			game.SwitchScene(&game.playScene, hwnd, g_hInst);
+			//game.SwitchScene(&game.playScene, g_hInst);
+			
 		}
 
 		break;
@@ -462,13 +395,23 @@ LRESULT CALLBACK LobbyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		case 114: // Start 버튼 클릭
 			MessageBox(hwnd, L"Game Starting!", L"Button Click", MB_OK);
-			gCurrentState = 1;
-			DestroyWindow(hwnd);
+			playWnd = CreateWindow(L"PlayScene", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER, 0, 0, WindowWidth, WindowHeight, hWnd, NULL, g_hInst, NULL);
+			ShowWindow(lobbyWnd, SW_HIDE);
+			SetFocus(playWnd);
+			//DestroyWindow(hwnd);
 			// 게임 시작 로직 구현
 			break;
 		}
 		break;
 	}
+	case WM_KEYDOWN:
+		if (wParam == VK_RETURN) {
+			ShowWindow(playWnd, SW_HIDE);
+			ShowWindow(lobbyWnd, SW_SHOW);
+			//DestroyWindow(playWnd);
+			SetFocus(lobbyWnd);
+		}
+		break;
 
 	case WM_PAINT:
 		hdc = BeginPaint(hwnd, &ps);
@@ -477,7 +420,7 @@ LRESULT CALLBACK LobbyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 
 	case WM_DESTROY:
-		PostQuitMessage(0); // 메시지 루프 종료
+		//PostQuitMessage(0); // 메시지 루프 종료
 		break;
 
 	default:
