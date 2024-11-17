@@ -9,15 +9,28 @@
 #define ID_MapEdit 104
 #define ID_MapClear 105
 
+
 #define WindowWidth 1440
 #define WindowHeight 900
+#define BUTTON_RED 110
+#define BUTTON_BLUE 111
+#define BUTTON_SOCCER 112
+#define BUTTON_BASKETBALL 113
+#define BUTTON_START 114
 
 HINSTANCE g_hInst;
 LPCTSTR lpszClass = L"Window Class Name";
 LPCTSTR lpszWindowName = L"Window Programming Lab";
+int gCurrentState = 1; //0이 로비  1이 게임화면
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK SoccerProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK LobbyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+//CGameFramework g_GameFramework;
+
+
+HWND hButtonRed, hButtonBlue, hButtonSoccer, hButtonBasketball, hButtonStart;
+
 
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
@@ -29,7 +42,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 
 	WndClass.cbSize = sizeof(WndClass);
 	WndClass.style = CS_HREDRAW | CS_VREDRAW;
-	WndClass.lpfnWndProc = (WNDPROC)SoccerProc;
+	if (gCurrentState == 1) {
+		WndClass.lpfnWndProc = (WNDPROC)SoccerProc;
+	}
+	else {
+		WndClass.lpfnWndProc = (WNDPROC)LobbyProc;
+	}
 	WndClass.cbClsExtra = 0;
 	WndClass.cbWndExtra = 0;
 	WndClass.hInstance = hInstance;
@@ -43,7 +61,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 
 	WndClass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
 	WndClass.lpszClassName = L"SoccerField";
-	WndClass.lpfnWndProc = (WNDPROC)SoccerProc;
+	if (gCurrentState == 1) {
+		WndClass.lpfnWndProc = (WNDPROC)SoccerProc;
+	}
+	else {
+		WndClass.lpfnWndProc = (WNDPROC)LobbyProc;
+	}
 	RegisterClassEx(&WndClass);
 
 	hWnd = CreateWindow(
@@ -63,6 +86,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	}
 	return Message.wParam;
 }
+
+
 //
 //typedef struct BLOCK {
 //	BOOL spawn;
@@ -766,6 +791,7 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_KEYDOWN:									// 키입력
 		KeyDownBuffer[wParam] = TRUE;
 		game.inputManager.Update(wParam, uMsg);
+		game.SetScene(1);
 		InvalidateRect(hwnd, NULL, FALSE);
 		break;
 	case WM_KEYUP:
@@ -818,4 +844,106 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 	}
 	return DefWindowProc(hwnd, uMsg, wParam, lParam); // 위의 세 메시지 외의 나머지 메시지는 OS로
+}
+
+LRESULT CALLBACK LobbyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	static HWND hButtonRed, hButtonBlue, hButtonSoccer, hButtonBasketball, hButtonStart;
+	HDC hdc;
+	PAINTSTRUCT ps;
+
+	switch (uMsg)
+	{
+	case WM_CREATE: {
+		// Red 버튼 생성
+		hButtonRed = CreateWindow(
+			L"BUTTON", L"RED",
+			WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
+			100, 200, 140, 60,
+			hwnd, (HMENU)110,
+			(HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL);
+
+		// Blue 버튼 생성
+		hButtonBlue = CreateWindow(
+			L"BUTTON", L"BLUE",
+			WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
+			250, 200, 140, 60,
+			hwnd, (HMENU)111,
+			(HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL);
+
+		// Soccer 버튼 생성
+		hButtonSoccer = CreateWindow(
+			L"BUTTON", L"SOCCER",
+			WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
+			450, 300, 230, 120,
+			hwnd, (HMENU)112,
+			(HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL);
+
+		// Basketball 버튼 생성
+		hButtonBasketball = CreateWindow(
+			L"BUTTON", L"BASKETBALL",
+			WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
+			700, 300, 230, 120,
+			hwnd, (HMENU)113,
+			(HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL);
+
+		// Start 버튼 생성
+		hButtonStart = CreateWindow(
+			L"BUTTON", L"START",
+			WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
+			400, 500, 224, 70,
+			hwnd, (HMENU)114,
+			(HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE), NULL);
+
+		break;
+	}
+
+	case WM_COMMAND: {
+		switch (LOWORD(wParam)) {
+		case 110: // Red 버튼 클릭
+			MessageBox(hwnd, L"Red Team Selected!", L"Button Click", MB_OK);
+			// Red 팀 관련 처리 추가
+			break;
+
+		case 111: // Blue 버튼 클릭
+			MessageBox(hwnd, L"Blue Team Selected!", L"Button Click", MB_OK);
+			// Blue 팀 관련 처리 추가
+			break;
+
+		case 112: // Soccer 버튼 클릭
+			MessageBox(hwnd, L"Soccer Mode Selected!", L"Button Click", MB_OK);
+			//gCurrentState = 1; // 축구 모드로 상태 전환
+			//PostQuitMessage(0); // 메시지 루프 종료 -> WinMain에서 새로운 윈도우 생성
+			break;
+
+		case 113: // Basketball 버튼 클릭
+			MessageBox(hwnd, L"Basketball Mode Selected!", L"Button Click", MB_OK);
+			//gCurrentState = 2; // 농구 모드로 상태 전환
+			//PostQuitMessage(0); // 메시지 루프 종료 -> WinMain에서 새로운 윈도우 생성
+			break;
+
+		case 114: // Start 버튼 클릭
+			MessageBox(hwnd, L"Game Starting!", L"Button Click", MB_OK);
+			gCurrentState = 1;
+			DestroyWindow(hwnd);
+			// 게임 시작 로직 구현
+			break;
+		}
+		break;
+	}
+
+	case WM_PAINT:
+		hdc = BeginPaint(hwnd, &ps);
+		TextOut(hdc, 400, 50, L"Lobby Screen", lstrlen(L"Lobby Screen"));
+		EndPaint(hwnd, &ps);
+		break;
+
+	case WM_DESTROY:
+		PostQuitMessage(0); // 메시지 루프 종료
+		break;
+
+	default:
+		return DefWindowProc(hwnd, uMsg, wParam, lParam);
+	}
+	return 0;
 }

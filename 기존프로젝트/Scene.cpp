@@ -133,6 +133,8 @@ void CPlayScene::ObjectCollisionCheck()
 			double repulsion = -0.1;
 			CollisionUpdate(otherplayers, ball, repulsion);
 		}
+
+
 	}
 
 	// °ø <-> °ñ´ë
@@ -152,7 +154,6 @@ void CPlayScene::ObjectCollisionCheck()
 }
 
 
-
 //----------------------------------------------------------------------------
 void InputManager::Update(WPARAM wParam, UINT uMsg) {
 	switch (uMsg) {
@@ -169,4 +170,13 @@ void InputManager::Update(WPARAM wParam, UINT uMsg) {
 BOOL* InputManager::GetInput()
 {
 	return KeyDownBuffer;
+}
+void CLobbyScene::Render(HDC& dc)
+{
+	lobbymap.Render(dc);
+}
+
+void CLobbyScene::Update()
+{
+
 }

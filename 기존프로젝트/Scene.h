@@ -15,6 +15,11 @@ class CStartScene : CScene
 
 class CLobbyScene : CScene
 {
+public:
+	CLobbyMap lobbymap;
+
+	void Render(HDC& dc);
+	void Update();
 
 };
 
