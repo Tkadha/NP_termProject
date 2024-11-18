@@ -78,6 +78,11 @@ void ProcessPacket(int id, char* packet)
 		}
 		break;
 	}
+	case CS_NAME: {
+		NAME_PACKET* p = reinterpret_cast<NAME_PACKET*>(packet);
+		strcpy(player[id].name, p->name);		
+		break;
+	}
 	}
 }
 

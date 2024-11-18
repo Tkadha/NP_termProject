@@ -14,6 +14,7 @@ public:
 	int id;
 	char recv_buf[BUFSIZE];
 	E_TEAMCOLOR team_color;
+	char name[NAME_SIZE];
 
 public:
 	SESSION()
@@ -21,6 +22,7 @@ public:
 		id = -1;
 		state = E_OFFLINE;
 		team_color = BLUE;
+		memset(name, 0, sizeof(name));
 	}
 	void DoRecv();
 	bool SendPlayerTeamPacket(int id, E_TEAMCOLOR color);

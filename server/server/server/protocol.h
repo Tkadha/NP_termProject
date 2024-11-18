@@ -4,12 +4,14 @@ constexpr int NAME_SIZE = 20;
 
 constexpr char CS_TEAM_CHOICE = 1;
 constexpr char CS_MAP_CHOICE = 2;
+constexpr char CS_NAME = 3;
 
 
 
 
 constexpr char SC_TEAM_CHOICE = 1;
 constexpr char SC_MAP_CHOICE = 2;
+constexpr char SC_NAME = 3;
 
 
 
