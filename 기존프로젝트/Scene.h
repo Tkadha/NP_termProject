@@ -3,27 +3,40 @@
 
 class CScene
 {
-
+public:
+	virtual void Enter(HWND hWnd, HINSTANCE hInstance) {};
+	virtual void Update() {};
+	virtual void Render(HDC& dc) {};
+	virtual void Exit() {};
 };
 
 
-class CStartScene : CScene
+class CStartScene :  public CScene
 {
 	
 };
 
 
-class CLobbyScene : CScene
+class CLobbyScene : public CScene
 {
+private:
+
+	HWND buttonRed, buttonBlue, buttonStart;
+
 public:
+	CLobbyScene() {};
+	//CLobbyScene(HWND hWnd, HINSTANCE hInstance) : hWnd(hWnd), hInstance(hInstance) {};
+
 	CLobbyMap lobbymap;
 
 	void Render(HDC& dc);
 	void Update();
 
+	void Enter(HWND hWnd, HINSTANCE hInstance);
+	void Exit();
 };
 
-class CPlayScene :CScene
+class CPlayScene : public CScene
 {
 public:
 	CPlayScene();
@@ -40,6 +53,9 @@ public:
 	void Update(BOOL KeyDownBuffer[]);
 	void Update(BOOL KeyDownBuffer[], float timeElapsed);
 	void Render(HDC& dc);
+
+	void Enter(HWND hWnd, HINSTANCE hInstance) {};
+	void Exit() {};
 };
 
 
