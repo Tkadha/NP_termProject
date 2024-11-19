@@ -91,6 +91,12 @@ void NetWorkManager::Con() {
     }
 }
 
+bool NetWorkManager::SendNamePacket(char* name)
+{
+	send(sock, name, strlen(name), 0);
+	return false;
+}
+
 
 
 

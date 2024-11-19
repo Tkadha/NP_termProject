@@ -16,4 +16,5 @@ public:
 	~NetWorkManager();
 
 	void Con();
+	bool SendNamePacket(char* name);
 };
