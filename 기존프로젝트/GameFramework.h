@@ -7,20 +7,23 @@
 
 class CGameFramework
 {
-	CPlayScene playScene;
-	CLobbyScene lobbyScene;
+	CScene* currentScene;
 	CTimer timer;
 
 public:
 	InputManager inputManager;
+	CPlayScene playScene;
+	CLobbyScene lobbyScene;
 
-	CGameFramework() { timer.Start(); };
+	CGameFramework() { SwitchScene(&playScene); timer.Start(); };
 
 	void Update();
 public:
-	int currentScene = 0;
+	//int currentScene = 0;
 	void Update(BOOL KeyDownBuffer[]);
 	void Render(HDC& dc);
 	void SetScene(int i);
+
+	void SwitchScene(CScene* newScene);
 };
 

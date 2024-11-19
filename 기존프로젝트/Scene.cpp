@@ -171,12 +171,25 @@ BOOL* InputManager::GetInput()
 {
 	return KeyDownBuffer;
 }
-void CLobbyScene::Render(HDC& dc)
-{
-	lobbymap.Render(dc);
-}
 
+
+
+
+//----------------------------------------------------------------------------
 void CLobbyScene::Update()
 {
 
+}
+
+void CLobbyScene::Exit()
+{
+	if (buttonRed) {
+		DestroyWindow(buttonRed);
+		buttonRed = nullptr;
+	}
+}
+
+void CLobbyScene::Render(HDC& dc)
+{
+	//lobbymap.Render(dc);
 }

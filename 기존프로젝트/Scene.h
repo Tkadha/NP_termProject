@@ -1,29 +1,44 @@
 #pragma once
 #include "Map.h"
+extern HWND hWnd;
+extern HINSTANCE g_hInst;
+
 
 class CScene
 {
-
+public:
+	virtual void Enter() {};
+	virtual void Update() {};
+	virtual void Render(HDC& dc) {};
+	virtual void Exit() {};
 };
 
 
-class CStartScene : CScene
+class CStartScene :  public CScene
 {
 	
 };
 
 
-class CLobbyScene : CScene
+class CLobbyScene : public CScene
 {
+private:
+
+	HWND buttonRed, buttonBlue, buttonStart;
+
 public:
+	CLobbyScene() {};
+
 	CLobbyMap lobbymap;
 
 	void Render(HDC& dc);
 	void Update();
 
+	void Enter() {};
+	void Exit();
 };
 
-class CPlayScene :CScene
+class CPlayScene : public CScene
 {
 public:
 	CPlayScene();
@@ -40,6 +55,9 @@ public:
 	void Update(BOOL KeyDownBuffer[]);
 	void Update(BOOL KeyDownBuffer[], float timeElapsed);
 	void Render(HDC& dc);
+
+	void Enter() {};
+	void Exit() {};
 };
 
 

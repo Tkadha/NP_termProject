@@ -17,15 +17,21 @@ void CGameFramework::Update(BOOL KeyDownBuffer[])
 
 void CGameFramework::Render(HDC& dc)
 {
-	if (currentScene == 0) {
-		lobbyScene.Render(dc);
-	}
-	else if (currentScene == 1) {
-		playScene.Render(dc);
-	}
+	currentScene->Render(dc);
 }
 
 void CGameFramework::SetScene(int i)
 {
-	currentScene = i;
+
+}
+
+void CGameFramework::SwitchScene(CScene* newScene)
+{
+	if (currentScene) {
+		currentScene->Exit();
+	}
+	currentScene = newScene;
+	if (currentScene) {
+		currentScene->Enter();
+	}
 }
