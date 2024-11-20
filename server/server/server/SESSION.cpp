@@ -35,4 +35,17 @@ bool SESSION::SendMapPacket(int id, E_MAPTYPE maptype)
 	return true;
 }
 
+bool SESSION::SendNamePacket(int id, char* names)
+{
+	NAME_PACKET p;
+	p.size = sizeof(NAME_PACKET);
+	strcpy(p.name, names);
+	p.type = SC_NAME;
+	p.id = id;
+	int retval;
+	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
+	if (retval == SOCKET_ERROR) return false;
+	return true;
+}
+
 

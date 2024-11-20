@@ -27,6 +27,7 @@ public:
 	void DoRecv();
 	bool SendPlayerTeamPacket(int id, E_TEAMCOLOR color);
 	bool SendMapPacket(int id, E_MAPTYPE maptype);
+	bool SendNamePacket(int id, char* names);
 };
 
 
