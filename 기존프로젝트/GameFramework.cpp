@@ -5,11 +5,12 @@
 void CGameFramework::Update()
 {
 	timer.Tick();
-	playScene.Update(inputManager.GetInput(), timer.GetElapsedTime());
+	currentScene->Update(inputManager->GetInput(), timer.GetElapsedTime());
 }
 
 void CGameFramework::Update(BOOL KeyDownBuffer[])
 {
+	// Áö±İ ¾È¾¸
 	timer.Tick();
 	//currentScene.Update(KeyDownBuffer, timer.GetElapsedTime());
 	playScene.Update(KeyDownBuffer, timer.GetElapsedTime());
@@ -33,5 +34,6 @@ void CGameFramework::SwitchScene(CScene* newScene)
 	currentScene = newScene;
 	if (currentScene) {
 		currentScene->Enter();
+		inputManager = currentScene->getInputManager();
 	}
 }

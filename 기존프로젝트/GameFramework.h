@@ -11,11 +11,11 @@ class CGameFramework
 	CTimer timer;
 
 public:
-	InputManager inputManager;
+	InputManager* inputManager;
 	CPlayScene playScene;
 	CLobbyScene lobbyScene;
 
-	CGameFramework() { SwitchScene(&playScene); timer.Start(); };
+	CGameFramework() { SwitchScene(&lobbyScene); timer.Start(); };
 
 	void Update();
 public:
@@ -25,5 +25,7 @@ public:
 	void SetScene(int i);
 
 	void SwitchScene(CScene* newScene);
+
+	InputManager* getInputManager() { return currentScene->getInputManager(); };
 };
 
