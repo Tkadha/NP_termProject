@@ -91,6 +91,13 @@ void NetWorkManager::Con() {
     }
 }
 
+void NetWorkManager::DoRecv()
+{
+	int retval;
+	memset(recv_buf, 0, sizeof(recv_buf));
+	retval = recv(sock, recv_buf, BUFSIZE, 0);
+}
+
 bool NetWorkManager::SendColorPacket(int id,E_TEAMCOLOR color)
 {
 	TEAM_PACKET p;

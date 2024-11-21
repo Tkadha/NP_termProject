@@ -12,12 +12,14 @@ public:
 	SOCKET sock;
 	struct sockaddr_in serv_addr;
 	char buffer[BUFFER_SIZE] = { 0 };
+	char recv_buf[BUFSIZE];
 	E_TEAMCOLOR team_color;
 
 	NetWorkManager();
 	~NetWorkManager();
 
 	void Con();
+	void DoRecv();
 	bool SendColorPacket(int id, E_TEAMCOLOR color);
 	bool SendMapPacket(int id, E_MAPTYPE maptype);
 };
