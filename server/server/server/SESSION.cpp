@@ -9,39 +9,51 @@ void SESSION::DoRecv()
 	
 }
 
-bool SESSION::SendPlayerTeamPacket(int id, E_TEAMCOLOR color)
+bool SESSION::SendLoginPacket(int pid)
+{
+	LOGIN_PACKET p;
+	p.size = sizeof(LOGIN_PACKET);
+	p.type = SC_LOGIN;
+	p.id = pid;
+	int retval;
+	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
+	if (retval == SOCKET_ERROR) return false;
+	return true;
+}
+
+bool SESSION::SendPlayerTeamPacket(int pid, E_TEAMCOLOR color)
 {
 	TEAM_PACKET p;
 	p.size = sizeof(TEAM_PACKET);
 	p.teamcolor = color;
 	p.type = SC_MAP_CHOICE;
-	p.id = id;
+	p.id = pid;
 	int retval;
 	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
 	if (retval == SOCKET_ERROR) return false;
 	return true;
 }
 
-bool SESSION::SendMapPacket(int id, E_MAPTYPE maptype)
+bool SESSION::SendMapPacket(int pid, E_MAPTYPE maptype)
 {
 	MAP_PACKET p;
 	p.size = sizeof(TEAM_PACKET);
 	p.maptype = maptype;
 	p.type = SC_MAP_CHOICE;
-	p.id = id;
+	p.id = pid;
 	int retval;
 	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
 	if (retval == SOCKET_ERROR) return false;
 	return true;
 }
 
-bool SESSION::SendNamePacket(int id, char* names)
+bool SESSION::SendNamePacket(int pid, char* names)
 {
 	NAME_PACKET p;
 	p.size = sizeof(NAME_PACKET);
 	strcpy(p.name, names);
 	p.type = SC_NAME;
-	p.id = id;
+	p.id = pid;
 	int retval;
 	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
 	if (retval == SOCKET_ERROR) return false;

@@ -88,6 +88,11 @@ void ProcessPacket(int id, char* packet)
 
 void PlayerThread(int id)
 {
+	player[id].SendLoginPacket(id);
+	for (int i = 0; i < MAXPLAYER; ++i) {
+		if (player[i].state == E_ONLINE)
+			player[id].SendLoginPacket(i);
+	}
 	player[id].state = E_ONLINE;
 	printf("make thread\n");
 	while (1) {
@@ -138,7 +143,6 @@ int main()
 		
 		player[id].state = E_ONLINE; 
 		player[id].sock = client_sock;
-
 		p_thread = std::thread(PlayerThread, id);	
 		++id;
 		

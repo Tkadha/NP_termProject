@@ -2,16 +2,21 @@
 #define BUFSIZE    512
 constexpr int NAME_SIZE = 20;
 
+constexpr char CS_LOGIN = 0;
 constexpr char CS_TEAM_CHOICE = 1;
 constexpr char CS_MAP_CHOICE = 2;
 constexpr char CS_NAME = 3;
+constexpr char CS_KEY = 4;
+constexpr char CS_START = 5;
 
 
 
 
+constexpr char SC_LOGIN = 0;
 constexpr char SC_TEAM_CHOICE = 1;
 constexpr char SC_MAP_CHOICE = 2;
 constexpr char SC_NAME = 3;
+constexpr char SC_START = 4;
 
 
 
@@ -29,6 +34,10 @@ public:
 	int		id;
 };
 
+class LOGIN_PACKET : public BASE_PACKET {
+public:
+};
+
 class NAME_PACKET : public BASE_PACKET {
 public:
 	char name[NAME_SIZE];
@@ -40,5 +49,12 @@ public:
 class MAP_PACKET : public BASE_PACKET {
 public:
 	E_MAPTYPE maptype;
+};
+class KEY_PACKET : public BASE_PACKET {
+public:
+	char key;
+};
+class START_PACKET : public BASE_PACKET {
+
 };
 #pragma pack (pop)

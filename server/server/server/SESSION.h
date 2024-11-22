@@ -25,9 +25,10 @@ public:
 		memset(name, 0, sizeof(name));
 	}
 	void DoRecv();
-	bool SendPlayerTeamPacket(int id, E_TEAMCOLOR color);
-	bool SendMapPacket(int id, E_MAPTYPE maptype);
-	bool SendNamePacket(int id, char* names);
+	bool SendLoginPacket(int pid);
+	bool SendPlayerTeamPacket(int pid, E_TEAMCOLOR color);
+	bool SendMapPacket(int pid, E_MAPTYPE maptype);
+	bool SendNamePacket(int pid, char* names);
 };
 
 
