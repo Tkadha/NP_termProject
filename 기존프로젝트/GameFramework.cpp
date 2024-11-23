@@ -37,3 +37,14 @@ void CGameFramework::SwitchScene(CScene* newScene)
 		inputManager = currentScene->getInputManager();
 	}
 }
+
+void CGameFramework::InputProcess(WPARAM wParam, WPARAM lParam, UINT uMsg)
+{
+	inputManager->Update(wParam, lParam, uMsg);
+
+	switch (LOWORD(wParam)) {
+	case 114: // Start 버튼 클릭
+		SwitchScene(&playScene);
+		break;
+	}
+}

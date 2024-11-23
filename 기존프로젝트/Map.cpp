@@ -5,6 +5,7 @@
 
 CSoccerMap::CSoccerMap()
 {
+
 	for (int i = 0; i < 128; ++i) {
 		for (int j = 0; j < 80; ++j) {
 			mapEdit[i][j] = FALSE;

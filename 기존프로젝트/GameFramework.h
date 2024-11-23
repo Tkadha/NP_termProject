@@ -25,7 +25,7 @@ public:
 	void SetScene(int i);
 
 	void SwitchScene(CScene* newScene);
-
-	InputManager* getInputManager() { return currentScene->getInputManager(); };
+	void InputProcess(WPARAM wParam, WPARAM lParam, UINT uMsg);
 };
+
 
