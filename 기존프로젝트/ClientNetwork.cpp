@@ -91,10 +91,32 @@ void NetWorkManager::Con() {
     }
 }
 
-bool NetWorkManager::SendNamePacket(char* name)
+bool NetWorkManager::SendColorPacket(int id,E_TEAMCOLOR color)
 {
-	send(sock, name, strlen(name), 0);
-	return false;
+	TEAM_PACKET p;
+	p.size = sizeof(TEAM_PACKET);
+	p.teamcolor = color;
+	p.type = CS_MAP_CHOICE;
+	p.id = id;
+	int retval;
+	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
+	if (retval == SOCKET_ERROR) return false;
+	return true;
+}
+
+bool NetWorkManager::SendMapPacket(int id, E_MAPTYPE maptype)
+{
+	MAP_PACKET p;
+	p.size = sizeof(TEAM_PACKET);
+	p.maptype = maptype;
+	p.type = CS_MAP_CHOICE;
+	p.id = id;
+	int retval;
+	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
+	if (retval == SOCKET_ERROR) return false;
+
+
+	return true;
 }
 
 
