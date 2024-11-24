@@ -80,9 +80,15 @@ void ProcessPacket(int id, char* packet)
 	}
 	case CS_NAME: {
 		NAME_PACKET* p = reinterpret_cast<NAME_PACKET*>(packet);
-		strcpy(player[id].name, p->name);		
+		strcpy(player[id].name, p->name);
+		for (int i = 0; i < MAXPLAYER; ++i) {
+			if (player[i].state == E_OFFLINE) continue;
+			player[i].SendNamePacket(id, player[id].name);
+		}
 		break;
 	}
+	case CS_START:
+		// 게임 로직이 넘어온 후 작성
 	}
 }
 
