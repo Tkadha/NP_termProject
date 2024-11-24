@@ -16,6 +16,14 @@ public:
 	E_TEAMCOLOR team_color;
 	char name[NAME_SIZE];
 
+	char name[20]{};
+	XY position, velocity;
+	BOOL KetDownBuffer[256];
+	double friction;		// ¸¶Âû °è¼ö
+	int size;
+	double power = 16;
+	bool input{ false }, hasKicked{ false };
+
 public:
 	SESSION()
 	{

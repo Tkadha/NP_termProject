@@ -89,7 +89,15 @@ void ProcessPacket(int id, char* packet)
 	}
 	case CS_START:
 		// 게임 로직이 넘어온 후 작성
+		break;
+	case CS_KEY_DOWN:
+		KEY_PACKET* p = reinterpret_cast<KEY_PACKET*>(packet);
+		player[id].player.KeyDownBuffer[p->wParam] = true;
+		printf("KeyDown : %d\n", p->wParam);
+
+		break;
 	}
+
 }
 
 void PlayerThread(int id)
