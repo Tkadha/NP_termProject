@@ -99,12 +99,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	switch (uMsg) {
 	case WM_CREATE:
 		Count = 0;
-		startBit = (HBITMAP)LoadBitmap(g_hInst, MAKEINTRESOURCE(IDB_Start));
-		titleBit = (HBITMAP)LoadBitmap(g_hInst, MAKEINTRESOURCE(IDB_Title));
-		titlemask = (HBITMAP)LoadBitmap(g_hInst, MAKEINTRESOURCE(IDB_Titlemask));
 		ZeroMemory(&LogFont, sizeof(LOGFONT));
 		LogFont.lfHeight = 70;
-		LogFont.lfWeight = 100;
+		LogFont.lfWeight = 100;	
 		LogFont.lfCharSet = HANGEUL_CHARSET;
 		LogFont.lfPitchAndFamily = VARIABLE_PITCH | FF_ROMAN;
 		lstrcpy(LogFont.lfFaceName, TEXT("ÈÞ¸Õ¸ÅÁ÷Ã¼"));
