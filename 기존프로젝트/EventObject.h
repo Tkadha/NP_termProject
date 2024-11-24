@@ -1,6 +1,7 @@
-#pragma once
-#include "Object.h"
+//#pragma once
+//#include "Object.h"
 
+/*
 class CEventManager
 {
 public:
@@ -48,3 +49,5 @@ class CItemObject : public CEventObject, CObject
 public:
 	void Render(HDC& dc);
 };
+
+*/

@@ -1,5 +1,7 @@
+
 #include "stdafx.h"
 #include "Project.h"
+
 
 
 #define ID_SOCCER 100
@@ -25,6 +27,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 LRESULT CALLBACK SoccerProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK LobbyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 //CGameFramework g_GameFramework;
+//NetWorkManager test;
 
 
 HWND hWnd, lobbyWnd, playWnd;
@@ -71,6 +74,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 		WindowWidth, WindowHeight,
 		NULL, (HMENU)NULL, hInstance, NULL);
 	ShowWindow(hWnd, nCmdShow);
+	//test.Connect();
 	UpdateWindow(hWnd);
 
 
@@ -181,6 +185,10 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	int yPos; // 클릭한 y좌표
 
 
+	
+	static NetWorkManager test;
+
+
 	static BOOL LMouse, RMouse;
 
 	// 메시지 처리하기
@@ -192,6 +200,7 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		LogFont.lfCharSet = HANGEUL_CHARSET;
 		LogFont.lfPitchAndFamily = VARIABLE_PITCH | FF_ROMAN;
 		lstrcpy(LogFont.lfFaceName, TEXT("휴먼매직체"));
+		test.Con();
 		SetTimer(hwnd, 1, 5, NULL);
 		break;
 	case WM_TIMER:
