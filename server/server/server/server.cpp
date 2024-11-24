@@ -81,6 +81,7 @@ void ProcessPacket(int id, char* packet)
 	case CS_NAME: {
 		NAME_PACKET* p = reinterpret_cast<NAME_PACKET*>(packet);
 		strcpy(player[id].name, p->name);
+		printf("%s", player[id].name);
 		for (int i = 0; i < MAXPLAYER; ++i) {
 			if (player[i].state == E_OFFLINE) continue;
 			player[i].SendNamePacket(id, player[id].name);
@@ -89,6 +90,7 @@ void ProcessPacket(int id, char* packet)
 	}
 	case CS_START:
 		// 게임 로직이 넘어온 후 작성
+		break;
 	}
 }
 
@@ -149,9 +151,10 @@ int main()
 		
 		player[id].state = E_ONLINE; 
 		player[id].sock = client_sock;
-		p_thread = std::thread(PlayerThread, id);	
+		p_thread = std::thread(PlayerThread, id);
+		p_thread.detach();
 		++id;
-		
+
 	}
 
 	closesocket(client_sock);
