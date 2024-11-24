@@ -91,6 +91,7 @@ void NetWorkManager::Con() {
     }
 }
 
+
 void NetWorkManager::DoRecv()
 {
 	int retval;
@@ -98,8 +99,7 @@ void NetWorkManager::DoRecv()
 	retval = recv(sock, recv_buf, BUFSIZE, 0);
 }
 
-bool NetWorkManager::SendColorPacket(int id,E_TEAMCOLOR color)
-{
+bool NetWorkManager::SendColorPacket(int id, E_TEAMCOLOR color) {
 	TEAM_PACKET p;
 	p.size = sizeof(TEAM_PACKET);
 	p.teamcolor = color;
@@ -108,9 +108,9 @@ bool NetWorkManager::SendColorPacket(int id,E_TEAMCOLOR color)
 	int retval;
 	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
 	if (retval == SOCKET_ERROR) return false;
+
 	return true;
 }
-
 bool NetWorkManager::SendMapPacket(int id, E_MAPTYPE maptype)
 {
 	MAP_PACKET p;
@@ -124,6 +124,11 @@ bool NetWorkManager::SendMapPacket(int id, E_MAPTYPE maptype)
 
 
 	return true;
+}
+
+bool NetWorkManager::SendNamePacket(char* name)
+{
+	return false;
 }
 
 

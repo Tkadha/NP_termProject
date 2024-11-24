@@ -426,3 +426,10 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+기존프로젝트/x64/Debug/Refactoring.ilk
+기존프로젝트/x64/Debug/Refactoring.ilk
+기존프로젝트/x64/Debug/Refactoring.log
+기존프로젝트/x64/Debug/Refactoring.pdb
+기존프로젝트/x64/Debug/Refactoring.tlog/CL.command.1.tlog
+*.tlog
+/기존프로젝트/x64
