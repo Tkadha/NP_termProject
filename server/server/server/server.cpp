@@ -62,6 +62,7 @@ void ProcessPacket(int id, char* packet)
 	case CS_TEAM_CHOICE: {
 		TEAM_PACKET* p = reinterpret_cast<TEAM_PACKET*>(packet);
 		player[id].team_color = p->teamcolor;
+		printf("%d", p->teamcolor);
 		for (int i = 0; i < MAXPLAYER; ++i) {
 			if (player[i].state == E_OFFLINE) continue;
 			player[i].SendPlayerTeamPacket(id, player[id].team_color);
@@ -89,6 +90,7 @@ void ProcessPacket(int id, char* packet)
 	}
 	case CS_START:
 		// 게임 로직이 넘어온 후 작성
+		break;
 	}
 }
 

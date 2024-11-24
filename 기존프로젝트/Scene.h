@@ -1,10 +1,12 @@
 #pragma once
 #include "Map.h"
+#include "ClientNetwork.h"
 extern HWND hWnd;
 extern HINSTANCE g_hInst;
 
 extern HWND lobbyWnd, playWnd;
 
+extern NetWorkManager test;
 class InputManager
 {
 public:
@@ -61,7 +63,8 @@ public:
 	CLobbyScene() {};
 
 	CLobbyMap lobbymap;
-
+	
+	
 	void Render(HDC& dc);
 	void Update(BOOL KeyDownBuffer[], float timeElapsed);
 
@@ -80,8 +83,8 @@ public:
 	CPlayScene();
 	//CSoccerMap soccerMap;
 
-	CPlayer player;					// 나
-	CPlayer otherplayers;			// 다른 사람
+	CPlayer player;
+	CPlayer otherplayers;
 
 	CBall ball;						// 공
 

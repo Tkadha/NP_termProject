@@ -20,6 +20,8 @@
 #define BUTTON_BASKETBALL 113
 #define BUTTON_START 114
 
+#define MAXPLAYER 10
+
 HINSTANCE g_hInst;
 LPCTSTR lpszClass = L"Window Class Name";
 
@@ -27,7 +29,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 LRESULT CALLBACK SoccerProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK LobbyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 //CGameFramework g_GameFramework;
-//NetWorkManager test;
+NetWorkManager test;
 
 
 HWND hWnd, lobbyWnd, playWnd;
@@ -35,6 +37,43 @@ HWND hButtonRed, hButtonBlue, hButtonSoccer, hButtonBasketball, hButtonStart;
 
 CGameFramework game{};
 
+E_MAPTYPE maptype = SOCCER;
+
+void ProcessPacket(char* packet)
+{
+	switch (packet[1])
+	{
+	case SC_TEAM_CHOICE: {
+		TEAM_PACKET* p = reinterpret_cast<TEAM_PACKET*>(packet);
+		MessageBox(hWnd, L"You are Red", L"Button Click", MB_OK);
+		break;
+	}
+
+	case SC_MAP_CHOICE: {
+		MAP_PACKET* p = reinterpret_cast<MAP_PACKET*>(packet);
+		break;
+	}
+	case SC_NAME: {
+
+		break;
+	}
+	case SC_LOGIN: {
+		LOGIN_PACKET* p = reinterpret_cast<LOGIN_PACKET*>(packet);
+		if (test.id == -1) {
+			test.id = p->id;
+		}
+		MessageBox(hWnd, L"You ID", L"Button Click", MB_OK);
+		break;
+	}
+	}
+}
+void PlayerThread()
+{
+	while (1) {
+		test.DoRecv();
+		ProcessPacket(test.recv_buf);
+	}
+}
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
@@ -74,7 +113,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 		WindowWidth, WindowHeight,
 		NULL, (HMENU)NULL, hInstance, NULL);
 	ShowWindow(hWnd, nCmdShow);
-	//test.Connect();
 	UpdateWindow(hWnd);
 
 
@@ -95,10 +133,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	HBITMAP oldBit;
 	static HWND SoccerWindow, button[6];
 	static LOGFONT LogFont;
-
+	std::thread p_thread;
 	static BOOL Play;
 	static int Count;
-
+	
 	// 메시지 처리하기
 	switch (uMsg) {
 	case WM_CREATE:
@@ -113,10 +151,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		LogFont.lfPitchAndFamily = VARIABLE_PITCH | FF_ROMAN;
 		lstrcpy(LogFont.lfFaceName, TEXT("휴먼매직체"));
 		//SetTimer(hwnd, 1, 100, NULL);
-
+		test.Con();
 		lobbyWnd = CreateWindow(L"LobbyScene", NULL, WS_CHILD | WS_VISIBLE, 0, 0, WindowWidth, WindowHeight, hwnd, NULL, g_hInst, NULL);
 		playWnd = CreateWindow(L"PlayScene", NULL, WS_CHILD | WS_VISIBLE, 0, 0, WindowWidth, WindowHeight, hwnd, NULL, g_hInst, NULL);
-	
+		p_thread = std::thread(PlayerThread);
+		p_thread.detach();
 		ShowWindow(playWnd, SW_HIDE);
 		SetFocus(lobbyWnd);
 
@@ -171,6 +210,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	default:
 		break;
 	}
+
+
 	return DefWindowProc(hwnd, uMsg, wParam, lParam); // 위의 세 메시지 외의 나머지 메시지는 OS로
 }
 
@@ -185,10 +226,6 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	int yPos; // 클릭한 y좌표
 
 
-	
-	static NetWorkManager test;
-
-
 	static BOOL LMouse, RMouse;
 
 	// 메시지 처리하기
@@ -200,7 +237,6 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		LogFont.lfCharSet = HANGEUL_CHARSET;
 		LogFont.lfPitchAndFamily = VARIABLE_PITCH | FF_ROMAN;
 		lstrcpy(LogFont.lfFaceName, TEXT("휴먼매직체"));
-		test.Con();
 		SetTimer(hwnd, 1, 5, NULL);
 		break;
 	case WM_TIMER:

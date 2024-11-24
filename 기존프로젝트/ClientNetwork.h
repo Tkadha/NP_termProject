@@ -1,6 +1,7 @@
 #pragma once
-#include "stdafx.h"
 #include "../server/server/server/protocol.h"
+#include <thread>
+#include <array>
 #define BUFFER_SIZE 1024
 
 class NetWorkManager
@@ -12,7 +13,7 @@ public:
 	SOCKET sock;
 	struct sockaddr_in serv_addr;
 	char buffer[BUFFER_SIZE] = { 0 };
-
+	int id = -1;
 	char recv_buf[BUFSIZE];
 	E_TEAMCOLOR team_color;
 
@@ -23,8 +24,9 @@ public:
 	void Con();
 
 	void DoRecv();
-	bool SendColorPacket(int id, E_TEAMCOLOR color);
-	bool SendMapPacket(int id, E_MAPTYPE maptype);
+	
+	bool SendColorPacket( E_TEAMCOLOR color);
+	bool SendMapPacket( E_MAPTYPE maptype);
 	bool SendNamePacket(char* name);
 
 };

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "ClientNetwork.h"
 #pragma comment(lib, "ws2_32")
 
@@ -99,11 +100,11 @@ void NetWorkManager::DoRecv()
 	retval = recv(sock, recv_buf, BUFSIZE, 0);
 }
 
-bool NetWorkManager::SendColorPacket(int id, E_TEAMCOLOR color) {
+bool NetWorkManager::SendColorPacket( E_TEAMCOLOR color) {
 	TEAM_PACKET p;
 	p.size = sizeof(TEAM_PACKET);
 	p.teamcolor = color;
-	p.type = CS_MAP_CHOICE;
+	p.type = CS_TEAM_CHOICE;
 	p.id = id;
 	int retval;
 	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
@@ -111,7 +112,7 @@ bool NetWorkManager::SendColorPacket(int id, E_TEAMCOLOR color) {
 
 	return true;
 }
-bool NetWorkManager::SendMapPacket(int id, E_MAPTYPE maptype)
+bool NetWorkManager::SendMapPacket( E_MAPTYPE maptype)
 {
 	MAP_PACKET p;
 	p.size = sizeof(TEAM_PACKET);
@@ -130,7 +131,3 @@ bool NetWorkManager::SendNamePacket(char* name)
 {
 	return false;
 }
-
-
-
-
