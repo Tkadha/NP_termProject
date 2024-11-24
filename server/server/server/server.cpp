@@ -82,6 +82,7 @@ void ProcessPacket(int id, char* packet)
 	case CS_NAME: {
 		NAME_PACKET* p = reinterpret_cast<NAME_PACKET*>(packet);
 		strcpy(player[id].name, p->name);
+		printf("%s", player[id].name);
 		for (int i = 0; i < MAXPLAYER; ++i) {
 			if (player[i].state == E_OFFLINE) continue;
 			player[i].SendNamePacket(id, player[id].name);
@@ -98,7 +99,7 @@ void PlayerThread(int id)
 {
 	player[id].SendLoginPacket(id);
 	for (int i = 0; i < MAXPLAYER; ++i) {
-		if (player[i].state == E_ONLINE)
+		if (player[i].state == E_ONLINE && i != id)
 			player[id].SendLoginPacket(i);
 	}
 	player[id].state = E_ONLINE;
@@ -149,11 +150,11 @@ int main()
 			return 0;
 		}
 		
-		player[id].state = E_ONLINE; 
 		player[id].sock = client_sock;
-		p_thread = std::thread(PlayerThread, id);	
+		p_thread = std::thread(PlayerThread, id);
+		p_thread.detach();
 		++id;
-		
+
 	}
 
 	closesocket(client_sock);
