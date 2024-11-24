@@ -1,6 +1,8 @@
+
 #include "stdafx.h"
-#include "resource.h"
-#include "GameFramework.h"
+#include "Project.h"
+
+
 
 #define ID_SOCCER 100
 #define ID_BasketBall_T 101
@@ -25,11 +27,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 LRESULT CALLBACK SoccerProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK LobbyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 //CGameFramework g_GameFramework;
+//NetWorkManager test;
 
 
 HWND hWnd, lobbyWnd, playWnd;
 HWND hButtonRed, hButtonBlue, hButtonSoccer, hButtonBasketball, hButtonStart;
 
+CGameFramework game{};
 
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
@@ -70,6 +74,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 		WindowWidth, WindowHeight,
 		NULL, (HMENU)NULL, hInstance, NULL);
 	ShowWindow(hWnd, nCmdShow);
+	//test.Connect();
 	UpdateWindow(hWnd);
 
 
@@ -85,13 +90,11 @@ static BOOL KeyDownBuffer[256];
 LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	PAINTSTRUCT ps;
-	HDC hdc, memdc, mem1dc;
+	HDC hdc, memdc;
 	static HBITMAP hBit, startBit, titleBit, titlemask;
-	HBITMAP oldBit, old1Bit, Button;
+	HBITMAP oldBit;
 	static HWND SoccerWindow, button[6];
-	HBRUSH hB, oldB;
 	static LOGFONT LogFont;
-	HFONT hF, oldF;
 
 	static BOOL Play;
 	static int Count;
@@ -112,6 +115,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		//SetTimer(hwnd, 1, 100, NULL);
 
 		lobbyWnd = CreateWindow(L"LobbyScene", NULL, WS_CHILD | WS_VISIBLE, 0, 0, WindowWidth, WindowHeight, hwnd, NULL, g_hInst, NULL);
+		playWnd = CreateWindow(L"PlayScene", NULL, WS_CHILD | WS_VISIBLE, 0, 0, WindowWidth, WindowHeight, hwnd, NULL, g_hInst, NULL);
+	
+		ShowWindow(playWnd, SW_HIDE);
+		SetFocus(lobbyWnd);
+
 		break;
 	case WM_TIMER:
 		hdc = GetDC(hwnd);
@@ -160,6 +168,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		KillTimer(hwnd, 1);
 		PostQuitMessage(0);
 		break;
+	default:
+		break;
 	}
 	return DefWindowProc(hwnd, uMsg, wParam, lParam); // 위의 세 메시지 외의 나머지 메시지는 OS로
 }
@@ -174,7 +184,10 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	int xPos; // 클릭한 x좌표
 	int yPos; // 클릭한 y좌표
 
-	static CGameFramework game{};
+
+	
+	static NetWorkManager test;
+
 
 	static BOOL LMouse, RMouse;
 
@@ -187,6 +200,7 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		LogFont.lfCharSet = HANGEUL_CHARSET;
 		LogFont.lfPitchAndFamily = VARIABLE_PITCH | FF_ROMAN;
 		lstrcpy(LogFont.lfFaceName, TEXT("휴먼매직체"));
+		test.Con();
 		SetTimer(hwnd, 1, 5, NULL);
 		break;
 	case WM_TIMER:
@@ -197,15 +211,6 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		oldBit = (HBITMAP)SelectObject(memdc, hBit);
 		
 		game.Update();
-		HBRUSH hBrush, oldBrush;
-
-		hBrush = CreateSolidBrush(RGB(255, 255, 255));
-
-		oldBrush = (HBRUSH)SelectObject(memdc, hBrush);
-		Ellipse(memdc, 0,0,100,100);
-		SelectObject(memdc, oldBrush);
-		DeleteObject(hBrush);
-
 		game.Render(memdc);
 		
 		SelectObject(memdc, oldBit);
@@ -224,7 +229,7 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_KEYDOWN:									// 키입력
 		KeyDownBuffer[wParam] = TRUE;
-		game.inputManager.Update(wParam, uMsg);
+		game.inputManager->Update(wParam, lParam, uMsg);
 		
 		if (wParam == VK_RETURN) {
 			ShowWindow(playWnd, SW_HIDE);
@@ -239,7 +244,7 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_KEYUP:
 		KeyDownBuffer[wParam] = FALSE;
-		game.inputManager.Update(wParam, uMsg);
+		game.inputManager->Update(wParam, lParam, uMsg);
 		InvalidateRect(hwnd, NULL, FALSE);
 		break;
 	case WM_LBUTTONDOWN:
@@ -283,30 +288,6 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		RMouse = FALSE;
 		break;
 	case WM_MOUSEMOVE:
-		/*if (mode.Edit) {
-			int x = LOWORD(lParam) / 8;
-			int y = HIWORD(lParam) / 8;
-			if (LMouse) {
-				if (mode.Soccer)
-					SoccerField[x][y] = TRUE;
-				else if (mode.T_Basketball)
-					T_BasketballField[x][y] = TRUE;
-				else if (mode.S_Basketball)
-					S_BasketballField[x][y] = TRUE;
-				else if (mode.Volleyball)
-					VolleyBallField[x][y] = TRUE;
-			}
-			else if (RMouse) {
-				if (mode.Soccer)
-					SoccerField[x][y] = FALSE;
-				else if (mode.T_Basketball)
-					T_BasketballField[x][y] = FALSE;
-				else if (mode.S_Basketball)
-					S_BasketballField[x][y] = FALSE;
-				else if (mode.Volleyball)
-					VolleyBallField[x][y] = FALSE;
-			}
-		}*/
 		InvalidateRect(hwnd, NULL, FALSE);
 		break;
 	case WM_DESTROY:
@@ -363,45 +344,14 @@ LRESULT CALLBACK LobbyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			L"BUTTON", L"START",
 			WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
 			400, 500, 224, 70,
-			hwnd, (HMENU)114,
+			hwnd, (HMENU)BUTTON_START,
 			g_hInst, NULL);
 
 		break;
 	}
-
 	case WM_COMMAND: {
-		switch (LOWORD(wParam)) {
-		case 110: // Red 버튼 클릭
-			MessageBox(hwnd, L"Red Team Selected!", L"Button Click", MB_OK);
-			// Red 팀 관련 처리 추가
-			break;
+		game.InputProcess(wParam, lParam, uMsg);
 
-		case 111: // Blue 버튼 클릭
-			MessageBox(hwnd, L"Blue Team Selected!", L"Button Click", MB_OK);
-			// Blue 팀 관련 처리 추가
-			break;
-
-		case 112: // Soccer 버튼 클릭
-			MessageBox(hwnd, L"Soccer Mode Selected!", L"Button Click", MB_OK);
-			//gCurrentState = 1; // 축구 모드로 상태 전환
-			//PostQuitMessage(0); // 메시지 루프 종료 -> WinMain에서 새로운 윈도우 생성
-			break;
-
-		case 113: // Basketball 버튼 클릭
-			MessageBox(hwnd, L"Basketball Mode Selected!", L"Button Click", MB_OK);
-			//gCurrentState = 2; // 농구 모드로 상태 전환
-			//PostQuitMessage(0); // 메시지 루프 종료 -> WinMain에서 새로운 윈도우 생성
-			break;
-
-		case 114: // Start 버튼 클릭
-			MessageBox(hwnd, L"Game Starting!", L"Button Click", MB_OK);
-			playWnd = CreateWindow(L"PlayScene", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER, 0, 0, WindowWidth, WindowHeight, hWnd, NULL, g_hInst, NULL);
-			ShowWindow(lobbyWnd, SW_HIDE);
-			SetFocus(playWnd);
-			//DestroyWindow(hwnd);
-			// 게임 시작 로직 구현
-			break;
-		}
 		break;
 	}
 	case WM_KEYDOWN:
