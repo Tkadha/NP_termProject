@@ -92,8 +92,8 @@ void ProcessPacket(int id, char* packet)
 		break;
 	case CS_KEY_DOWN:
 		KEY_PACKET* p = reinterpret_cast<KEY_PACKET*>(packet);
-		player[id].player.KeyDownBuffer[p->wParam] = true;
-		printf("KeyDown : %d\n", p->wParam);
+		player[id].player.KeyDownBuffer[p->key] = true;
+		printf("KeyDown : %d\n", p->key);
 
 		break;
 	}
@@ -150,7 +150,8 @@ int main()
 	std::thread p_thread, logic_thread;
 	int id = 0;
 
-	logic_thread = std::thread()
+	logic_thread = std::thread(); // 여기 스레드 함수도 쓰고
+	logic_thread.detach();
 	while (1) {
 		addrlen = sizeof(clientaddr);
 		client_sock = accept(listen_sock, (struct sockaddr*)&clientaddr, &addrlen);
@@ -165,6 +166,7 @@ int main()
 		player[id].state = E_ONLINE; 
 		player[id].sock = client_sock;
 		p_thread = std::thread(PlayerThread, id);	
+		p_thread.detach();
 		++id;
 		
 	}
