@@ -1,7 +1,7 @@
 #pragma once
 #include "Common.h"
 #include "Scene.h"
-
+#include "ClientNetwork.h"
 
 
 class CGameFramework
@@ -13,7 +13,9 @@ public:
 	CPlayScene playScene;
 	CLobbyScene lobbyScene;
 
-	CGameFramework() { SwitchScene(&lobbyScene);};
+	NetWorkManager networkManager;
+
+	CGameFramework() { SwitchScene(&lobbyScene); networkManager.Con(); };
 
 	void Update();
 public:
@@ -22,6 +24,9 @@ public:
 
 	void SwitchScene(CScene* newScene);
 	void InputProcess(WPARAM wParam, WPARAM lParam, UINT uMsg);
+
+	// юс╫ц
+	void SetPos(XY pos) { currentScene->SetPos(pos); };
 };
 
 

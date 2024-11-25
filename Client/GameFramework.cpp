@@ -31,6 +31,7 @@ void CGameFramework::InputProcess(WPARAM wParam, WPARAM lParam, UINT uMsg)
 	switch (LOWORD(wParam)) {
 	case 114: // Start 버튼 클릭
 		SwitchScene(&playScene);
+		SetFocus(playWnd);
 		break;
 	}
 }

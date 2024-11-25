@@ -46,7 +46,7 @@ void err_display(int errcode)
 	LocalFree(lpMsgBuf);
 }
 
-CGameFramework game;
+CGameFramework game{};
 E_MAPTYPE maptype = SOCCER;
 
 void ProcessPacket(int id, char* packet)
@@ -84,10 +84,14 @@ void ProcessPacket(int id, char* packet)
 	case CS_START:
 		// 게임 로직이 넘어온 후 작성
 		break;
-	case CS_KEY_DOWN:
+	case CS_KEY:
 		KEY_PACKET* p = reinterpret_cast<KEY_PACKET*>(packet);
-		game.players[id].p.KeyDownBuffer[p->key] = true;
-		printf("KeyDown : %d\n", p->key);
+		if (game.players[id].p.KeyDownBuffer[p->key])
+			game.players[id].p.KeyDownBuffer[p->key] = false;
+		else
+			game.players[id].p.KeyDownBuffer[p->key] = true;
+		//game.players[id].p.KeyDownBuffer[p->key] != true;
+		printf("Key : %d\n", p->key);
 		break;
 	}
 
@@ -112,8 +116,6 @@ void LogicThread()
 {
 	while (1) {
 		game.Update();
-
-
 	}
 }
 
@@ -147,8 +149,9 @@ int main()
 	std::thread p_thread, logic_thread;
 	int id = 0;
 
-	logic_thread = std::thread(); // 여기 스레드 함수도 쓰고
+	logic_thread = std::thread(LogicThread); // 여기 스레드 함수도 쓰고
 	logic_thread.detach();
+
 	while (1) {
 		addrlen = sizeof(clientaddr);
 		client_sock = accept(listen_sock, (struct sockaddr*)&clientaddr, &addrlen);

@@ -14,7 +14,7 @@ public:
 	CPlayScene playScene;
 	CLobbyScene lobbyScene;
 
-	CGameFramework() { timer.Start(); };
+	CGameFramework() { timer.Start(); currentScene = &playScene; };
 public:
 	void Update();
 

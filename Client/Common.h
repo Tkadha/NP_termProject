@@ -1,4 +1,6 @@
 #pragma once
+#include <winsock2.h> // 윈속2 메인 헤더
+#include <ws2tcpip.h>
 #include <windows.h> //--- 윈도우 헤더 파일
 #include <tchar.h>
 #include <math.h>
