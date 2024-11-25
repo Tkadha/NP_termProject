@@ -27,6 +27,6 @@ public:
 	
 	bool SendColorPacket( E_TEAMCOLOR color);
 	bool SendMapPacket( E_MAPTYPE maptype);
-	bool SendNamePacket(char* name);
+	bool SendNamePacket(const char* name);
 
 };

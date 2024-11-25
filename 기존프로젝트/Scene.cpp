@@ -196,6 +196,7 @@ void LobbyInputManager::Update(WPARAM wParam, WPARAM lParam, UINT uMsg) {
 		break;
 
 	case 114: // Start 버튼 클릭
+		test.SendNamePacket("Test");
 		MessageBox(hWnd, L"Game Starting!", L"Button Click", MB_OK);
 		ShowWindow(lobbyWnd, SW_HIDE);
 		ShowWindow(playWnd, SW_SHOW);
