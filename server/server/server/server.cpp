@@ -46,7 +46,7 @@ void err_display(int errcode)
 	LocalFree(lpMsgBuf);
 }
 
-CGameFramework game;
+CGameFramework game{};
 E_MAPTYPE maptype = SOCCER;
 
 void ProcessPacket(int id, char* packet)
@@ -95,7 +95,6 @@ void ProcessPacket(int id, char* packet)
 			game.players[id].p.KeyDownBuffer[p->key] = false;
 		else
 			game.players[id].p.KeyDownBuffer[p->key] = true;
-		printf("KeyDown : %d\n", p->key);
 		break;
 	}
 
@@ -165,6 +164,7 @@ int main()
 
 	logic_thread = std::thread(LogicThread); // 여기 스레드 함수도 쓰고
 	logic_thread.detach();
+
 	while (1) {
 		addrlen = sizeof(clientaddr);
 		client_sock = accept(listen_sock, (struct sockaddr*)&clientaddr, &addrlen);

@@ -40,6 +40,9 @@ public:
 	virtual void Update() {};
 	virtual void Render(HDC& dc) {};
 	virtual void Exit() {};
+	
+	// 임시로 만듬
+	virtual void SetPos(XY pos) {};
 
 	virtual InputManager* getInputManager() { return nullptr; };
 };
@@ -90,6 +93,10 @@ public:
 
 	void Enter() {};
 	void Exit() {};
+
+
+	// 임시
+	void SetPos(XY pos);
 
 	InputManager* getInputManager() override { return &inputM; };
 };

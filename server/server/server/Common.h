@@ -12,6 +12,7 @@
 
 #define MAXPLAYER  10
 
+
 class XY
 {
 public:

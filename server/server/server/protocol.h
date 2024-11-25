@@ -20,7 +20,6 @@ constexpr char SC_POS = 5;
 
 
 
-
 enum E_MAPTYPE { SOCCER, BASKETBALL };
 enum E_TEAMCOLOR { RED, BLUE };
 enum E_OBJTYPE { BALL, PLAYER };

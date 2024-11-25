@@ -29,6 +29,43 @@ HWND hButtonRed, hButtonBlue, hButtonSoccer, hButtonBasketball, hButtonStart;
 
 CGameFramework game{};
 
+void ProcessPacket(char* packet)
+{
+	switch (packet[1])
+	{
+	case SC_TEAM_CHOICE: {
+		TEAM_PACKET* p = reinterpret_cast<TEAM_PACKET*>(packet);
+		MessageBox(hWnd, L"You are Red", L"Button Click", MB_OK);
+		break;
+	}
+
+	case SC_MAP_CHOICE: {
+		MAP_PACKET* p = reinterpret_cast<MAP_PACKET*>(packet);
+		break;
+	}
+	case SC_NAME: {
+
+		break;
+	}
+	case SC_LOGIN: {
+		LOGIN_PACKET* p = reinterpret_cast<LOGIN_PACKET*>(packet);
+		MessageBox(hWnd, L"You ID", L"Button Click", MB_OK);
+		break;
+	}
+	case SC_POS: {
+		POSITION_PACKET* p = reinterpret_cast<POSITION_PACKET*>(packet);
+		game.SetPos({ p->x, p->y });
+		break;
+	}
+	}
+}
+
+void PlayerThread()
+{
+	while (1) {
+		ProcessPacket(game.networkManager.recv_buf);
+	}
+}
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
@@ -92,6 +129,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	static BOOL Play;
 	static int Count;
 
+	std::thread p_thread;
+
 	// 메시지 처리하기
 	switch (uMsg) {
 	case WM_CREATE:
@@ -103,6 +142,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		LogFont.lfPitchAndFamily = VARIABLE_PITCH | FF_ROMAN;
 		lstrcpy(LogFont.lfFaceName, TEXT("휴먼매직체"));
 		//SetTimer(hwnd, 1, 100, NULL);
+
+		p_thread = std::thread(PlayerThread);
+		p_thread.detach();
 
 		lobbyWnd = CreateWindow(L"LobbyScene", NULL, WS_CHILD | WS_VISIBLE, 0, 0, WindowWidth, WindowHeight, hwnd, NULL, g_hInst, NULL);
 		playWnd = CreateWindow(L"PlayScene", NULL, WS_CHILD | WS_VISIBLE, 0, 0, WindowWidth, WindowHeight, hwnd, NULL, g_hInst, NULL);
@@ -213,8 +255,11 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		EndPaint(hwnd, &ps);
 		break;
 	case WM_KEYDOWN:									// 키입력
-		KeyDownBuffer[wParam] = TRUE;
-		game.inputManager->Update(wParam, lParam, uMsg);
+		if (!KeyDownBuffer[wParam]) {
+			KeyDownBuffer[wParam] = TRUE;
+			game.networkManager.SendKeyPacket(wParam);
+		}
+
 
 		if (wParam == VK_RETURN) {
 			ShowWindow(playWnd, SW_HIDE);
@@ -222,13 +267,13 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			//DestroyWindow(playWnd);
 			SetFocus(lobbyWnd);
 		}
-		break;
-
-
 		InvalidateRect(hwnd, NULL, FALSE);
 		break;
 	case WM_KEYUP:
-		KeyDownBuffer[wParam] = FALSE;
+		if (KeyDownBuffer[wParam]) {
+			KeyDownBuffer[wParam] = FALSE;
+			game.networkManager.SendKeyPacket(wParam);
+		}
 		game.inputManager->Update(wParam, lParam, uMsg);
 		InvalidateRect(hwnd, NULL, FALSE);
 		break;

@@ -29,7 +29,6 @@ void CSoccerMap::Render(HDC& dc)
     SelectObject(dc, oldB);
     DeleteObject(hB);
 
-    Rectangle(dc, 90, 30, WindowWidth - 90, WindowHeight - 30);
     hP = CreatePen(PS_SOLID, 5, RGB(255, 255, 255));
     oldP = (HPEN)SelectObject(dc, hP);
     MoveToEx(dc, WindowWidth/2, 30, NULL);
@@ -41,6 +40,7 @@ void CSoccerMap::Render(HDC& dc)
     hB = (HBRUSH)GetStockObject(NULL_BRUSH);
     oldB = (HBRUSH)SelectObject(dc, hB);
     Ellipse(dc, WindowWidth/2 - 100, WindowHeight/2 - 100, WindowWidth/2 + 100, WindowHeight/2 + 100);
+    Rectangle(dc, 90, 30, WindowWidth - 90, WindowHeight - 30);
     SelectObject(dc, oldP);
     DeleteObject(hP);
     SelectObject(dc, oldB);

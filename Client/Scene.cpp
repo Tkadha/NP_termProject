@@ -27,6 +27,10 @@ void CPlayScene::Render(HDC& dc)
 	player.Render(dc);
 }
 
+void CPlayScene::SetPos(XY pos)
+{
+	player.position = pos;
+}
 
 
 //----------------------------------------------------------------------------
@@ -43,6 +47,7 @@ void PlayInputManager::Update(WPARAM wParam, WPARAM lParam, UINT uMsg) {
 	switch (uMsg) {
 	case WM_KEYDOWN:
 		KeyDownBuffer[wParam] = TRUE;
+		
 		break;
 
 	case WM_KEYUP:
