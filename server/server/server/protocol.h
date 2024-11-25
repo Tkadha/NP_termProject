@@ -8,7 +8,7 @@ constexpr char CS_MAP_CHOICE = 2;
 constexpr char CS_NAME = 3;
 constexpr char CS_KEY = 4;
 constexpr char CS_START = 5;
-
+constexpr char CS_KEY_DOWN = 10;
 
 
 
@@ -56,6 +56,35 @@ public:
 };
 class START_PACKET : public BASE_PACKET {
 
+};
+
+class KEY_PACKET : public BASE_PACKET {
+public:
+	WPARAM wParam;
+};
+
+//--------------------------태경-----------------------------
+class XY
+{
+public:
+	double x{}, y{};
+
+	XY() {};
+	XY(double x, double y) : x(x), y(y) {};
+};
+
+class Rect
+{
+public:
+	double left, right, top, bottom;
+
+	Rect() {};
+	Rect(double l, double r, double t, double b) :
+		left(l), right(r), top(t), bottom(b) {};
+
+	Rect(XY pos, XY size) :
+		left(pos.x - size.x / 2), right(pos.x + size.x / 2),
+		top(pos.y - size.y / 2), bottom(pos.y + size.y / 2) {};
 };
 
 //--------------------------태경-----------------------------

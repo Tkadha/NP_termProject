@@ -115,6 +115,11 @@ void PlayerThread(int id)
 	}
 }
 
+void LogicThread()
+{
+
+}
+
 
 int main()
 {
@@ -142,8 +147,10 @@ int main()
 	SOCKET client_sock;
 	struct sockaddr_in clientaddr;
 	int addrlen;
-	std::thread p_thread;
+	std::thread p_thread, logic_thread;
 	int id = 0;
+
+	logic_thread = std::thread()
 	while (1) {
 		addrlen = sizeof(clientaddr);
 		client_sock = accept(listen_sock, (struct sockaddr*)&clientaddr, &addrlen);
