@@ -52,15 +52,10 @@ public:
 };
 class KEY_PACKET : public BASE_PACKET {
 public:
-	char key;
+	WPARAM key;
 };
 class START_PACKET : public BASE_PACKET {
 
-};
-
-class KEY_DOWN_PACKET : public BASE_PACKET {
-public:
-	WPARAM wParam;
 };
 
 //--------------------------еб╟Ф-----------------------------

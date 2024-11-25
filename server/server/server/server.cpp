@@ -61,7 +61,7 @@ void ProcessPacket(int id, char* packet)
 			game.players[i].SendPlayerTeamPacket(id, game.players[id].team_color);
 		}
 	}
-		break;
+					   break;
 
 	case CS_MAP_CHOICE: {
 		MAP_PACKET* p = reinterpret_cast<MAP_PACKET*>(packet);
@@ -85,10 +85,9 @@ void ProcessPacket(int id, char* packet)
 		// 게임 로직이 넘어온 후 작성
 		break;
 	case CS_KEY_DOWN:
-		KEY_DOWN_PACKET* p = reinterpret_cast<KEY_DOWN_PACKET*>(packet);
-		game.players[id].p.KeyDownBuffer[p->wParam] = true;
-		printf("KeyDown : %d\n", p->wParam);
-
+		KEY_PACKET* p = reinterpret_cast<KEY_PACKET*>(packet);
+		game.players[id].p.KeyDownBuffer[p->key] = true;
+		printf("KeyDown : %d\n", p->key);
 		break;
 	}
 
@@ -148,7 +147,8 @@ int main()
 	std::thread p_thread, logic_thread;
 	int id = 0;
 
-	logic_thread = std::thread();
+	logic_thread = std::thread(); // 여기 스레드 함수도 쓰고
+	logic_thread.detach();
 	while (1) {
 		addrlen = sizeof(clientaddr);
 		client_sock = accept(listen_sock, (struct sockaddr*)&clientaddr, &addrlen);
@@ -163,6 +163,7 @@ int main()
 		game.players[id].state = E_ONLINE;
 		game.players[id].sock = client_sock;
 		p_thread = std::thread(PlayerThread, id);	
+		p_thread.detach();
 		++id;
 		
 	}
