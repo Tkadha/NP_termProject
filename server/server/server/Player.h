@@ -9,7 +9,6 @@ public:
 	XY maxVelocity{ 50,50 };
 	char name[20]{};
 	double power = 16;
-	E_TEAMCOLOR team;
 	bool input{ false }, hasKicked{ false };
 
 	BOOL KeyDownBuffer[256]{};
@@ -20,7 +19,8 @@ public:
 
 	void Reset(XY pos);		// 게임 시작, 골 들어갔을 때
 
-	void SetTeam(E_TEAMCOLOR);
+
+	void InfoReset();
 private:
 	InputComponent* inputC;
 	PhysicsComponent* physicsC;

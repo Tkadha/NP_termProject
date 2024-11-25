@@ -7,7 +7,6 @@ CPlayer::CPlayer()
 	size = 20;
 	inputC = new InputComponent;
 	physicsC = new PhysicsComponent;
-	team = RED;
 }
 
 void CPlayer::Update(float timeElapsed)
@@ -27,9 +26,13 @@ void CPlayer::Reset(XY pos)
 	input = hasKicked = false;
 }
 
-void CPlayer::SetTeam(E_TEAMCOLOR t)
+void CPlayer::InfoReset()
 {
-	team = t;
+	friction = 1.05;
+	size = 20;
+	maxVelocity = { 50,50 };
+	power = 16;
+	memset(KeyDownBuffer, 0, sizeof(KeyDownBuffer));
 }
 
 

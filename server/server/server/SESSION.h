@@ -25,6 +25,7 @@ public:
 		team_color = BLUE;
 		memset(p.name, 0, sizeof(p.name));
 	}
+	void ResetSESSION();
 	void DoRecv();
 	bool SendLoginPacket(int pid);
 	bool SendPlayerTeamPacket(int pid, E_TEAMCOLOR color);

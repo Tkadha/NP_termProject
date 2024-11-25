@@ -1,12 +1,24 @@
 #include "SESSION.h"
 
 
+void SESSION::ResetSESSION()
+{
+	closesocket(sock);
+	state = E_OFFLINE;
+	id = -1;
+	memset(p.name, 0, sizeof(p.name));
+	p.InfoReset();
+}
+
 void SESSION::DoRecv()
 {
 	int retval;
 	memset(recv_buf, 0, sizeof(recv_buf));
 	retval = recv(sock, recv_buf, BUFSIZE, 0);
-	
+	if (retval == 0 || retval == -1) {
+		state = E_OFFLINE;
+		printf("logout\n");
+	}
 }
 
 bool SESSION::SendLoginPacket(int pid)

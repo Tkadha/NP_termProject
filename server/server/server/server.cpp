@@ -60,8 +60,8 @@ void ProcessPacket(int id, char* packet)
 			if (game.players[i].state == E_OFFLINE) continue;
 			game.players[i].SendPlayerTeamPacket(id, game.players[id].team_color);
 		}
+		break;
 	}
-					   break;
 
 	case CS_MAP_CHOICE: {
 		MAP_PACKET* p = reinterpret_cast<MAP_PACKET*>(packet);
@@ -91,7 +91,7 @@ void ProcessPacket(int id, char* packet)
 		break;
 	case CS_KEY:
 		KEY_PACKET* p = reinterpret_cast<KEY_PACKET*>(packet);
-		if (game.players[id].p.KeyDownBuffer[p->key] == true)
+		if (game.players[id].p.KeyDownBuffer[p->key])
 			game.players[id].p.KeyDownBuffer[p->key] = false;
 		else
 			game.players[id].p.KeyDownBuffer[p->key] = true;
@@ -109,11 +109,13 @@ void PlayerThread(int id)
 			game.players[id].SendLoginPacket(i);
 	}
 	game.players[id].state = E_ONLINE;
-	printf("make thread\n");
+	printf("%d make thread\n",id);
 	while (1) {
 		game.players[id].DoRecv();
+		if (game.players[id].state == E_OFFLINE) break;
 		ProcessPacket(id, game.players[id].recv_buf);
 	}
+	game.players[id].ResetSESSION();
 }
 
 void LogicThread()
@@ -122,6 +124,14 @@ void LogicThread()
 	while (1) {
 		//game.Update();
 	}
+}
+
+int UserInGame()
+{
+	for (int i = 0; i < MAXPLAYER; ++i) 
+		if (game.players[i].state == E_OFFLINE) 
+			return i;		
+	return -1;
 }
 
 
@@ -152,7 +162,6 @@ int main()
 	struct sockaddr_in clientaddr;
 	int addrlen;
 	std::thread p_thread, logic_thread;
-	int id = 0;
 
 	logic_thread = std::thread(LogicThread); // 여기 스레드 함수도 쓰고
 	logic_thread.detach();
@@ -166,13 +175,13 @@ int main()
 			WSACleanup();
 			return 0;
 		}
-		
-		game.players[id].state = E_ONLINE;
-		game.players[id].sock = client_sock;
-		p_thread = std::thread(PlayerThread, id);	
-		p_thread.detach();
-		++id;
-		
+		int id = UserInGame();
+		if (id != -1) {
+			game.players[id].state = E_ONLINE;
+			game.players[id].sock = client_sock;
+			p_thread = std::thread(PlayerThread, id);
+			p_thread.detach();
+		}
 	}
 
 	closesocket(client_sock);
