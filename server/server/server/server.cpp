@@ -1,15 +1,9 @@
 #define _CRT_SECURE_NO_WARNINGS // 구형 C 함수 사용 시 경고 끄기
 #define _WINSOCK_DEPRECATED_NO_WARNINGS // 구형 소켓 API 사용 시 경고 끄기
-#include <winsock2.h> // 윈속2 메인 헤더
-#include <ws2tcpip.h> // 윈속2 확장 헤더
-#include <iostream>
 #include <thread>
-#include <array>
-#include "SESSION.h"
+#include "GameFramework.h"
 #pragma comment(lib, "ws2_32") // ws2_32.lib 링크
 #define SERVERPORT 9000
-#define MAXPLAYER  10
-
 
 
 // 소켓 함수 오류 출력 후 종료
@@ -52,7 +46,7 @@ void err_display(int errcode)
 	LocalFree(lpMsgBuf);
 }
 
-std::array <SESSION, MAXPLAYER> player;
+CGameFramework game;
 E_MAPTYPE maptype = SOCCER;
 
 void ProcessPacket(int id, char* packet)
@@ -61,10 +55,10 @@ void ProcessPacket(int id, char* packet)
 	{
 	case CS_TEAM_CHOICE: {
 		TEAM_PACKET* p = reinterpret_cast<TEAM_PACKET*>(packet);
-		player[id].team_color = p->teamcolor;
+		game.players[id].team_color = p->teamcolor;
 		for (int i = 0; i < MAXPLAYER; ++i) {
-			if (player[i].state == E_OFFLINE) continue;
-			player[i].SendPlayerTeamPacket(id, player[id].team_color);
+			if (game.players[i].state == E_OFFLINE) continue;
+			game.players[i].SendPlayerTeamPacket(id, game.players[id].team_color);
 		}
 	}
 		break;
@@ -73,17 +67,17 @@ void ProcessPacket(int id, char* packet)
 		MAP_PACKET* p = reinterpret_cast<MAP_PACKET*>(packet);
 		maptype = p->maptype;
 		for (int i = 0; i < MAXPLAYER; ++i) {
-			if (player[i].state == E_OFFLINE) continue;
-			player[i].SendMapPacket(id, maptype);
+			if (game.players[i].state == E_OFFLINE) continue;
+			game.players[i].SendMapPacket(id, maptype);
 		}
 		break;
 	}
 	case CS_NAME: {
 		NAME_PACKET* p = reinterpret_cast<NAME_PACKET*>(packet);
-		strcpy(player[id].name, p->name);
+		strcpy(game.players[id].name, p->name);
 		for (int i = 0; i < MAXPLAYER; ++i) {
-			if (player[i].state == E_OFFLINE) continue;
-			player[i].SendNamePacket(id, player[id].name);
+			if (game.players[i].state == E_OFFLINE) continue;
+			game.players[i].SendNamePacket(id, game.players[id].name);
 		}
 		break;
 	}
@@ -91,8 +85,8 @@ void ProcessPacket(int id, char* packet)
 		// 게임 로직이 넘어온 후 작성
 		break;
 	case CS_KEY_DOWN:
-		KEY_PACKET* p = reinterpret_cast<KEY_PACKET*>(packet);
-		player[id].player.KeyDownBuffer[p->wParam] = true;
+		KEY_DOWN_PACKET* p = reinterpret_cast<KEY_DOWN_PACKET*>(packet);
+		game.players[id].p.KeyDownBuffer[p->wParam] = true;
 		printf("KeyDown : %d\n", p->wParam);
 
 		break;
@@ -102,22 +96,26 @@ void ProcessPacket(int id, char* packet)
 
 void PlayerThread(int id)
 {
-	player[id].SendLoginPacket(id);
+	game.players[id].SendLoginPacket(id);
 	for (int i = 0; i < MAXPLAYER; ++i) {
-		if (player[i].state == E_ONLINE)
-			player[id].SendLoginPacket(i);
+		if (game.players[i].state == E_ONLINE)
+			game.players[id].SendLoginPacket(i);
 	}
-	player[id].state = E_ONLINE;
+	game.players[id].state = E_ONLINE;
 	printf("make thread\n");
 	while (1) {
-		player[id].DoRecv();
-		ProcessPacket(id, player[id].recv_buf);
+		game.players[id].DoRecv();
+		ProcessPacket(id, game.players[id].recv_buf);
 	}
 }
 
 void LogicThread()
 {
+	while (1) {
+		game.Update();
 
+
+	}
 }
 
 
@@ -150,7 +148,7 @@ int main()
 	std::thread p_thread, logic_thread;
 	int id = 0;
 
-	logic_thread = std::thread()
+	logic_thread = std::thread();
 	while (1) {
 		addrlen = sizeof(clientaddr);
 		client_sock = accept(listen_sock, (struct sockaddr*)&clientaddr, &addrlen);
@@ -162,8 +160,8 @@ int main()
 			return 0;
 		}
 		
-		player[id].state = E_ONLINE; 
-		player[id].sock = client_sock;
+		game.players[id].state = E_ONLINE;
+		game.players[id].sock = client_sock;
 		p_thread = std::thread(PlayerThread, id);	
 		++id;
 		

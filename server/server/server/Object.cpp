@@ -1,19 +1,59 @@
-#include "Player.h"
+#include "Object.h"
 #include <algorithm>
 
-void PhysicsComponent::Update(CEllipseObject& object) {
+CEllipseObject::CEllipseObject()
+{
+	position = { 0,0 };
+	velocity = { 0,0 };
+
+	team = RED;
+}
+
+
+//------------------------------------------------------------------------------
+
+CBall::CBall()
+{
+	friction = 1.007;
+	size = 14;
+	physicsC = new PhysicsComponent;
+}
+
+void CBall::Update(float timeElapsed)
+{
+	physicsC->Update(*this, timeElapsed);
+}
+
+
+void CGoalpost::BuildObject(int index)
+{
+
+}
+
+
+
+CSoccerGoal::CSoccerGoal(E_TEAMCOLOR team)
+{
+	if (team == RED)
+		position = { 40,324 };
+	else if (team == BLUE)
+		position = { 976,324 };
+	size = { 80,152 };
+
+	Rect bb(position, size);
+
+	BoundingBox = bb;
+}
+
+
+void PhysicsComponent::Update(CEllipseObject& object, float timeElapsed) {
 	// 이동
-	object.position.x += object.velocity.x;
-	object.position.y += object.velocity.y;
+	object.position.x += object.velocity.x * MeterPerPixel;
+	object.position.y += object.velocity.y * MeterPerPixel;
 
 
 	// 마찰력 적용
 	object.velocity.x /= object.friction;
 	object.velocity.y /= object.friction;
 
-	CPlayer* playerPtr = dynamic_cast<CPlayer*>(&object);
-	if (playerPtr) {
-		std::clamp(playerPtr->velocity.x, playerPtr->maxVelocity.x, playerPtr->maxVelocity.x);
-		std::clamp(playerPtr->velocity.y, playerPtr->maxVelocity.y, playerPtr->maxVelocity.y);
-	}
 }

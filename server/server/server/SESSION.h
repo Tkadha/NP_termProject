@@ -16,7 +16,7 @@ public:
 	E_TEAMCOLOR team_color;
 	char name[NAME_SIZE];
 
-	CPlayer player{};
+	CPlayer p{};
 
 public:
 	SESSION()
