@@ -122,7 +122,7 @@ void LogicThread()
 {
 	// waitfor¹¹½Ã±â ¾²±â
 	while (1) {
-		//game.Update();
+		game.Update();
 	}
 }
 

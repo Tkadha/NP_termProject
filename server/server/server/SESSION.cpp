@@ -83,4 +83,18 @@ bool SESSION::SendStartPacket()
 	return false;
 }
 
+bool SESSION::SendPosPacket(int pid, double x, double y, E_OBJTYPE objtype)
+{
+	POS_PACKET p;
+	p.size = sizeof(POS_PACKET);
+	p.type = SC_POS;
+	p.x = x;
+	p.y = y;
+	p.objtype = objtype;
+	int retval;
+	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
+	if (retval == SOCKET_ERROR) return false;
+	return false;
+}
+
 

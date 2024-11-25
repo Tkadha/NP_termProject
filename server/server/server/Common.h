@@ -11,3 +11,26 @@
 #define WindowHeight 900
 
 #define MAXPLAYER  10
+
+class XY
+{
+public:
+	double x{}, y{};
+
+	XY() {};
+	XY(double x, double y) : x(x), y(y) {};
+};
+
+class Rect
+{
+public:
+	double left, right, top, bottom;
+
+	Rect() { left = 0, right = 0, top = 0, bottom = 0; };
+	Rect(double l, double r, double t, double b) :
+		left(l), right(r), top(t), bottom(b) {};
+
+	Rect(XY pos, XY size) :
+		left(pos.x - size.x / 2), right(pos.x + size.x / 2),
+		top(pos.y - size.y / 2), bottom(pos.y + size.y / 2) {};
+};

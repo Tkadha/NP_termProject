@@ -64,7 +64,19 @@ CPlayScene::CPlayScene()
 void CPlayScene::Update(float timeElapsed, std::array <SESSION, MAXPLAYER>& players)
 {
 	ObjectCollisionCheck(players);
+	for (SESSION player : players) {
+		if (player.state == E_OFFLINE) continue;
+		player.p.Update(timeElapsed);
+		for (int i = 0; i < MAXPLAYER; ++i) {
+			if (players[i].state == E_OFFLINE) continue;
+			players[i].SendPosPacket(player.id, player.p.position.x, player.p.position.y, PLAYER);
+		}
+	}
 	ball.Update(timeElapsed);
+	for (int i = 0; i < MAXPLAYER; ++i) {
+		if (players[i].state == E_OFFLINE) continue;
+		players[i].SendPosPacket(-1, ball.position.x, ball.position.y, BALL);
+	}
 }
 
 
@@ -72,6 +84,7 @@ void CPlayScene::ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players)
 {
 	// 플레이어 <-> 공
 	for (SESSION player : players) {
+		if (player.state == E_OFFLINE) continue;
 		if (CollisionCheck(player.p, ball)) {
 			if (player.p.input) {
 				if (!player.p.hasKicked) {
@@ -89,7 +102,9 @@ void CPlayScene::ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players)
 	}
 
 	for (int i = 0; i < MAXPLAYER; ++i) {
+		if (players[i].state == E_OFFLINE) continue;
 		for (int j = i + 1; j < MAXPLAYER; ++j) {
+			if (players[j].state == E_OFFLINE) continue;
 			if (CollisionCheck(players[i].p, players[j].p)) {
 				double repulsion = -1.2;		// 반발력 계수
 				CollisionUpdate(players[i].p, players[j].p, repulsion);
