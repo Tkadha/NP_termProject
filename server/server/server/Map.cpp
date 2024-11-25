@@ -7,10 +7,6 @@
 CSoccerMap::CSoccerMap()
 {
     // °ñ´ë ¼³Á¤
-    for (int i = 0; i < 2; ++i) {
-        RedGoalpost[i].team = OBEJCT;
-        BlueGoalpost[i].team = OBEJCT;
-    }
     RedGoalpost[0].position.x = RedGoal.position.x + RedGoal.size.x / 2;
     RedGoalpost[0].position.y = RedGoal.position.y - RedGoal.size.y / 2;
     RedGoalpost[1].position.x = RedGoal.position.x + RedGoal.size.x / 2;

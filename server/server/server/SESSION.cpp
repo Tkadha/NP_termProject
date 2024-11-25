@@ -60,4 +60,15 @@ bool SESSION::SendNamePacket(int pid, char* names)
 	return true;
 }
 
+bool SESSION::SendStartPacket()
+{
+	START_PACKET p;
+	p.size = sizeof(START_PACKET);
+	p.type = SC_START;
+	int retval;
+	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
+	if (retval == SOCKET_ERROR) return false;
+	return false;
+}
+
 

@@ -6,7 +6,6 @@ CEllipseObject::CEllipseObject()
 	position = { 0,0 };
 	velocity = { 0,0 };
 
-	team = RED;
 }
 
 

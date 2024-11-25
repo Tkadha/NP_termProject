@@ -8,7 +8,6 @@ constexpr char CS_MAP_CHOICE = 2;
 constexpr char CS_NAME = 3;
 constexpr char CS_KEY = 4;
 constexpr char CS_START = 5;
-constexpr char CS_KEY_DOWN = 10;
 
 
 
@@ -22,9 +21,30 @@ constexpr char SC_START = 4;
 
 
 enum E_MAPTYPE { SOCCER, BASKETBALL };
-enum E_TEAMCOLOR { RED, BLUE, BALL, OBEJCT };
+enum E_TEAMCOLOR { RED, BLUE };
+enum E_OBJTYPE { BALL, PLAYER };
+class XY
+{
+public:
+	double x{}, y{};
 
+	XY() {};
+	XY(double x, double y) : x(x), y(y) {};
+};
 
+class Rect
+{
+public:
+	double left, right, top, bottom;
+
+	Rect() { left = 0, right = 0, top = 0, bottom = 0; };
+	Rect(double l, double r, double t, double b) :
+		left(l), right(r), top(t), bottom(b) {};
+
+	Rect(XY pos, XY size) :
+		left(pos.x - size.x / 2), right(pos.x + size.x / 2),
+		top(pos.y - size.y / 2), bottom(pos.y + size.y / 2) {};
+};
 
 #pragma pack (push, 1)
 class BASE_PACKET {
@@ -52,33 +72,16 @@ public:
 };
 class KEY_PACKET : public BASE_PACKET {
 public:
-	WPARAM key;
+	char key;
 };
 class START_PACKET : public BASE_PACKET {
 
 };
+class POS_PACKET : public BASE_PACKET {
+	XY pos;
+	E_OBJTYPE objtype;
+};
 
 //--------------------------еб╟Ф-----------------------------
-class XY
-{
-public:
-	double x{}, y{};
 
-	XY() {};
-	XY(double x, double y) : x(x), y(y) {};
-};
-
-class Rect
-{
-public:
-	double left, right, top, bottom;
-
-	Rect() {};
-	Rect(double l, double r, double t, double b) :
-		left(l), right(r), top(t), bottom(b) {};
-
-	Rect(XY pos, XY size) :
-		left(pos.x - size.x / 2), right(pos.x + size.x / 2),
-		top(pos.y - size.y / 2), bottom(pos.y + size.y / 2) {};
-};
 #pragma pack (pop)

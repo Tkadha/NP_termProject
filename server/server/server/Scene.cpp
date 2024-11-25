@@ -58,18 +58,17 @@ BOOL GoalCheck(CEllipseObject& ball, CSoccerGoal goal)
 
 CPlayScene::CPlayScene()
 {
-	ball.team = BALL;
 	ball.position = { WindowWidth/2, WindowHeight/2 };
 }
 
-void CPlayScene::Update(float timeElapsed, std::array <SESSION, MAXPLAYER> players)
+void CPlayScene::Update(float timeElapsed, std::array <SESSION, MAXPLAYER>& players)
 {
 	ObjectCollisionCheck(players);
 	ball.Update(timeElapsed);
 }
 
 
-void CPlayScene::ObjectCollisionCheck(std::array <SESSION, MAXPLAYER> players)
+void CPlayScene::ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players)
 {
 	// 플레이어 <-> 공
 	for (SESSION player : players) {
@@ -172,6 +171,6 @@ void LobbyInputManager::Update(WPARAM wParam, WPARAM lParam, UINT uMsg) {
 
 
 //----------------------------------------------------------------------------
-void CLobbyScene::Update(float timeElapsed, std::array <SESSION, MAXPLAYER> p)
+void CLobbyScene::Update(float timeElapsed, std::array <SESSION, MAXPLAYER>& p)
 {
 }

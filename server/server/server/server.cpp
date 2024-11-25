@@ -74,19 +74,27 @@ void ProcessPacket(int id, char* packet)
 	}
 	case CS_NAME: {
 		NAME_PACKET* p = reinterpret_cast<NAME_PACKET*>(packet);
-		strcpy(game.players[id].name, p->name);
+		strcpy(game.players[id].p.name, p->name);
 		for (int i = 0; i < MAXPLAYER; ++i) {
 			if (game.players[i].state == E_OFFLINE) continue;
-			game.players[i].SendNamePacket(id, game.players[id].name);
+			game.players[i].SendNamePacket(id, game.players[id].p.name);
 		}
 		break;
 	}
 	case CS_START:
-		// 게임 로직이 넘어온 후 작성
+		// event_ logic 깨우기 작성하기
+
+		for (int i = 0; i < MAXPLAYER; ++i) {
+			if (game.players[i].state == E_OFFLINE) continue;
+			game.players[i].SendStartPacket();
+		}
 		break;
-	case CS_KEY_DOWN:
+	case CS_KEY:
 		KEY_PACKET* p = reinterpret_cast<KEY_PACKET*>(packet);
-		game.players[id].p.KeyDownBuffer[p->key] = true;
+		if (game.players[id].p.KeyDownBuffer[p->key] == true)
+			game.players[id].p.KeyDownBuffer[p->key] = false;
+		else
+			game.players[id].p.KeyDownBuffer[p->key] = true;
 		printf("KeyDown : %d\n", p->key);
 		break;
 	}
@@ -110,10 +118,9 @@ void PlayerThread(int id)
 
 void LogicThread()
 {
+	// waitfor뭐시기 쓰기
 	while (1) {
-		game.Update();
-
-
+		//game.Update();
 	}
 }
 
@@ -147,7 +154,7 @@ int main()
 	std::thread p_thread, logic_thread;
 	int id = 0;
 
-	logic_thread = std::thread(); // 여기 스레드 함수도 쓰고
+	logic_thread = std::thread(LogicThread); // 여기 스레드 함수도 쓰고
 	logic_thread.detach();
 	while (1) {
 		addrlen = sizeof(clientaddr);

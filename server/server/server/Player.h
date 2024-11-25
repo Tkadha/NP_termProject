@@ -9,7 +9,7 @@ public:
 	XY maxVelocity{ 50,50 };
 	char name[20]{};
 	double power = 16;
-
+	E_TEAMCOLOR team;
 	bool input{ false }, hasKicked{ false };
 
 	BOOL KeyDownBuffer[256]{};

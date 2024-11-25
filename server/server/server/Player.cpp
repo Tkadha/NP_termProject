@@ -7,6 +7,7 @@ CPlayer::CPlayer()
 	size = 20;
 	inputC = new InputComponent;
 	physicsC = new PhysicsComponent;
+	team = RED;
 }
 
 void CPlayer::Update(float timeElapsed)

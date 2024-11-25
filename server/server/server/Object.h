@@ -14,7 +14,6 @@ class CEllipseObject : public CObject
 public:
 	XY velocity{};
 	double friction{};		// ¸¶Âû °è¼ö
-	E_TEAMCOLOR team;
 	int size{};
 
 	CEllipseObject();

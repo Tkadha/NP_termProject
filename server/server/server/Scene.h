@@ -36,7 +36,7 @@ public:
 class CScene
 {
 public:
-	virtual void Update(float timeElapsed, std::array <SESSION, MAXPLAYER> players) {};
+	virtual void Update(float timeElapsed, std::array <SESSION, MAXPLAYER>& players) {};
 };
 
 
@@ -54,7 +54,7 @@ private:
 public:
 	CLobbyScene() {};
 
-	void Update(float timeElapsed, std::array <SESSION, MAXPLAYER> players);
+	void Update(float timeElapsed, std::array <SESSION, MAXPLAYER>& players);
 };
 
 class CPlayScene : public CScene
@@ -69,8 +69,8 @@ public:
 
 	CSoccerMap map;
 
-	void ObjectCollisionCheck(std::array <SESSION, MAXPLAYER> players);
-	void Update(float timeElapsed, std::array <SESSION, MAXPLAYER> players);
+	void ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players);
+	void Update(float timeElapsed, std::array <SESSION, MAXPLAYER>& players);
 };
 
 
