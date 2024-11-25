@@ -53,8 +53,14 @@ void ProcessPacket(char* packet)
 		break;
 	}
 	case SC_POS: {
-		POSITION_PACKET* p = reinterpret_cast<POSITION_PACKET*>(packet);
+		POS_PACKET* p = reinterpret_cast<POS_PACKET*>(packet);
 		game.SetPos({ p->x, p->y });
+		break;
+	}
+	case SC_START: {
+		ShowWindow(lobbyWnd, SW_HIDE);
+		ShowWindow(playWnd, SW_SHOW);
+		SetFocus(playWnd);
 		break;
 	}
 	}
@@ -63,6 +69,7 @@ void ProcessPacket(char* packet)
 void PlayerThread()
 {
 	while (1) {
+		game.networkManager.DoRecv();
 		ProcessPacket(game.networkManager.recv_buf);
 	}
 }
@@ -183,7 +190,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_COMMAND:									// 버튼 메시지 처리?
 		switch (LOWORD(wParam)) {
-
+			break;
 		}
 		SetFocus(hwnd);
 		break;

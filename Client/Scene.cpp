@@ -86,6 +86,7 @@ void LobbyInputManager::Update(WPARAM wParam, WPARAM lParam, UINT uMsg) {
 		ShowWindow(playWnd, SW_SHOW);
 		SetFocus(playWnd);
 
+		
 		//DestroyWindow(hwnd);
 		// 게임 시작 로직 구현
 		break;

@@ -88,6 +88,7 @@ bool SESSION::SendPosPacket(int pid, double x, double y, E_OBJTYPE objtype)
 	POS_PACKET p;
 	p.size = sizeof(POS_PACKET);
 	p.type = SC_POS;
+	p.id = pid;
 	p.x = x;
 	p.y = y;
 	p.objtype = objtype;

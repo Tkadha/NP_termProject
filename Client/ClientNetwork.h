@@ -30,4 +30,5 @@ public:
 	bool SendMapPacket(E_MAPTYPE maptype);
 	bool SendNamePacket(char* name);
 	bool SendKeyPacket(WPARAM wParam);
+	bool SendStartPacket();
 };

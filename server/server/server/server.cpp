@@ -49,6 +49,8 @@ void err_display(int errcode)
 CGameFramework game{};
 E_MAPTYPE maptype = SOCCER;
 
+HANDLE event_logic;
+
 void ProcessPacket(int id, char* packet)
 {
 	switch (packet[1])
@@ -83,7 +85,7 @@ void ProcessPacket(int id, char* packet)
 	}
 	case CS_START:
 		// event_ logic 깨우기 작성하기
-
+		SetEvent(event_logic);
 		for (int i = 0; i < MAXPLAYER; ++i) {
 			if (game.players[i].state == E_OFFLINE) continue;
 			game.players[i].SendStartPacket();
@@ -103,9 +105,13 @@ void ProcessPacket(int id, char* packet)
 void PlayerThread(int id)
 {
 	game.players[id].SendLoginPacket(id);
+	printf("SendLoginPacket\n");
 	for (int i = 0; i < MAXPLAYER; ++i) {
-		if (game.players[i].state == E_ONLINE)
+		if (game.players[i].state == E_ONLINE) {
 			game.players[id].SendLoginPacket(i);
+			printf("SendLoginPacket\n");
+		}
+
 	}
 	game.players[id].state = E_ONLINE;
 	printf("%d make thread\n",id);
@@ -119,9 +125,11 @@ void PlayerThread(int id)
 
 void LogicThread()
 {
-	// waitfor뭐시기 쓰기
+	WaitForSingleObject(event_logic, INFINITE);
+	ResetEvent(event_logic);
 	while (1) {
 		game.Update();
+		Sleep(50);
 	}
 }
 

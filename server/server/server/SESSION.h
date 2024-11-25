@@ -32,4 +32,5 @@ public:
 	bool SendMapPacket(int pid, E_MAPTYPE maptype);
 	bool SendNamePacket(int pid, char* names);
 	bool SendStartPacket();
+	bool SendPosPacket(int pid, double x, double y, E_OBJTYPE objtype);
 };

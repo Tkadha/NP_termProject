@@ -32,6 +32,7 @@ void CGameFramework::InputProcess(WPARAM wParam, WPARAM lParam, UINT uMsg)
 	case 114: // Start 버튼 클릭
 		SwitchScene(&playScene);
 		SetFocus(playWnd);
+		networkManager.SendStartPacket();
 		break;
 	}
 }
