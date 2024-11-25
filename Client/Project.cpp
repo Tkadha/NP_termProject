@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Project.h"
 
 
@@ -10,8 +9,6 @@
 #define ID_MapClear 105
 
 
-#define WindowWidth 1440
-#define WindowHeight 900
 #define BUTTON_RED 110
 #define BUTTON_BLUE 111
 #define BUTTON_SOCCER 112
@@ -101,7 +98,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		Count = 0;
 		ZeroMemory(&LogFont, sizeof(LOGFONT));
 		LogFont.lfHeight = 70;
-		LogFont.lfWeight = 100;	
+		LogFont.lfWeight = 100;
 		LogFont.lfCharSet = HANGEUL_CHARSET;
 		LogFont.lfPitchAndFamily = VARIABLE_PITCH | FF_ROMAN;
 		lstrcpy(LogFont.lfFaceName, TEXT("휴먼매직체"));
@@ -109,7 +106,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		lobbyWnd = CreateWindow(L"LobbyScene", NULL, WS_CHILD | WS_VISIBLE, 0, 0, WindowWidth, WindowHeight, hwnd, NULL, g_hInst, NULL);
 		playWnd = CreateWindow(L"PlayScene", NULL, WS_CHILD | WS_VISIBLE, 0, 0, WindowWidth, WindowHeight, hwnd, NULL, g_hInst, NULL);
-	
+
 		ShowWindow(playWnd, SW_HIDE);
 		SetFocus(lobbyWnd);
 
@@ -197,12 +194,12 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			hBit = CreateCompatibleBitmap(hdc, WindowWidth, WindowHeight);
 		memdc = CreateCompatibleDC(hdc);
 		oldBit = (HBITMAP)SelectObject(memdc, hBit);
-		
+
 		game.Update();
 		game.Render(memdc);
-		
+
 		SelectObject(memdc, oldBit);
-		DeleteDC(memdc);              
+		DeleteDC(memdc);
 		InvalidateRect(hwnd, NULL, FALSE);
 		ReleaseDC(hwnd, hdc);
 		break;
@@ -218,7 +215,7 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_KEYDOWN:									// 키입력
 		KeyDownBuffer[wParam] = TRUE;
 		game.inputManager->Update(wParam, lParam, uMsg);
-		
+
 		if (wParam == VK_RETURN) {
 			ShowWindow(playWnd, SW_HIDE);
 			ShowWindow(lobbyWnd, SW_SHOW);
@@ -262,7 +259,7 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		// Start 버튼 영역 확인
 		if (xPos >= 400 && xPos <= 624 && yPos >= 500 && yPos <= 570) {
 			//game.SwitchScene(&game.playScene, g_hInst);
-			
+
 		}
 
 		break;
