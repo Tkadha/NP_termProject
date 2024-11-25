@@ -35,7 +35,7 @@ void ProcessPacket(char* packet)
 	{
 	case SC_TEAM_CHOICE: {
 		TEAM_PACKET* p = reinterpret_cast<TEAM_PACKET*>(packet);
-		MessageBox(hWnd, L"You are Red", L"Button Click", MB_OK);
+		//MessageBox(hWnd, L"You are Red", L"Button Click", MB_OK);
 		break;
 	}
 
@@ -49,12 +49,17 @@ void ProcessPacket(char* packet)
 	}
 	case SC_LOGIN: {
 		LOGIN_PACKET* p = reinterpret_cast<LOGIN_PACKET*>(packet);
-		MessageBox(hWnd, L"You ID", L"Button Click", MB_OK);
+		//MessageBox(hWnd, L"You ID", L"Button Click", MB_OK);
 		break;
 	}
 	case SC_POS: {
 		POS_PACKET* p = reinterpret_cast<POS_PACKET*>(packet);
-		game.SetPos({ p->x, p->y });
+		if (p->objtype == PLAYER) {
+			game.SetPos({ p->x, p->y });
+		}
+		else {
+			game.SetBallPos({ p->x, p->y });
+		}
 		break;
 	}
 	case SC_START: {
@@ -76,6 +81,9 @@ void PlayerThread()
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
+	AllocConsole();
+	freopen("CONOUT$", "wt", stdout);
+
 	MSG Message;
 	WNDCLASSEX WndClass;
 	g_hInst = hInstance;
@@ -244,7 +252,6 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		memdc = CreateCompatibleDC(hdc);
 		oldBit = (HBITMAP)SelectObject(memdc, hBit);
 
-		game.Update();
 		game.Render(memdc);
 
 		SelectObject(memdc, oldBit);
@@ -281,38 +288,9 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			KeyDownBuffer[wParam] = FALSE;
 			game.networkManager.SendKeyPacket(wParam);
 		}
-		game.inputManager->Update(wParam, lParam, uMsg);
 		InvalidateRect(hwnd, NULL, FALSE);
 		break;
 	case WM_LBUTTONDOWN:
-		xPos = LOWORD(lParam); // 클릭한 x좌표
-		yPos = HIWORD(lParam); // 클릭한 y좌표
-
-		// Red 버튼 영역 확인
-		if (xPos >= 100 && xPos <= 240 && yPos >= 200 && yPos <= 260) {
-			MessageBox(hwnd, L"Red 버튼 클릭!", L"버튼 이벤트", MB_OK);
-		}
-
-		// Blue 버튼 영역 확인
-		if (xPos >= 250 && xPos <= 390 && yPos >= 200 && yPos <= 260) {
-			MessageBox(hwnd, L"Blue 버튼 클릭!", L"버튼 이벤트", MB_OK);
-		}
-
-		// Soccer 버튼 영역 확인
-		if (xPos >= 450 && xPos <= 680 && yPos >= 300 && yPos <= 420) {
-			MessageBox(hwnd, L"Soccer 버튼 클릭!", L"버튼 이벤트", MB_OK);
-		}
-
-		// Basketball 버튼 영역 확인
-		if (xPos >= 700 && xPos <= 930 && yPos >= 300 && yPos <= 420) {
-			MessageBox(hwnd, L"Basketball 버튼 클릭!", L"버튼 이벤트", MB_OK);
-		}
-
-		// Start 버튼 영역 확인
-		if (xPos >= 400 && xPos <= 624 && yPos >= 500 && yPos <= 570) {
-			//game.SwitchScene(&game.playScene, g_hInst);
-
-		}
 
 		break;
 	case WM_LBUTTONUP:

@@ -93,8 +93,10 @@ void ProcessPacket(int id, char* packet)
 		break;
 	case CS_KEY:
 		KEY_PACKET* p = reinterpret_cast<KEY_PACKET*>(packet);
-		if (game.players[id].p.KeyDownBuffer[p->key])
+		if (game.players[id].p.KeyDownBuffer[p->key]) { 
+			//printf("%d\t", p->key);
 			game.players[id].p.KeyDownBuffer[p->key] = false;
+		}
 		else
 			game.players[id].p.KeyDownBuffer[p->key] = true;
 		break;
@@ -129,7 +131,7 @@ void LogicThread()
 	ResetEvent(event_logic);
 	while (1) {
 		game.Update();
-		Sleep(50);
+		Sleep(1);
 	}
 }
 
@@ -145,14 +147,18 @@ int UserInGame()
 int main()
 {
 	int retval;
-	// 扩加 檬扁拳
 	WSADATA wsa;
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
 		return 1;
-	// 家南 积己
+
+	event_logic = CreateEvent(NULL, TRUE, FALSE, NULL);
+	if (event_logic == NULL) err_quit("CreateEvent()");
+
+
 	SOCKET listen_sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (listen_sock == INVALID_SOCKET) err_quit("socket()");
-	// bind()
+
+
 	struct sockaddr_in serveraddr;
 	memset(&serveraddr, 0, sizeof(serveraddr));
 	serveraddr.sin_family = AF_INET;
@@ -195,5 +201,6 @@ int main()
 	closesocket(client_sock);
 	closesocket(listen_sock);
 	WSACleanup();
+	CloseHandle(event_logic);
 	return 0;
 }

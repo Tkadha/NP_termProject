@@ -9,11 +9,13 @@ CPlayer::CPlayer()
 void CPlayer::Update(XY pos)
 {
 	position = pos;
+	printf("%f %f\n", position.x, position.y);
 }
 
 void CPlayer::Render(HDC& dc)
 {
 	graphicsC->Render(*this, dc);
+	//printf("%f %f\n", position.x, position.y);
 }
 
 void CPlayer::Reset(XY pos)

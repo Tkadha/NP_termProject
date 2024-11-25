@@ -64,7 +64,7 @@ CPlayScene::CPlayScene()
 void CPlayScene::Update(float timeElapsed, std::array <SESSION, MAXPLAYER>& players)
 {
 	ObjectCollisionCheck(players);
-	for (SESSION player : players) {
+	for (SESSION& player : players) {
 		if (player.state == E_OFFLINE) continue;
 		player.p.Update(timeElapsed);
 		for (int i = 0; i < MAXPLAYER; ++i) {
@@ -83,7 +83,7 @@ void CPlayScene::Update(float timeElapsed, std::array <SESSION, MAXPLAYER>& play
 void CPlayScene::ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players)
 {
 	// 플레이어 <-> 공
-	for (SESSION player : players) {
+	for (SESSION& player : players) {
 		if (player.state == E_OFFLINE) continue;
 		if (CollisionCheck(player.p, ball)) {
 			if (player.p.input) {

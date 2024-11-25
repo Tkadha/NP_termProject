@@ -80,7 +80,7 @@ bool SESSION::SendStartPacket()
 	int retval;
 	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
 	if (retval == SOCKET_ERROR) return false;
-	return false;
+	return true;
 }
 
 bool SESSION::SendPosPacket(int pid, double x, double y, E_OBJTYPE objtype)
@@ -95,7 +95,9 @@ bool SESSION::SendPosPacket(int pid, double x, double y, E_OBJTYPE objtype)
 	int retval;
 	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
 	if (retval == SOCKET_ERROR) return false;
-	return false;
+
+	printf("%f,%f\n", p.x, p.y);
+	return true;
 }
 
 

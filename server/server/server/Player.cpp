@@ -3,6 +3,7 @@
 
 CPlayer::CPlayer()
 {
+	position = { WindowWidth / 2, WindowHeight / 2 };
 	friction = 1.05;
 	size = 20;
 	inputC = new InputComponent;

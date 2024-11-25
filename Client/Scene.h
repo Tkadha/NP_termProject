@@ -43,6 +43,7 @@ public:
 	
 	// 임시로 만듬
 	virtual void SetPos(XY pos) {};
+	virtual void SetBallPos(XY pos) {};
 
 	virtual InputManager* getInputManager() { return nullptr; };
 };
@@ -71,6 +72,9 @@ public:
 	void Exit();
 
 	InputManager* getInputManager() override { return &inputM; };
+
+	// 임시
+	void SetPos(XY pos) {};
 };
 
 class CPlayScene : public CScene
@@ -97,6 +101,7 @@ public:
 
 	// 임시
 	void SetPos(XY pos);
+	void SetBallPos(XY pos);
 
 	InputManager* getInputManager() override { return &inputM; };
 };

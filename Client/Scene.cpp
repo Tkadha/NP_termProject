@@ -13,9 +13,6 @@ CPlayScene::CPlayScene()
 
 void CPlayScene::Update()
 {
-	XY temp;
-	player.Update(temp);
-	ball.Update(temp);
 }
 
 
@@ -29,9 +26,13 @@ void CPlayScene::Render(HDC& dc)
 
 void CPlayScene::SetPos(XY pos)
 {
-	player.position = pos;
+	player.Update(pos);
 }
 
+void CPlayScene::SetBallPos(XY pos)
+{
+	ball.position = pos;
+}
 
 //----------------------------------------------------------------------------
 void InputManager::Update(WPARAM wParam, WPARAM lParam, UINT uMsg) {
