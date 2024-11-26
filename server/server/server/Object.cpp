@@ -23,6 +23,12 @@ void CBall::Update(float timeElapsed)
 	physicsC->Update(*this, timeElapsed);
 }
 
+void CBall::Reset()
+{
+	position = { WindowWidth / 2, WindowHeight / 2 };
+	velocity = { 0,0 };
+}
+
 
 void CGoalpost::BuildObject(int index)
 {
@@ -33,11 +39,11 @@ void CGoalpost::BuildObject(int index)
 
 CSoccerGoal::CSoccerGoal(E_TEAMCOLOR team)
 {
-	if (team == RED)
-		position = { 40,324 };
-	else if (team == BLUE)
-		position = { 976,324 };
 	size = { 80,152 };
+	if (team == RED)
+		position = { 90 - size.x / 2 ,WindowHeight / 2 };
+	else if (team == BLUE)
+		position = { WindowWidth - (90 - size.x / 2),WindowHeight / 2 };
 
 	Rect bb(position, size);
 

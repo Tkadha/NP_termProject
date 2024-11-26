@@ -4,8 +4,10 @@
 class CMap
 {
 public:
-	Rect rect{ 80,936,552,80 };
+	Rect rect{ 90, WindowWidth - 90, 30, WindowHeight - 30 };
 	BOOL mapEdit[128][80]{};
+
+	virtual ~CMap() {};
 };
 
 class CSoccerMap : public CMap

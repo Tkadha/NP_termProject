@@ -29,7 +29,8 @@ public:
 	CBall();
 
 	void Update(float timeElapsed);
-
+	
+	void Reset();
 private:
 	PhysicsComponent* physicsC;
 };
@@ -62,9 +63,8 @@ public:
 
 class CSoccerGoal : public CRectangleObject
 {
-	Rect BoundingBox;
-
 private:
+	Rect BoundingBox;
 
 public:
 	CSoccerGoal() {};

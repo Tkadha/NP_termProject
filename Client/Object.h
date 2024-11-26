@@ -39,13 +39,9 @@ public:
 class CGoalpost : public CEllipseObject			// 골대 동그란거
 {
 public:
-	// 반지름
-	int size = 16;
-
-	CGoalpost() {};
+	CGoalpost() { size = 16; };
 
 	void Render(HDC& dc);
-	void BuildObject(int index);
 };
 
 

@@ -33,12 +33,6 @@ void CBall::Render(HDC& dc)
 	graphicsC->Render(*this, dc);
 }
 
-
-void CGoalpost::BuildObject(int index)
-{
-
-}
-
 void CGoalpost::Render(HDC& dc)
 {
 	graphicsC->Render(*this, dc);
@@ -46,6 +40,7 @@ void CGoalpost::Render(HDC& dc)
 
 CSoccerGoal::CSoccerGoal()
 {
+	
 	graphicsC = new RectangleComponent;
 }
 
@@ -107,13 +102,30 @@ void EllipseComponent::Render(CEllipseObject& object, HDC& dc)
 
 void RectangleComponent::Render(CRectangleObject& object, HDC dc, BOOL fill)
 {
-
-	oldBrush = (HBRUSH)SelectObject(dc, hBrush);
-	Rectangle(dc, object.position.x - object.size.x / 2,
-		object.position.y - object.size.y / 2,
-		object.position.x + object.size.x / 2,
-		object.position.y + object.size.y / 2
-	);
-	SelectObject(dc, oldBrush);
-	DeleteObject(hBrush);
+	if (fill) {
+		hBrush = CreateSolidBrush(RGB(255, 255, 255));
+		oldBrush = (HBRUSH)SelectObject(dc, hBrush);
+		Rectangle(dc, object.position.x - object.size.x / 2,
+			object.position.y - object.size.y / 2,
+			object.position.x + object.size.x / 2,
+			object.position.y + object.size.y / 2
+		);
+		SelectObject(dc, oldBrush);
+		DeleteObject(hBrush);
+	}
+	else {
+		hPen = CreatePen(PS_SOLID, 5, RGB(255, 255, 255));
+		oldPen = (HPEN)SelectObject(dc, hPen);
+		hBrush = (HBRUSH)GetStockObject(NULL_BRUSH);
+		oldBrush = (HBRUSH)SelectObject(dc, hBrush);
+		Rectangle(dc, object.position.x - object.size.x / 2,
+			object.position.y - object.size.y / 2,
+			object.position.x + object.size.x / 2,
+			object.position.y + object.size.y / 2
+		);
+		SelectObject(dc, oldBrush);
+		DeleteObject(hBrush);
+		SelectObject(dc, oldPen);
+		DeleteObject(hPen);
+	}
 }
