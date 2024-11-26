@@ -111,13 +111,22 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	WndClass.lpfnWndProc = (WNDPROC)SoccerProc;
 	RegisterClassEx(&WndClass);
 
+	DWORD windowStyle = WS_CAPTION | WS_SYSMENU | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
+
+	// 창 크기를 조정하기 위해 RECT 구조체 초기화
+	RECT rect = { 0, 0, WindowWidth, WindowHeight };
+	AdjustWindowRect(&rect, windowStyle, FALSE);
+
+	// 조정된 전체 창 크기 계산
+	int windowWidth = rect.right - rect.left;
+	int windowHeight = rect.bottom - rect.top;
 
 	hWnd = CreateWindow(
 		lpszClass,
 		L"Hit Ball",
-		WS_CAPTION | WS_SYSMENU | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
+		windowStyle,
 		0, 0,
-		WindowWidth, WindowHeight,
+		windowWidth, windowHeight,
 		NULL, (HMENU)NULL, hInstance, NULL);
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
@@ -197,9 +206,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		InvalidateRect(hwnd, NULL, FALSE);
 		break;
 	case WM_COMMAND:									// 버튼 메시지 처리?
-		switch (LOWORD(wParam)) {
-			break;
-		}
 		SetFocus(hwnd);
 		break;
 	case WM_KEYUP:
@@ -228,9 +234,6 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	static HBITMAP hBit;
 	HBITMAP oldBit;
 	static LOGFONT LogFont;
-	int xPos; // 클릭한 x좌표
-	int yPos; // 클릭한 y좌표
-
 
 	static BOOL LMouse, RMouse;
 
