@@ -12,10 +12,30 @@ void MapCollisionCheck(CEllipseObject& a, CMap& map, double repulsion)
 {
 	Rect m = map.rect;
 	if (a.position.x - a.size < m.left) {
-		a.velocity.x *= repulsion;
+		if (CSoccerMap* sMap = dynamic_cast<CSoccerMap*>(&map)) {
+			if (sMap->RedGoal.GetBB().top < a.position.y && a.position.y < sMap->RedGoal.GetBB().bottom) {
+
+			}
+			else {
+				a.velocity.x *= repulsion;
+			}
+		}
+		else {
+			a.velocity.x *= repulsion;
+		}
 	}
 	if (a.position.x + a.size > m.right) {
-		a.velocity.x *= repulsion;
+		if (CSoccerMap* sMap = dynamic_cast<CSoccerMap*>(&map)) {
+			if (sMap->BlueGoal.GetBB().top < a.position.y && a.position.y < sMap->BlueGoal.GetBB().bottom) {
+
+			}
+			else {
+				a.velocity.x *= repulsion;
+			}
+		}
+		else {
+			a.velocity.x *= repulsion;
+		}
 	}
 	if (a.position.y - a.size < m.top) {
 		a.velocity.y *= repulsion;
@@ -43,13 +63,19 @@ void CollisionUpdate(CEllipseObject& a, CEllipseObject& b, double repulsion)
 	}
 }
 
-BOOL GoalCheck(CEllipseObject& ball, CSoccerGoal goal)
+BOOL GoalCheck(CEllipseObject& ball, CMap& map)
 {
-	Rect bb = goal.GetBB();
-
-	if (ball.position.x + ball.size >= bb.left && ball.position.x - ball.size <= bb.right &&
-		ball.position.y + ball.size >= bb.top && ball.position.y - ball.size <= bb.bottom)
-		return true;
+	if (CSoccerMap* sMap = dynamic_cast<CSoccerMap*>(&map)) {
+		Rect bb = sMap->RedGoal.GetBB();
+		if (ball.position.x - ball.size >= bb.left && ball.position.x + ball.size <= bb.right &&
+			ball.position.y - ball.size >= bb.top && ball.position.y + ball.size <= bb.bottom)
+			return true;
+	
+		bb = sMap->BlueGoal.GetBB();
+		if (ball.position.x - ball.size >= bb.left && ball.position.x + ball.size <= bb.right &&
+			ball.position.y - ball.size >= bb.top && ball.position.y + ball.size <= bb.bottom)
+			return true;
+	}
 
 	return false;
 }
@@ -126,6 +152,11 @@ void CPlayScene::ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players)
 
 	// °ø <-> ¸Ê(º®)
 	MapCollisionCheck(ball, map, -1.0);
+
+	if (GoalCheck(ball, map)) {
+		printf("Goal\n");
+		ball.Reset();
+	}
 }
 
 

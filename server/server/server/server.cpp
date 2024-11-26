@@ -108,7 +108,7 @@ void PlayerThread(int id)
 {
 	game.players[id].SendLoginPacket(id);
 	printf("SendLoginPacket\n");
-	for (int i = 0; i < MAXPLAYER; ++i) {
+	for (int i = 0; i < MAXPLAYER; ++i) {	
 		if (game.players[i].state == E_ONLINE) {
 			game.players[id].SendLoginPacket(i);
 			printf("SendLoginPacket\n");
