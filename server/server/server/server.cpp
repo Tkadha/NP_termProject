@@ -85,7 +85,7 @@ void ProcessPacket(int id, char* packet)
 		break;
 	}
 	case CS_START: {		// event_ logic 깨우기 작성하기
-		//SetEvent(event_logic);
+		SetEvent(event_logic);
 		game.SwitchScene(&game.playScene);
 
 		SCENE_PACKET* p = reinterpret_cast<SCENE_PACKET*>(packet);
@@ -95,9 +95,8 @@ void ProcessPacket(int id, char* packet)
 		}
 		break;
 	}
-	case CS_EXIT: {		// event_ logic 깨우기 작성하기
-		//SetEvent(event_logic);
-		START_PACKET* p = reinterpret_cast<START_PACKET*>(packet);
+	case CS_EXIT: {		// 플레이어가 모두 접속 종료할 경우 로비로 넘어가게 만들기
+		/*START_PACKET* p = reinterpret_cast<START_PACKET*>(packet);
 		game.players[p->id].state = E_OFFLINE;
 		if (UserInGame() == -1) {
 			game.SwitchScene(&game.lobbyScene);
@@ -105,7 +104,7 @@ void ProcessPacket(int id, char* packet)
 		}
 		for (int i = 0; i < MAXPLAYER; ++i) {
 			if (game.players[i].state == E_OFFLINE) continue;
-		}
+		}*/	
 		break;
 	}
 	case CS_KEY: {
@@ -143,6 +142,8 @@ void PlayerThread(int id)
 
 void LogicThread()
 {
+	WaitForSingleObject(event_logic, INFINITE);
+	ResetEvent(event_logic);
 	while (1) {
 		game.Update();
 		Sleep(1);

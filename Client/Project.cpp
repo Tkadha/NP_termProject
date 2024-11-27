@@ -29,6 +29,8 @@ HWND hButtonRed, hButtonBlue, hButtonSoccer, hButtonBasketball, hButtonStart;
 
 CGameFramework game{};
 
+
+CRITICAL_SECTION cs;
 void ProcessPacket(char* packet)
 {
 	switch (packet[1])
@@ -54,12 +56,14 @@ void ProcessPacket(char* packet)
 	}
 	case SC_POS: {
 		POS_PACKET* p = reinterpret_cast<POS_PACKET*>(packet);
+		EnterCriticalSection(&cs);
 		if (p->objtype == PLAYER) {
 			game.PlayerUpdate(p->id, { p->x, p->y });
 		}
 		else {
 			game.SetBallPos({ p->x, p->y });
 		}
+		LeaveCriticalSection(&cs);
 		break;
 	}
 	case SC_SCENE: {
@@ -169,6 +173,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		p_thread = std::thread(PlayerThread);
 		p_thread.detach();
 
+		InitializeCriticalSection(&cs);
+
 		lobbyWnd = CreateWindow(L"LobbyScene", NULL, WS_CHILD | WS_VISIBLE, 0, 0, WindowWidth, WindowHeight, hwnd, NULL, g_hInst, NULL);
 		playWnd = CreateWindow(L"PlayScene", NULL, WS_CHILD | WS_VISIBLE, 0, 0, WindowWidth, WindowHeight, hwnd, NULL, g_hInst, NULL);
 
@@ -229,6 +235,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		DestroyWindow(SoccerWindow);
 		break;
 	case WM_DESTROY:
+		DeleteCriticalSection(&cs);
 		game.networkManager.SendExitPacket();
 		KillTimer(hwnd, 1);
 		PostQuitMessage(0);
@@ -267,7 +274,9 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		memdc = CreateCompatibleDC(hdc);
 		oldBit = (HBITMAP)SelectObject(memdc, hBit);
 
+		EnterCriticalSection(&cs);
 		game.Render(memdc);
+		LeaveCriticalSection(&cs);
 
 		SelectObject(memdc, oldBit);
 		DeleteDC(memdc);
