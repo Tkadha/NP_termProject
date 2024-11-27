@@ -101,3 +101,16 @@ bool SESSION::SendPosPacket(int pid, double x, double y, E_OBJTYPE objtype)
 }
 
 
+bool SESSION::SendScenePacket(int pid, E_SCENEKIND scene)
+{
+	SCENE_PACKET p;
+	p.size = sizeof(SCENE_PACKET);
+	p.type = SC_SCENE;
+	p.id = pid;
+	p.scenekind = scene;
+	int retval;
+	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
+	if (retval == SOCKET_ERROR) return false;
+
+	return true;
+}

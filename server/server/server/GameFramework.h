@@ -14,10 +14,11 @@ public:
 	CPlayScene playScene;
 	CLobbyScene lobbyScene;
 
-	CGameFramework() { timer.Start(); currentScene = &playScene; };
+	CGameFramework() { timer.Start(); currentScene = &lobbyScene; };
 public:
 	void Update();
-
+	
+	void SwitchScene(CScene*);
 };
 
 

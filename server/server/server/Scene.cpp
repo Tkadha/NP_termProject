@@ -159,6 +159,18 @@ void CPlayScene::ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players)
 	}
 }
 
+void CPlayScene::Reset()
+{
+	ball.position = { WindowWidth / 2,WindowHeight / 2 };
+
+	map.Reset();
+}
+
+void CPlayScene::Enter()
+{
+
+}
+
 
 //----------------------------------------------------------------------------
 void InputManager::Update(WPARAM wParam, WPARAM lParam, UINT uMsg) {

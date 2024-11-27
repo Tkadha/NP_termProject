@@ -33,4 +33,5 @@ public:
 	bool SendNamePacket(int pid, char* names);
 	bool SendStartPacket();
 	bool SendPosPacket(int pid, double x, double y, E_OBJTYPE objtype);
+	bool SendScenePacket(int pid, E_SCENEKIND scene);
 };

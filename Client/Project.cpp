@@ -62,10 +62,20 @@ void ProcessPacket(char* packet)
 		}
 		break;
 	}
-	case SC_START: {
-		ShowWindow(lobbyWnd, SW_HIDE);
-		ShowWindow(playWnd, SW_SHOW);
-		SetFocus(playWnd);
+	case SC_SCENE: {
+		SCENE_PACKET* p = reinterpret_cast<SCENE_PACKET*>(packet);
+		if (p->scenekind == PLAY) {
+			ShowWindow(lobbyWnd, SW_HIDE);
+			ShowWindow(playWnd, SW_SHOW);
+			SetFocus(playWnd);
+			game.SwitchScene(&game.playScene);
+		}
+		else if (p->scenekind == LOBBY) {
+			ShowWindow(playWnd, SW_HIDE);
+			ShowWindow(lobbyWnd, SW_SHOW);
+			SetFocus(lobbyWnd);
+			game.SwitchScene(&game.lobbyScene);
+		}
 		break;
 	}
 	}
@@ -206,7 +216,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		InvalidateRect(hwnd, NULL, FALSE);
 		break;
 	case WM_COMMAND:									// 버튼 메시지 처리?
-		SetFocus(hwnd);
+		//SetFocus(hwnd);
 		break;
 	case WM_KEYUP:
 		KeyDownBuffer[wParam] = FALSE;

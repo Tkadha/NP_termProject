@@ -83,9 +83,9 @@ void LobbyInputManager::Update(WPARAM wParam, WPARAM lParam, UINT uMsg) {
 
 	case 114: // Start 버튼 클릭
 		MessageBox(hWnd, L"Game Starting!", L"Button Click", MB_OK);
-		ShowWindow(lobbyWnd, SW_HIDE);
-		ShowWindow(playWnd, SW_SHOW);
-		SetFocus(playWnd);
+		//ShowWindow(lobbyWnd, SW_HIDE);
+		//ShowWindow(playWnd, SW_SHOW);
+		//SetFocus(playWnd);
 
 		
 		//DestroyWindow(hwnd);

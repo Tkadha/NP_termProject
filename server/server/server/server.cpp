@@ -83,17 +83,19 @@ void ProcessPacket(int id, char* packet)
 		}
 		break;
 	}
-	case CS_START:
-		// event_ logic 깨우기 작성하기
-		SetEvent(event_logic);
+	case CS_START: {		// event_ logic 깨우기 작성하기
+		//SetEvent(event_logic);
+		SCENE_PACKET* p = reinterpret_cast<SCENE_PACKET*>(packet);
 		for (int i = 0; i < MAXPLAYER; ++i) {
 			if (game.players[i].state == E_OFFLINE) continue;
-			game.players[i].SendStartPacket();
+			game.players[i].SendScenePacket(id, PLAY);
 		}
+		printf("Start\n");
 		break;
-	case CS_KEY:
+	}
+	case CS_KEY: {
 		KEY_PACKET* p = reinterpret_cast<KEY_PACKET*>(packet);
-		if (game.players[id].p.KeyDownBuffer[p->key]) { 
+		if (game.players[id].p.KeyDownBuffer[p->key]) {
 			//printf("%d\t", p->key);
 			game.players[id].p.KeyDownBuffer[p->key] = false;
 		}
@@ -101,7 +103,7 @@ void ProcessPacket(int id, char* packet)
 			game.players[id].p.KeyDownBuffer[p->key] = true;
 		break;
 	}
-
+	}
 }
 
 void PlayerThread(int id)
@@ -127,8 +129,8 @@ void PlayerThread(int id)
 
 void LogicThread()
 {
-	WaitForSingleObject(event_logic, INFINITE);
-	ResetEvent(event_logic);
+	//WaitForSingleObject(event_logic, INFINITE);
+	//ResetEvent(event_logic);
 	while (1) {
 		game.Update();
 		Sleep(1);

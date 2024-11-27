@@ -8,6 +8,8 @@ public:
 	BOOL mapEdit[128][80]{};
 
 	virtual ~CMap() {};
+
+	virtual void Reset() {};
 };
 
 class CSoccerMap : public CMap
@@ -18,6 +20,7 @@ public:
 
 	CSoccerMap();
 
+	void Reset();
 };
 
 class CLobbyMap : public CMap

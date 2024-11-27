@@ -37,6 +37,9 @@ class CScene
 {
 public:
 	virtual void Update(float timeElapsed, std::array <SESSION, MAXPLAYER>& players) {};
+
+	virtual void Enter() {};
+	virtual void Exit() {};
 };
 
 
@@ -55,6 +58,9 @@ public:
 	CLobbyScene() {};
 
 	void Update(float timeElapsed, std::array <SESSION, MAXPLAYER>& players);
+	
+	void Enter() {};
+	void Exit() {};
 };
 
 class CPlayScene : public CScene
@@ -71,6 +77,11 @@ public:
 
 	void ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players);
 	void Update(float timeElapsed, std::array <SESSION, MAXPLAYER>& players);
+
+	void Reset();
+
+	void Enter();
+	void Exit() {};
 };
 
 
