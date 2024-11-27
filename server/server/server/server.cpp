@@ -85,12 +85,15 @@ void ProcessPacket(int id, char* packet)
 	}
 	case CS_START: {		// event_ logic 깨우기 작성하기
 		//SetEvent(event_logic);
+		game.SwitchScene(&game.playScene);
+
 		SCENE_PACKET* p = reinterpret_cast<SCENE_PACKET*>(packet);
 		for (int i = 0; i < MAXPLAYER; ++i) {
 			if (game.players[i].state == E_OFFLINE) continue;
 			game.players[i].SendScenePacket(id, PLAY);
+
+			printf("send PLAY\n");
 		}
-		printf("Start\n");
 		break;
 	}
 	case CS_KEY: {

@@ -156,5 +156,5 @@ bool NetWorkManager::SendStartPacket()
 	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
 	if (retval == SOCKET_ERROR) return false;
 
-	return true; return false;
+	return true;
 }

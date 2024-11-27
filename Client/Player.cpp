@@ -9,7 +9,7 @@ CPlayer::CPlayer()
 void CPlayer::Update(XY pos)
 {
 	position = pos;
-	printf("%f %f\n", position.x, position.y);
+	//printf("%f %f\n", position.x, position.y);
 }
 
 void CPlayer::Render(HDC& dc)
