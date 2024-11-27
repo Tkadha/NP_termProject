@@ -18,7 +18,7 @@
 
 #define MAXPLAYER 10
 
-#define ID_RED_BUTTON 1001
+#define WM_SET_FOCUS_TO_CHILD 999
 
 
 enum E_team {

@@ -176,6 +176,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		SetFocus(lobbyWnd);
 
 		break;
+	case WM_ACTIVATE:
+		if (wParam == WA_INACTIVE) {
+			// 윈도우가 비활성화됨 (다른 창으로 전환)
+		}
+		else {
+			// 윈도우가 다시 활성화됨 (Alt+Tab 등으로 돌아옴)
+			game.setFocus();
+		}
+		break;
 	case WM_TIMER:
 		hdc = GetDC(hwnd);
 		if (hBit == NULL)
@@ -202,11 +211,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_KEYDOWN:									// 키입력
 		KeyDownBuffer[wParam] = TRUE;
-		printf("Key : %d\t", wParam);
 		InvalidateRect(hwnd, NULL, FALSE);
 		break;
 	case WM_COMMAND:									// 버튼 메시지 처리?
 		SetFocus(hwnd);
+		break;
+	case WM_SET_FOCUS_TO_CHILD:
+		SetFocus(playWnd);
 		break;
 	case WM_KEYUP:
 		KeyDownBuffer[wParam] = FALSE;
@@ -282,7 +293,6 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		if (wParam == VK_RETURN) {
 			ShowWindow(playWnd, SW_HIDE);
 			ShowWindow(lobbyWnd, SW_SHOW);
-			//DestroyWindow(playWnd);
 			SetFocus(lobbyWnd);
 		}
 		InvalidateRect(hwnd, NULL, FALSE);

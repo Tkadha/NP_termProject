@@ -16,7 +16,7 @@ void CGameFramework::ChangeScene(E_SCENEKIND scene)
 	if (scene == PLAY) {
 		ShowWindow(lobbyWnd, SW_HIDE);
 		ShowWindow(playWnd, SW_SHOW);
-		SetFocus(playWnd);
+		PostMessage(hWnd, WM_SET_FOCUS_TO_CHILD, 0, 0);
 		SwitchScene(&playScene);
 		printf("Scene Change : Play\n");
 	}
@@ -46,7 +46,6 @@ void CGameFramework::InputProcess(WPARAM wParam, WPARAM lParam, UINT uMsg)
 
 	switch (LOWORD(wParam)) {
 	case 114: // Start 버튼 클릭
-		SetFocus(playWnd);
 		networkManager.SendStartPacket();
 		break;
 	}

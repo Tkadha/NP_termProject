@@ -92,8 +92,6 @@ void ProcessPacket(int id, char* packet)
 		for (int i = 0; i < MAXPLAYER; ++i) {
 			if (game.players[i].state == E_OFFLINE) continue;
 			game.players[i].SendScenePacket(id, PLAY);
-
-			printf("send PLAY\n");
 		}
 		break;
 	}
@@ -133,6 +131,7 @@ void PlayerThread(int id)
 		}
 	}
 	//game.players[id].SendPosPacket(id, 500, 500, PLAYER);
+	game.players[id].id = id;
 	printf("%d make thread\n",id);
 	while (1) {
 		game.players[id].DoRecv();

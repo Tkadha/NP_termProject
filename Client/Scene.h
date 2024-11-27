@@ -40,6 +40,7 @@ public:
 	virtual void Update() {};
 	virtual void Render(HDC& dc, std::array <CPlayer, MAXPLAYER> players) {};
 	virtual void Exit() {};
+	virtual void setFocus() {};
 	
 	// 임시로 만듬
 	virtual void SetPos(XY pos) {};
@@ -71,6 +72,8 @@ public:
 	void Enter();
 	void Exit();
 
+	void setFocus() { SetFocus(lobbyWnd); };
+
 	InputManager* getInputManager() override { return &inputM; };
 
 	// 임시
@@ -96,6 +99,7 @@ public:
 	void Enter() {};
 	void Exit() {};
 
+	void setFocus() { PostMessage(hWnd, WM_SET_FOCUS_TO_CHILD, 0, 0); };
 
 	// 임시
 	void SetPos(XY pos);

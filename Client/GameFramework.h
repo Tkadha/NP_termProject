@@ -27,6 +27,7 @@ public:
 	void SwitchScene(CScene* newScene);
 	void InputProcess(WPARAM wParam, WPARAM lParam, UINT uMsg);
 
+	void setFocus() { currentScene->setFocus(); };
 
 	// юс╫ц
 	void PlayerUpdate(int id, XY pos);
