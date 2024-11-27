@@ -38,7 +38,7 @@ class CScene
 public:
 	virtual void Enter() {};
 	virtual void Update() {};
-	virtual void Render(HDC& dc) {};
+	virtual void Render(HDC& dc, std::array <CPlayer, MAXPLAYER> players) {};
 	virtual void Exit() {};
 	
 	// 임시로 만듬
@@ -65,7 +65,7 @@ public:
 
 	CLobbyMap lobbymap;
 
-	void Render(HDC& dc);
+	void Render(HDC& dc, std::array <CPlayer, MAXPLAYER> players);
 	void Update(BOOL KeyDownBuffer[], float timeElapsed);
 
 	void Enter();
@@ -86,14 +86,12 @@ public:
 	CPlayScene();
 	//CSoccerMap soccerMap;
 
-	CPlayer player;					// 나
-
 	CBall ball;						// 공
 
 	CSoccerMap map;
 
 	void Update();
-	void Render(HDC& dc);
+	void Render(HDC& dc, std::array <CPlayer, MAXPLAYER> players);
 
 	void Enter() {};
 	void Exit() {};

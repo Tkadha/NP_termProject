@@ -158,3 +158,16 @@ bool NetWorkManager::SendStartPacket()
 
 	return true;
 }
+
+bool NetWorkManager::SendExitPacket()
+{
+	START_PACKET p;
+	p.size = sizeof(START_PACKET);
+	p.type = CS_EXIT;
+	p.id = id;
+	int retval;
+	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
+	if (retval == SOCKET_ERROR) return false;
+
+	return true;
+}

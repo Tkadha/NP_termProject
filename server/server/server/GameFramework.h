@@ -11,8 +11,8 @@ class CGameFramework
 public:
 	std::array <SESSION, MAXPLAYER> players;
 
-	CPlayScene playScene;
-	CLobbyScene lobbyScene;
+	CPlayScene playScene{};
+	CLobbyScene lobbyScene{};
 
 	CGameFramework() { timer.Start(); currentScene = &lobbyScene; };
 public:

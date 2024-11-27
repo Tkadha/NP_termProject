@@ -8,7 +8,7 @@ void CGameFramework::Update()
 
 void CGameFramework::Render(HDC& dc)
 {
-	currentScene->Render(dc);
+	currentScene->Render(dc, players);
 }
 
 void CGameFramework::ChangeScene(E_SCENEKIND scene)
@@ -50,4 +50,11 @@ void CGameFramework::InputProcess(WPARAM wParam, WPARAM lParam, UINT uMsg)
 		networkManager.SendStartPacket();
 		break;
 	}
+}
+
+void CGameFramework::PlayerUpdate(int id, XY pos)
+{
+	if (players[id].state == OFFLINE)
+		players[id].state = ONLINE;
+	players[id].position = pos;
 }

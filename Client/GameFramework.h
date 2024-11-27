@@ -9,6 +9,8 @@ class CGameFramework
 	CScene* currentScene;
 
 public:
+	std::array <CPlayer, MAXPLAYER> players;
+
 	InputManager* inputManager;
 	CPlayScene playScene;
 	CLobbyScene lobbyScene;
@@ -19,7 +21,6 @@ public:
 
 	void Update();
 public:
-	void Update(BOOL KeyDownBuffer[]);
 	void Render(HDC& dc);
 
 	void ChangeScene(E_SCENEKIND scene);
@@ -28,6 +29,7 @@ public:
 
 
 	// юс╫ц
+	void PlayerUpdate(int id, XY pos);
 	void SetPos(XY pos) { currentScene->SetPos(pos); };
 	void SetBallPos(XY pos) { currentScene->SetBallPos(pos); };
 

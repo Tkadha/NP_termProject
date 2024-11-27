@@ -4,9 +4,6 @@
 
 CPlayScene::CPlayScene()
 {
-	player.SetTeam(RedTeam);
-	player.Reset({ 384,320 });
-
 	ball.team = Ball;
 	ball.position = { 512,320 };
 }
@@ -16,17 +13,19 @@ void CPlayScene::Update()
 }
 
 
-void CPlayScene::Render(HDC& dc)
+void CPlayScene::Render(HDC& dc, std::array <CPlayer, MAXPLAYER> players)
 {
-	//soccerMap.Render(dc);
 	map.Render(dc);
 	ball.Render(dc);
-	player.Render(dc);
+	for (CPlayer& player : players) {
+		if (player.state == OFFLINE) continue;
+		player.Render(dc);
+	}
 }
 
 void CPlayScene::SetPos(XY pos)
 {
-	player.Update(pos);
+	//player.Update(pos);
 }
 
 void CPlayScene::SetBallPos(XY pos)
@@ -110,6 +109,6 @@ void CLobbyScene::Exit()
 {
 }
 
-void CLobbyScene::Render(HDC& dc)
+void CLobbyScene::Render(HDC& dc, std::array <CPlayer, MAXPLAYER> players)
 {
 }

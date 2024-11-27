@@ -6,7 +6,8 @@
 #include <math.h>
 #include <mmsystem.h>
 #include <chrono>
-#include <vector>
+#include <array>
+
 
 
 #define WindowWidth 1440
@@ -14,6 +15,8 @@
 
 #define PixelPerMeter 12
 #define MeterPerPixel 1/12
+
+#define MAXPLAYER 10
 
 #define ID_RED_BUTTON 1001
 
@@ -30,6 +33,8 @@ enum E_item {
 	Speed,
 	Size
 };
+
+enum E_STATE { ONLINE, OFFLINE };
 
 class XY
 {

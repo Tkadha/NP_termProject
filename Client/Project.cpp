@@ -55,7 +55,7 @@ void ProcessPacket(char* packet)
 	case SC_POS: {
 		POS_PACKET* p = reinterpret_cast<POS_PACKET*>(packet);
 		if (p->objtype == PLAYER) {
-			game.SetPos({ p->x, p->y });
+			game.PlayerUpdate(p->id, { p->x, p->y });
 		}
 		else {
 			game.SetBallPos({ p->x, p->y });
@@ -202,6 +202,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_KEYDOWN:									// 키입력
 		KeyDownBuffer[wParam] = TRUE;
+		printf("Key : %d\t", wParam);
 		InvalidateRect(hwnd, NULL, FALSE);
 		break;
 	case WM_COMMAND:									// 버튼 메시지 처리?
@@ -217,6 +218,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		DestroyWindow(SoccerWindow);
 		break;
 	case WM_DESTROY:
+		game.networkManager.SendExitPacket();
 		KillTimer(hwnd, 1);
 		PostQuitMessage(0);
 		break;

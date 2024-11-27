@@ -6,6 +6,7 @@ public:
 	XY maxVelocity{ 50,50 };
 	char name[20]{};
 	double power = 16;
+	E_STATE state{ OFFLINE };
 
 	bool input{ false }, hasKicked{ false };
 

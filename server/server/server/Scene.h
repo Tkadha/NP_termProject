@@ -59,7 +59,9 @@ public:
 
 	void Update(float timeElapsed, std::array <SESSION, MAXPLAYER>& players);
 	
-	void Enter() {};
+	void Enter() {
+		printf("Scene : Lobby\n");
+	};
 	void Exit() {};
 };
 

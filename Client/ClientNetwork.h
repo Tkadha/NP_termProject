@@ -31,4 +31,5 @@ public:
 	bool SendNamePacket(char* name);
 	bool SendKeyPacket(WPARAM wParam);
 	bool SendStartPacket();
+	bool SendExitPacket();
 };

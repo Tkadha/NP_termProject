@@ -103,6 +103,7 @@ void CPlayScene::Update(float timeElapsed, std::array <SESSION, MAXPLAYER>& play
 		if (players[i].state == E_OFFLINE) continue;
 		players[i].SendPosPacket(-1, ball.position.x, ball.position.y, BALL);
 	}
+	//printf("play Update\n");
 }
 
 
@@ -168,7 +169,7 @@ void CPlayScene::Reset()
 
 void CPlayScene::Enter()
 {
-
+	printf("Scene : Play\n");
 }
 
 
@@ -231,4 +232,5 @@ void LobbyInputManager::Update(WPARAM wParam, WPARAM lParam, UINT uMsg) {
 //----------------------------------------------------------------------------
 void CLobbyScene::Update(float timeElapsed, std::array <SESSION, MAXPLAYER>& p)
 {
+	//printf("lobby Update\n");
 }

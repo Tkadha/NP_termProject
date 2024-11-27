@@ -5,6 +5,7 @@
 #pragma comment(lib, "ws2_32") // ws2_32.lib 링크
 #define SERVERPORT 9000
 
+int UserInGame();
 
 // 소켓 함수 오류 출력 후 종료
 void err_quit(const char* msg)
@@ -96,10 +97,22 @@ void ProcessPacket(int id, char* packet)
 		}
 		break;
 	}
+	case CS_EXIT: {		// event_ logic 깨우기 작성하기
+		//SetEvent(event_logic);
+		START_PACKET* p = reinterpret_cast<START_PACKET*>(packet);
+		game.players[p->id].state = E_OFFLINE;
+		if (UserInGame() == -1) {
+			game.SwitchScene(&game.lobbyScene);
+			break;
+		}
+		for (int i = 0; i < MAXPLAYER; ++i) {
+			if (game.players[i].state == E_OFFLINE) continue;
+		}
+		break;
+	}
 	case CS_KEY: {
 		KEY_PACKET* p = reinterpret_cast<KEY_PACKET*>(packet);
 		if (game.players[id].p.KeyDownBuffer[p->key]) {
-			//printf("%d\t", p->key);
 			game.players[id].p.KeyDownBuffer[p->key] = false;
 		}
 		else
@@ -118,9 +131,8 @@ void PlayerThread(int id)
 			game.players[id].SendLoginPacket(i);
 			printf("SendLoginPacket\n");
 		}
-
 	}
-	game.players[id].state = E_ONLINE;
+	//game.players[id].SendPosPacket(id, 500, 500, PLAYER);
 	printf("%d make thread\n",id);
 	while (1) {
 		game.players[id].DoRecv();
@@ -132,8 +144,6 @@ void PlayerThread(int id)
 
 void LogicThread()
 {
-	//WaitForSingleObject(event_logic, INFINITE);
-	//ResetEvent(event_logic);
 	while (1) {
 		game.Update();
 		Sleep(1);

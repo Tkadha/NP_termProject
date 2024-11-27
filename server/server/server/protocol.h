@@ -8,6 +8,7 @@ constexpr char CS_MAP_CHOICE = 3;
 constexpr char CS_NAME = 4;
 constexpr char CS_KEY = 5;
 constexpr char CS_START = 6;
+constexpr char CS_EXIT = 7;
 
 
 
