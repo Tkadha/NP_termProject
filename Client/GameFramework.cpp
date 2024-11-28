@@ -45,6 +45,11 @@ void CGameFramework::InputProcess(WPARAM wParam, WPARAM lParam, UINT uMsg)
 	inputManager->Update(wParam, lParam, uMsg);
 
 	switch (LOWORD(wParam)) {
+	case 110: // RED 버튼 클릭
+		SendMessage(hListBoxRed, LB_ADDSTRING, 0, (LPARAM)L"Player1");
+		SendMessage(hListBoxRed, LB_ADDSTRING, 0, (LPARAM)L"Player2");
+
+		break;
 	case 114: // Start 버튼 클릭
 		networkManager.SendStartPacket();
 		break;

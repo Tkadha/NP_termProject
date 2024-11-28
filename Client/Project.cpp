@@ -26,6 +26,7 @@ LRESULT CALLBACK LobbyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 HWND hWnd, lobbyWnd, playWnd;
 HWND hButtonRed, hButtonBlue, hButtonSoccer, hButtonBasketball, hButtonStart;
+HWND hListBoxRed, hListBoxBlue;
 
 CGameFramework game{};
 
@@ -84,6 +85,7 @@ void PlayerThread()
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
+	/*
 	AllocConsole();
 	FILE* fp;
 	freopen_s(&fp, "CONOUT$", "w", stdout); // 표준 출력 연결
@@ -98,6 +100,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	game.networkManager.SendNamePacket(playerNameCStr);
 
 	std::cout << "Welcome, " << playerName << "!" << std::endl;
+	*/
 	MSG Message;
 	WNDCLASSEX WndClass;
 	g_hInst = hInstance;
@@ -349,7 +352,8 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 LRESULT CALLBACK LobbyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	static HWND hButtonRed, hButtonBlue, hButtonSoccer, hButtonBasketball, hButtonStart;
+	
+	
 	HDC hdc;
 	PAINTSTRUCT ps;
 
@@ -371,7 +375,21 @@ LRESULT CALLBACK LobbyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			250, 200, 140, 60,
 			hwnd, (HMENU)111,
 			g_hInst, NULL);
+		// Red 플레이어 목록 리스트 박스 생성
+		hListBoxRed = CreateWindow(
+			L"LISTBOX", NULL,
+			WS_VISIBLE | WS_CHILD | WS_BORDER | LBS_STANDARD,
+			100, 270, 140, 150, // Red 버튼 아래 위치
+			hwnd, (HMENU)120,
+			g_hInst, NULL);
 
+		// Blue 플레이어 목록 리스트 박스 생성
+		hListBoxBlue = CreateWindow(
+			L"LISTBOX", NULL,
+			WS_VISIBLE | WS_CHILD | WS_BORDER | LBS_STANDARD,
+			250, 270, 140, 150, // Blue 버튼 아래 위치
+			hwnd, (HMENU)121,
+			g_hInst, NULL);
 		// Soccer 버튼 생성
 		hButtonSoccer = CreateWindow(
 			L"BUTTON", L"SOCCER",
