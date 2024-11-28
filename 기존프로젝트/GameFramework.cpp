@@ -5,11 +5,12 @@
 void CGameFramework::Update()
 {
 	timer.Tick();
-	playScene.Update(inputManager.GetInput(), timer.GetElapsedTime());
+	currentScene->Update(inputManager->GetInput(), timer.GetElapsedTime());
 }
 
 void CGameFramework::Update(BOOL KeyDownBuffer[])
 {
+	// 지금 안씀
 	timer.Tick();
 	//currentScene.Update(KeyDownBuffer, timer.GetElapsedTime());
 	playScene.Update(KeyDownBuffer, timer.GetElapsedTime());
@@ -17,15 +18,33 @@ void CGameFramework::Update(BOOL KeyDownBuffer[])
 
 void CGameFramework::Render(HDC& dc)
 {
-	if (currentScene == 0) {
-		lobbyScene.Render(dc);
-	}
-	else if (currentScene == 1) {
-		playScene.Render(dc);
-	}
+	currentScene->Render(dc);
 }
 
 void CGameFramework::SetScene(int i)
 {
-	currentScene = i;
+
+}
+
+void CGameFramework::SwitchScene(CScene* newScene)
+{
+	if (currentScene) {
+		currentScene->Exit();
+	}
+	currentScene = newScene;
+	if (currentScene) {
+		currentScene->Enter();
+		inputManager = currentScene->getInputManager();
+	}
+}
+
+void CGameFramework::InputProcess(WPARAM wParam, WPARAM lParam, UINT uMsg)
+{
+	inputManager->Update(wParam, lParam, uMsg);
+
+	switch (LOWORD(wParam)) {
+	case 114: // Start 버튼 클릭
+		SwitchScene(&playScene);
+		break;
+	}
 }

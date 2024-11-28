@@ -133,7 +133,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Component.h" />
+    <ClInclude Include="ClientNetwork.h" />
     <ClInclude Include="EventObject.h" />
     <ClInclude Include="GameFramework.h" />
     <ClInclude Include="Map.h" />

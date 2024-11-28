@@ -8,6 +8,10 @@
 
 #define PixelPerMeter 12
 #define MeterPerPixel 1/12
+
+#define ID_RED_BUTTON 1001
+
+
 enum E_team {
 	RedTeam,
 	BlueTeam,

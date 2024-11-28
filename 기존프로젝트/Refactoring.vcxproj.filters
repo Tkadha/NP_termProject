@@ -36,13 +36,13 @@
     <ClInclude Include="Project.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Component.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Timer.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="EventObject.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ClientNetwork.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
