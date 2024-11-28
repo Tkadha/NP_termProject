@@ -3,6 +3,7 @@
 #include "Common.h"
 #include <thread>
 #include <array>
+#include <string.h>
 #define BUFFER_SIZE 1024
 
 class NetWorkManager
@@ -28,7 +29,7 @@ public:
 
 	bool SendColorPacket(E_TEAMCOLOR color);
 	bool SendMapPacket(E_MAPTYPE maptype);
-	bool SendNamePacket(char* name);
+	bool SendNamePacket(const char* name);
 	bool SendKeyPacket(WPARAM wParam);
 	bool SendStartPacket();
 	bool SendExitPacket();

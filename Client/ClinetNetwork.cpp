@@ -126,9 +126,18 @@ bool NetWorkManager::SendMapPacket(E_MAPTYPE maptype)
 	return true;
 }
 
-bool NetWorkManager::SendNamePacket(char* name)
+bool NetWorkManager::SendNamePacket(const char* name)
 {
-	return false;
+	NAME_PACKET p;
+	p.size = sizeof(NAME_PACKET);
+	strcpy(p.name, name);
+	p.type = CS_NAME;
+	int retval;
+	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
+	if (retval == SOCKET_ERROR) return false;
+
+
+	return true;
 }
 
 bool NetWorkManager::SendKeyPacket(WPARAM wParam)

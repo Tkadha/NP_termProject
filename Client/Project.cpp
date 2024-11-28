@@ -85,8 +85,19 @@ void PlayerThread()
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
 	AllocConsole();
-	freopen("CONOUT$", "wt", stdout);
+	FILE* fp;
+	freopen_s(&fp, "CONOUT$", "w", stdout); // 표준 출력 연결
+	freopen_s(&fp, "CONIN$", "r", stdin);  // 표준 입력 연결
 
+	std::cout << "플레이어 이름을 입력하세요: ";
+
+	// 사용자로부터 이름 입력받기
+	std::string playerName;
+	std::getline(std::cin, playerName);
+	const char* playerNameCStr = playerName.c_str();
+	game.networkManager.SendNamePacket(playerNameCStr);
+
+	std::cout << "Welcome, " << playerName << "!" << std::endl;
 	MSG Message;
 	WNDCLASSEX WndClass;
 	g_hInst = hInstance;
