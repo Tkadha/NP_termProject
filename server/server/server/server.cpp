@@ -2,6 +2,7 @@
 #define _WINSOCK_DEPRECATED_NO_WARNINGS // 구형 소켓 API 사용 시 경고 끄기
 #include <thread>
 #include "GameFramework.h"
+#include <random>
 #pragma comment(lib, "ws2_32") // ws2_32.lib 링크
 #define SERVERPORT 9000
 
@@ -51,6 +52,7 @@ CGameFramework game{};
 E_MAPTYPE maptype = SOCCER;
 
 HANDLE event_logic;
+HANDLE event_event;
 
 void ProcessPacket(int id, char* packet)
 {
@@ -138,13 +140,47 @@ void PlayerThread(int id)
 	game.players[id].ResetSESSION();
 }
 
+
 void LogicThread()
 {
-	WaitForSingleObject(event_logic, INFINITE);
-	ResetEvent(event_logic);
-	while (1) {
-		game.Update();
-		Sleep(1000 / 120);
+	while (1)
+	{
+		WaitForSingleObject(event_logic, INFINITE);
+		SetEvent(event_event);
+		while (1) { // 여기 조건 플레이씬일떼만으로 설정하면 될듯
+			game.Update();
+			Sleep(1000 / 120);
+		}
+		ResetEvent(event_logic);
+	}
+}
+
+void EventThread()
+{
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<int> dis(0, 100);
+	while (1)
+	{
+		WaitForSingleObject(event_event, INFINITE);
+		while (1)	// 여기 조건 플레이씬일떼만으로 설정하면 될듯
+		{
+			Sleep(1000 * 15); // 여기는 타이머 대신 일단 써둠
+			int num = dis(gen);
+			if (num < 25) {		 // 바람 이벤트
+
+			}
+			else if (num < 50) { // 장판 이벤트
+
+			}
+			else if (num < 75) { // 아이템 이벤트
+
+			}
+			else {				 // 장애물 이벤트 
+
+			}
+		}
+		ResetEvent(event_event);
 	}
 }
 
@@ -166,7 +202,8 @@ int main()
 
 	event_logic = CreateEvent(NULL, TRUE, FALSE, NULL);
 	if (event_logic == NULL) err_quit("CreateEvent()");
-
+	event_event = CreateEvent(NULL, TRUE, FALSE, NULL);
+	if (event_event == NULL) err_quit("CreateEvent()");
 
 	SOCKET listen_sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (listen_sock == INVALID_SOCKET) err_quit("socket()");
@@ -187,11 +224,12 @@ int main()
 	SOCKET client_sock;
 	struct sockaddr_in clientaddr;
 	int addrlen;
-	std::thread p_thread, logic_thread;
+	std::thread p_thread, logic_thread, event_thread;
 
 	logic_thread = std::thread(LogicThread);
 	logic_thread.detach();
-
+	event_thread = std::thread(EventThread);
+	event_thread.detach();
 	while (1) {
 		addrlen = sizeof(clientaddr);
 		client_sock = accept(listen_sock, (struct sockaddr*)&clientaddr, &addrlen);
@@ -215,5 +253,6 @@ int main()
 	closesocket(listen_sock);
 	WSACleanup();
 	CloseHandle(event_logic);
+	CloseHandle(event_event);
 	return 0;
 }
