@@ -23,7 +23,7 @@ constexpr char SC_SCENE = 7;
 
 
 enum E_MAPTYPE { SOCCER, BASKETBALL };
-enum E_TEAMCOLOR { RED, BLUE };
+enum E_TEAMCOLOR { RED, BLUE, OBSERVER };
 enum E_OBJTYPE { BALL, PLAYER };
 enum E_SCENEKIND { PLAY, LOBBY };
 

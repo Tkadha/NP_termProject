@@ -5,7 +5,7 @@
 #pragma comment(lib, "ws2_32") // ws2_32.lib 링크
 #define SERVERPORT 9000
 
-int UserInGame();
+int FindRemainID();
 
 // 소켓 함수 오류 출력 후 종료
 void err_quit(const char* msg)
@@ -123,14 +123,11 @@ void ProcessPacket(int id, char* packet)
 void PlayerThread(int id)
 {
 	game.players[id].SendLoginPacket(id);
-	printf("SendLoginPacket\n");
 	for (int i = 0; i < MAXPLAYER; ++i) {	
-		if (game.players[i].state == E_ONLINE) {
+		if (game.players[i].state == E_ONLINE || id != i) {
 			game.players[id].SendLoginPacket(i);
-			printf("SendLoginPacket\n");
 		}
 	}
-	//game.players[id].SendPosPacket(id, 500, 500, PLAYER);
 	game.players[id].id = id;
 	printf("%d make thread\n",id);
 	while (1) {
@@ -147,11 +144,11 @@ void LogicThread()
 	ResetEvent(event_logic);
 	while (1) {
 		game.Update();
-		Sleep(1);
+		Sleep(1000 / 120);
 	}
 }
 
-int UserInGame()
+int FindRemainID()
 {
 	for (int i = 0; i < MAXPLAYER; ++i) 
 		if (game.players[i].state == E_OFFLINE) 
@@ -192,7 +189,7 @@ int main()
 	int addrlen;
 	std::thread p_thread, logic_thread;
 
-	logic_thread = std::thread(LogicThread); // 여기 스레드 함수도 쓰고
+	logic_thread = std::thread(LogicThread);
 	logic_thread.detach();
 
 	while (1) {
@@ -205,7 +202,7 @@ int main()
 			WSACleanup();
 			return 0;
 		}
-		int id = UserInGame();
+		int id = FindRemainID();
 		if (id != -1) {
 			game.players[id].state = E_ONLINE;
 			game.players[id].sock = client_sock;
