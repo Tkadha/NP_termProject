@@ -42,11 +42,19 @@ void CGameFramework::SwitchScene(CScene* newScene)
 
 void CGameFramework::InputProcess(WPARAM wParam, WPARAM lParam, UINT uMsg)
 {
-	inputManager->Update(wParam, lParam, uMsg);
+	NETWORK_EVENT event = inputManager->Update(wParam, lParam, uMsg);
 
-	switch (LOWORD(wParam)) {
-	case 114: // Start 버튼 클릭
+	switch (event) {
+	case SendStart: // Start 버튼 클릭
 		networkManager.SendStartPacket();
+		break;
+	case SendTeamRed:
+		players[pid].team = RedTeam;
+		networkManager.SendColorPacket((E_TEAMCOLOR)players[pid].team);
+		break;
+	case SendTeamBlue:
+		players[pid].team = BlueTeam;
+		networkManager.SendColorPacket((E_TEAMCOLOR)players[pid].team);
 		break;
 	}
 }

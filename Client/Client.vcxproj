@@ -137,6 +137,7 @@
     <ClCompile Include="Scene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\server\server\server\protocol.h" />
     <ClInclude Include="ClientNetwork.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="GameFramework.h" />

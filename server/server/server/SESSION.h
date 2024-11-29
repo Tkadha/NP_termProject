@@ -28,6 +28,7 @@ public:
 	void ResetSESSION();
 	void DoRecv();
 	bool SendLoginPacket(int pid);
+	bool SendLogoutPacket(int pid);
 	bool SendPlayerTeamPacket(int pid, E_TEAMCOLOR color);
 	bool SendMapPacket(int pid, E_MAPTYPE maptype);
 	bool SendNamePacket(int pid, char* names);

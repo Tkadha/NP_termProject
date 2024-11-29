@@ -17,6 +17,8 @@ public:
 
 	NetWorkManager networkManager;
 
+	int pid{};
+
 	CGameFramework() { SwitchScene(&lobbyScene); networkManager.Con(); };
 
 	void Update();

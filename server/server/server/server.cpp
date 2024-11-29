@@ -135,7 +135,14 @@ void PlayerThread(int id)
 	printf("%d make thread\n",id);
 	while (1) {
 		game.players[id].DoRecv();
-		if (game.players[id].state == E_OFFLINE) break;
+		if (game.players[id].state == E_OFFLINE) {
+			for (int i = 0; i < MAXPLAYER; ++i) {
+				if (game.players[i].state == E_ONLINE || id != i) {
+					game.players[i].SendLogoutPacket(id);
+				}
+			}
+			break;
+		}
 		ProcessPacket(id, game.players[id].recv_buf);
 	}
 	game.players[id].ResetSESSION();

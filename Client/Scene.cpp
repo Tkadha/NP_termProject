@@ -34,8 +34,9 @@ void CPlayScene::SetBallPos(XY pos)
 }
 
 //----------------------------------------------------------------------------
-void InputManager::Update(WPARAM wParam, WPARAM lParam, UINT uMsg) {
-
+NETWORK_EVENT InputManager::Update(WPARAM wParam, WPARAM lParam, UINT uMsg) 
+{
+	return SendNone;
 }
 
 BOOL* InputManager::GetInput()
@@ -43,7 +44,8 @@ BOOL* InputManager::GetInput()
 	return KeyDownBuffer;
 }
 
-void PlayInputManager::Update(WPARAM wParam, WPARAM lParam, UINT uMsg) {
+NETWORK_EVENT PlayInputManager::Update(WPARAM wParam, WPARAM lParam, UINT uMsg)
+{
 	switch (uMsg) {
 	case WM_KEYDOWN:
 		KeyDownBuffer[wParam] = TRUE;
@@ -54,18 +56,23 @@ void PlayInputManager::Update(WPARAM wParam, WPARAM lParam, UINT uMsg) {
 		KeyDownBuffer[wParam] = FALSE;
 		break;
 	}
+	return SendNone;
 }
 
-void LobbyInputManager::Update(WPARAM wParam, WPARAM lParam, UINT uMsg) {
+NETWORK_EVENT LobbyInputManager::Update(WPARAM wParam, WPARAM lParam, UINT uMsg)
+{
 	switch (LOWORD(wParam)) {
 	case 110: // Red 버튼 클릭
+
 		//MessageBox(hWnd, L"Red Team Selected!", L"Button Click", MB_OK);
 		// Red 팀 관련 처리 추가
+		return SendTeamRed;
 		break;
 
 	case 111: // Blue 버튼 클릭
 		//MessageBox(hWnd, L"Blue Team Selected!", L"Button Click", MB_OK);
 		// Blue 팀 관련 처리 추가
+		return SendTeamBlue;
 		break;
 
 	case 112: // Soccer 버튼 클릭
@@ -82,10 +89,7 @@ void LobbyInputManager::Update(WPARAM wParam, WPARAM lParam, UINT uMsg) {
 
 	case 114: // Start 버튼 클릭
 		MessageBox(hWnd, L"Game Starting!", L"Button Click", MB_OK);
-		//ShowWindow(lobbyWnd, SW_HIDE);
-		//ShowWindow(playWnd, SW_SHOW);
-		//SetFocus(playWnd);
-
+		return SendStart;
 		
 		//DestroyWindow(hwnd);
 		// 게임 시작 로직 구현
