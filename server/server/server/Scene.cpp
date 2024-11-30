@@ -93,16 +93,24 @@ void CPlayScene::Update(float timeElapsed, std::array <SESSION, MAXPLAYER>& play
 	for (SESSION& player : players) {
 		if (player.state == E_OFFLINE) continue;		
 		if (player.team_color == OBSERVER) continue;
+		double px = player.p.position.x;
+		double py = player.p.position.y;
 		player.p.Update(timeElapsed);
-		for (int i = 0; i < MAXPLAYER; ++i) {
-			if (players[i].state == E_OFFLINE) continue;
-			players[i].SendPosPacket(player.id, player.p.position.x, player.p.position.y, PLAYER);
+		if (px != player.p.position.x || py != player.p.position.y) {
+			for (int i = 0; i < MAXPLAYER; ++i) {
+				if (players[i].state == E_OFFLINE) continue;
+				players[i].SendPosPacket(player.id, player.p.position.x, player.p.position.y, PLAYER);
+			}
 		}
 	}
+	double bx = ball.position.x;
+	double by = ball.position.y;
 	ball.Update(timeElapsed);
-	for (int i = 0; i < MAXPLAYER; ++i) {
-		if (players[i].state == E_OFFLINE) continue;
-		players[i].SendPosPacket(-1, ball.position.x, ball.position.y, BALL);
+	if (bx != ball.position.x || by != ball.position.y) {
+		for (int i = 0; i < MAXPLAYER; ++i) {
+			if (players[i].state == E_OFFLINE) continue;
+			players[i].SendPosPacket(-1, ball.position.x, ball.position.y, BALL);
+		}
 	}
 	//printf("play Update\n");
 }

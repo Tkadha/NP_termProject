@@ -149,7 +149,7 @@ void LogicThread()
 		SetEvent(event_event);
 		while (1) { // 여기 조건 플레이씬일떼만으로 설정하면 될듯
 			game.Update();
-			Sleep(1000 / 120);
+			Sleep(1);
 		}
 		ResetEvent(event_logic);
 	}
