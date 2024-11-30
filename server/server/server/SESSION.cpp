@@ -95,7 +95,6 @@ bool SESSION::SendPosPacket(int pid, double x, double y, E_OBJTYPE objtype)
 	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
 	if (retval == SOCKET_ERROR) return false;
 
-	//printf("%f,%f\n", p.x, p.y);
 	return true;
 }
 

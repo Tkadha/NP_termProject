@@ -16,6 +16,7 @@ public:
 	int id = -1;
 	char recv_buf[BUFSIZE]{};
 	E_TEAMCOLOR team_color;
+	int remain_data{};
 
 	NetWorkManager();
 	~NetWorkManager();

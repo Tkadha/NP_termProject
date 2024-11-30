@@ -94,7 +94,6 @@ void ProcessPacket(int id, char* packet)
 		SCENE_PACKET* p = reinterpret_cast<SCENE_PACKET*>(packet);
 		for (int i = 0; i < MAXPLAYER; ++i) {
 			if (game.players[i].state == E_OFFLINE) continue;
-			printf("%d send scene\n", i);
 			game.players[i].SendScenePacket(id, PLAY);
 		}
 		break;

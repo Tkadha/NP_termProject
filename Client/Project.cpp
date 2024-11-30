@@ -77,27 +77,37 @@ void ProcessPacket(char* packet)
 
 void PlayerThread()
 {
-	char buffer[BUFSIZE * 2]{0};	//남은 버퍼 데이터를 저장하는 곳
-	int remain_data{ 0 };			//남은 버퍼 데이터 양
+	char buffer[BUFSIZE * 2]{0};
 	while (1) {
 		game.networkManager.DoRecv();
-
-		int len = strlen(game.networkManager.recv_buf); // 방금 받은 버퍼 크기
-		memcpy(buffer + remain_data, game.networkManager.recv_buf, len); // buffer와 recv_buf 합치기
-		remain_data += len;	// 남은 데이터 + 방금 받은 버퍼 크기
-		std::cout << remain_data << '\n';
-		char* p = buffer;	// 버퍼 배열 0번지
-		while (remain_data > 0) {	// 데이터가 남아있다면
-			int packet_size = p[0]; // 처리해야할 패킷 사이즈 측정
-			std::cout << "packet size: " << packet_size << '\n';
-			if (packet_size <= remain_data) { // 패킷 사이즈가 남은 데이터보다 작거나 같으면
-				ProcessPacket(p);	// 처리
-				p += packet_size; // 포인터 패킷 크기만큼 이동
-				remain_data -= packet_size; // 패킷 크기만큼 남은 데이터 빼기
+		
+		while (game.networkManager.remain_data > 0)
+		{
+			BASE_PACKET* bp = reinterpret_cast<BASE_PACKET*>(game.networkManager.recv_buf);
+			int packetsize = bp->size;
+			if (game.networkManager.remain_data >= packetsize) {
+				ProcessPacket(game.networkManager.recv_buf);
+				game.networkManager.remain_data -= packetsize;
+				std::memmove(game.networkManager.recv_buf, game.networkManager.recv_buf + packetsize, game.networkManager.remain_data);
 			}
-			else break;  // 패킷 사이즈가 남은 데이터 보다 크다면 break
+			else break;
 		}
-		if(remain_data > 0) memcpy(buffer, p, remain_data); // 남은 데이터가 있다면 buffer에 복사
+
+
+		/*int len = strlen(game.networkManager.recv_buf);
+		memcpy(buffer + remain_data, game.networkManager.recv_buf, len);
+		remain_data += len;
+		char* p = buffer;
+		while (remain_data > 0) {
+			int packet_size = p[0];
+			if (packet_size <= remain_data) {
+				ProcessPacket(p);
+				p += packet_size;
+				remain_data -= packet_size;
+			}
+			else break;
+		}
+		if (remain_data > 0) memcpy(buffer, p, remain_data);*/
 
 		//ProcessPacket(game.networkManager.recv_buf);
 	}
