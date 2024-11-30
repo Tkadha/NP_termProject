@@ -1,6 +1,6 @@
 #include "ClientNetwork.h"
 #pragma comment(lib, "ws2_32")
-
+#include <iostream>
 #define PORT 9000
 void err_quit(const char* msg)
 {
@@ -96,7 +96,7 @@ void NetWorkManager::DoRecv()
 {
 	int retval;
 	memset(recv_buf, 0, sizeof(recv_buf));
-	retval = recv(sock, recv_buf, BUFSIZE - remain_size, 0);
+	retval = recv(sock, recv_buf, BUFSIZE, 0);
 }
 
 bool NetWorkManager::SendColorPacket(E_TEAMCOLOR color) {
