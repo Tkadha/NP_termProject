@@ -53,7 +53,8 @@ void ProcessPacket(char* packet)
 	}
 	case SC_LOGIN: {
 		LOGIN_PACKET* p = reinterpret_cast<LOGIN_PACKET*>(packet);
-		game.pid = p->id;
+		if(game.pid == -1)
+			game.pid = p->id;
 		//MessageBox(hWnd, L"You ID", L"Button Click", MB_OK);		
 		break;
 	}
