@@ -1,11 +1,13 @@
 #define _CRT_SECURE_NO_WARNINGS // 구형 C 함수 사용 시 경고 끄기
 #define _WINSOCK_DEPRECATED_NO_WARNINGS // 구형 소켓 API 사용 시 경고 끄기
 #include <thread>
+#include <algorithm>
 #include "GameFramework.h"
 #pragma comment(lib, "ws2_32") // ws2_32.lib 링크
 #define SERVERPORT 9000
 
 int UserInGame();
+E_TEAMCOLOR GetLessTeam();
 
 // 소켓 함수 오류 출력 후 종료
 void err_quit(const char* msg)
@@ -122,15 +124,17 @@ void ProcessPacket(int id, char* packet)
 
 void PlayerThread(int id)
 {
+	game.players[id].team_color = GetLessTeam();
 	game.players[id].SendLoginPacket(id);
-	printf("SendLoginPacket\n");
+	game.players[id].SendPlayerTeamPacket(id, game.players[id].team_color);
+
 	for (int i = 0; i < MAXPLAYER; ++i) {	
 		if (game.players[i].state == E_ONLINE) {
 			game.players[id].SendLoginPacket(i);
-			printf("SendLoginPacket\n");
+			game.players[id].SendPlayerTeamPacket(i, game.players[id].team_color);
+
 		}
 	}
-	//game.players[id].SendPosPacket(id, 500, 500, PLAYER);
 	game.players[id].id = id;
 	printf("%d make thread\n",id);
 	while (1) {
@@ -164,6 +168,27 @@ int UserInGame()
 	return -1;
 }
 
+E_TEAMCOLOR GetLessTeam()
+{
+	const int redplayers = std::count_if(game.players.begin(), game.players.end(), [](SESSION p) {
+		if (p.state == E_OFFLINE)
+			return false;
+		return p.team_color == RED;
+		});
+
+	const int blueplayers = std::count_if(game.players.begin(), game.players.end(), [](SESSION p) {
+		if (p.state == E_OFFLINE)
+			return false;
+		return p.team_color == BLUE;
+		});
+
+	//printf("red : %d명\tblue : %d명", redplayers, blueplayers);
+
+	if (redplayers > blueplayers)
+		return BLUE;
+	else
+		return RED;
+}
 
 int main()
 {
