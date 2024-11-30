@@ -4,7 +4,6 @@
 #include <thread>
 #include <array>
 #include <string.h>
-#define BUFFER_SIZE 1024
 
 class NetWorkManager
 {
@@ -14,11 +13,11 @@ public:
 	WSADATA wsa;
 	SOCKET sock;
 	struct sockaddr_in serv_addr;
-	char buffer[BUFFER_SIZE] = { 0 };
 	int id = -1;
-	char recv_buf[BUFSIZE];
+	char recv_buf[BUFSIZE]{};
 	E_TEAMCOLOR team_color;
-
+	char remain_buf[BUFSIZE]{};
+	int remain_size{};
 
 	NetWorkManager();
 	~NetWorkManager();

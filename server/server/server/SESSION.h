@@ -22,7 +22,7 @@ public:
 	{
 		id = -1;
 		state = E_OFFLINE;
-		team_color = OBSERVER;
+		team_color = RED;
 		memset(p.name, 0, sizeof(p.name));
 	}
 	void ResetSESSION();

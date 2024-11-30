@@ -79,19 +79,44 @@ void PlayerThread()
 {
 	while (1) {
 		game.networkManager.DoRecv();
-		ProcessPacket(game.networkManager.recv_buf);
+
+		int total_size = game.networkManager.remain_size + strlen(game.networkManager.recv_buf);
+
+		char combined_buf[BUFSIZE] = { 0 };
+		memcpy(combined_buf, game.networkManager.remain_buf, game.networkManager.remain_size);
+		memcpy(combined_buf + game.networkManager.remain_size, game.networkManager.recv_buf, strlen(game.networkManager.recv_buf));
+
+		char* buffer = combined_buf;
+		int remain_data = total_size;
+		while (remain_data > 0) {
+			int packet_size = buffer[0];
+			if (packet_size > remain_data) {
+				std::cout << static_cast<int>(buffer[1]) << '\n';
+				ProcessPacket(buffer);
+				buffer = buffer + packet_size;
+				remain_data = remain_data - packet_size;
+			}
+			else break;
+		}
+		if (remain_data > 0) {
+			memmove(game.networkManager.remain_buf, buffer, remain_data);
+			game.networkManager.remain_size = remain_data;
+		}
+		else game.networkManager.remain_size = 0;
+
+		//ProcessPacket(game.networkManager.recv_buf);
 	}
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
-	/*
 	AllocConsole();
 	FILE* fp;
 	freopen_s(&fp, "CONOUT$", "w", stdout); // 표준 출력 연결
 	freopen_s(&fp, "CONIN$", "r", stdin);  // 표준 입력 연결
-
+	/*
 	std::cout << "플레이어 이름을 입력하세요: ";
+
 
 	// 사용자로부터 이름 입력받기
 	std::string playerName;

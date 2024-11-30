@@ -61,7 +61,7 @@ void ProcessPacket(int id, char* packet)
 	case CS_TEAM_CHOICE: {
 		TEAM_PACKET* p = reinterpret_cast<TEAM_PACKET*>(packet);
 		game.players[id].team_color = p->teamcolor;
-		
+		printf("%d", game.players[id].team_color);
 		for (int i = 0; i < MAXPLAYER; ++i) {
 			if (game.players[i].state == E_OFFLINE) continue;
 			game.players[i].SendPlayerTeamPacket(id, game.players[id].team_color);
