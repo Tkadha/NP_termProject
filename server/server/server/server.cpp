@@ -124,9 +124,12 @@ void ProcessPacket(int id, char* packet)
 
 void PlayerThread(int id)
 {
+	game.players[id].id = id;
 	game.players[id].team_color = GetLessTeam();
 	game.players[id].SendLoginPacket(id);
 	game.players[id].SendPlayerTeamPacket(id, game.players[id].team_color);
+
+	printf("player %d : %d\n", id, game.players[id].team_color);
 
 	for (int i = 0; i < MAXPLAYER; ++i) {	
 		if (game.players[i].state == E_ONLINE) {
@@ -135,7 +138,6 @@ void PlayerThread(int id)
 
 		}
 	}
-	game.players[id].id = id;
 	printf("%d make thread\n",id);
 	while (1) {
 		game.players[id].DoRecv();
@@ -182,7 +184,7 @@ E_TEAMCOLOR GetLessTeam()
 		return p.team_color == BLUE;
 		});
 
-	//printf("red : %d명\tblue : %d명", redplayers, blueplayers);
+	printf("red : %d명\tblue : %d명", redplayers, blueplayers);
 
 	if (redplayers > blueplayers)
 		return BLUE;

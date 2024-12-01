@@ -37,9 +37,15 @@ void ProcessPacket(char* packet)
 			game.players[p->id].team = RedTeam;
 		else if (p->teamcolor == BLUE)
 			game.players[p->id].team = BlueTeam;
+		printf("player %d : %d\n", p->id, p->teamcolor);
 
-		//MessageBox(hWnd, L"You are Red", L"Button Click", MB_OK);
-
+		for (const CPlayer p : game.players)
+		{
+			if (p.state == ONLINE) {
+				printf("%d\t", p.team);
+			}
+		}
+		printf("\n");
 		break;
 	}
 
@@ -55,7 +61,6 @@ void ProcessPacket(char* packet)
 		LOGIN_PACKET* p = reinterpret_cast<LOGIN_PACKET*>(packet);
 		if(game.pid == -1)
 			game.pid = p->id;
-		//MessageBox(hWnd, L"You ID", L"Button Click", MB_OK);		
 		break;
 	}
 	case SC_LOGOUT: {

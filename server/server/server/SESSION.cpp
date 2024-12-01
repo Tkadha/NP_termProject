@@ -51,7 +51,7 @@ bool SESSION::SendPlayerTeamPacket(int pid, E_TEAMCOLOR color)
 	TEAM_PACKET p;
 	p.size = sizeof(TEAM_PACKET);
 	p.teamcolor = color;
-	p.type = SC_MAP_CHOICE;
+	p.type = SC_TEAM_CHOICE;
 	p.id = pid;
 	int retval;
 	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
