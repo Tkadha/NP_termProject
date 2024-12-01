@@ -26,7 +26,8 @@ LRESULT CALLBACK LobbyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 HWND hWnd, lobbyWnd, playWnd;
 HWND hButtonRed, hButtonBlue, hButtonSoccer, hButtonBasketball, hButtonStart;
-HWND hListBoxRed, hListBoxBlue;
+HWND hListBoxRed, hListBoxBlue, hListBoxLobby;
+std::string playerName;
 
 CGameFramework game{};
 
@@ -34,6 +35,8 @@ CGameFramework game{};
 CRITICAL_SECTION cs;
 void ProcessPacket(char* packet)
 {
+	
+	
 	switch (packet[1])
 	{
 	case SC_TEAM_CHOICE: {
@@ -52,7 +55,7 @@ void ProcessPacket(char* packet)
 	}
 	case SC_LOGIN: {
 		LOGIN_PACKET* p = reinterpret_cast<LOGIN_PACKET*>(packet);
-		//MessageBox(hWnd, L"You ID", L"Button Click", MB_OK);
+		//MessageBox(hWnd, wPlayer.c_str(), L"Button Click", MB_OK);
 		break;
 	}
 	case SC_POS: {
@@ -85,7 +88,7 @@ void PlayerThread()
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
-	/*
+	
 	AllocConsole();
 	FILE* fp;
 	freopen_s(&fp, "CONOUT$", "w", stdout); // 표준 출력 연결
@@ -94,13 +97,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	std::cout << "플레이어 이름을 입력하세요: ";
 
 	// 사용자로부터 이름 입력받기
-	std::string playerName;
 	std::getline(std::cin, playerName);
 	const char* playerNameCStr = playerName.c_str();
 	game.networkManager.SendNamePacket(playerNameCStr);
-
+	
 	std::cout << "Welcome, " << playerName << "!" << std::endl;
-	*/
+	
 	MSG Message;
 	WNDCLASSEX WndClass;
 	g_hInst = hInstance;
@@ -389,6 +391,12 @@ LRESULT CALLBACK LobbyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			WS_VISIBLE | WS_CHILD | WS_BORDER | LBS_STANDARD,
 			250, 270, 140, 150, // Blue 버튼 아래 위치
 			hwnd, (HMENU)121,
+			g_hInst, NULL);
+		hListBoxLobby = CreateWindow(
+			L"LISTBOX", NULL,
+			WS_VISIBLE | WS_CHILD | WS_BORDER | LBS_STANDARD,
+			100, 440, 290, 150, // Red와 Blue 리스트 아래 위치
+			hwnd, (HMENU)122,
 			g_hInst, NULL);
 		// Soccer 버튼 생성
 		hButtonSoccer = CreateWindow(
