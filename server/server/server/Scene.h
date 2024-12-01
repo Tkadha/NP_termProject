@@ -38,8 +38,8 @@ class CScene
 public:
 	virtual void Update(float timeElapsed, std::array <SESSION, MAXPLAYER>& players) {};
 
-	virtual void Enter() {};
-	virtual void Exit() {};
+	virtual void Enter(std::array <SESSION, MAXPLAYER>& players) {};
+	virtual void Exit(std::array <SESSION, MAXPLAYER>& players) {};
 };
 
 
@@ -59,10 +59,10 @@ public:
 
 	void Update(float timeElapsed, std::array <SESSION, MAXPLAYER>& players);
 	
-	void Enter() {
+	void Enter(std::array <SESSION, MAXPLAYER>& players) {
 		printf("Scene : Lobby\n");
 	};
-	void Exit() {};
+	void Exit(std::array <SESSION, MAXPLAYER>& players) {};
 };
 
 class CPlayScene : public CScene
@@ -82,8 +82,8 @@ public:
 
 	void Reset();
 
-	void Enter();
-	void Exit() {};
+	void Enter(std::array <SESSION, MAXPLAYER>& players);
+	void Exit(std::array <SESSION, MAXPLAYER>& players) {};
 };
 
 

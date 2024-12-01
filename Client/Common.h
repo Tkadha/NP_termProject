@@ -22,8 +22,9 @@
 
 
 enum E_team {
-	RedTeam,
-	BlueTeam,
+	Red,
+	Blue,
+	Observer,
 	Ball,
 	Object
 };

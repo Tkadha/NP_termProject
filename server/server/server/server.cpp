@@ -98,7 +98,6 @@ void ProcessPacket(int id, char* packet)
 		break;
 	}
 	case CS_EXIT: {		// event_ logic 깨우기 작성하기
-		//SetEvent(event_logic);
 		START_PACKET* p = reinterpret_cast<START_PACKET*>(packet);
 		game.players[p->id].state = E_OFFLINE;
 		if (UserInGame() == -1) {
@@ -125,19 +124,31 @@ void ProcessPacket(int id, char* packet)
 void PlayerThread(int id)
 {
 	game.players[id].id = id;
-	game.players[id].team_color = GetLessTeam();
+	//if (game.isPlaying())
+		game.players[id].team_color = GetLessTeam();
+	//else
+	//	game.players[id].team_color = OBSERVER;
+
 	game.players[id].SendLoginPacket(id);
+	Sleep(1);
 	game.players[id].SendPlayerTeamPacket(id, game.players[id].team_color);
 
-	printf("player %d : %d\n", id, game.players[id].team_color);
-
 	for (int i = 0; i < MAXPLAYER; ++i) {	
-		if (game.players[i].state == E_ONLINE) {
+		if (game.players[i].state == E_ONLINE && id != i) {
 			game.players[id].SendLoginPacket(i);
-			game.players[id].SendPlayerTeamPacket(i, game.players[id].team_color);
-
+			game.players[id].SendPlayerTeamPacket(i, game.players[i].team_color);
 		}
 	}
+
+	for (int i = 0; i < MAXPLAYER; ++i) {
+		if (game.players[i].state == E_ONLINE && id != i) {
+			game.players[i].SendLoginPacket(id);
+			game.players[i].SendPlayerTeamPacket(id, game.players[id].team_color);
+		}
+	}
+
+
+
 	printf("%d make thread\n",id);
 	while (1) {
 		game.players[id].DoRecv();
@@ -184,7 +195,7 @@ E_TEAMCOLOR GetLessTeam()
 		return p.team_color == BLUE;
 		});
 
-	printf("red : %d명\tblue : %d명", redplayers, blueplayers);
+	printf("red : %d명\tblue : %d명\n", redplayers, blueplayers);
 
 	if (redplayers > blueplayers)
 		return BLUE;

@@ -34,9 +34,10 @@ void ProcessPacket(char* packet)
 	case SC_TEAM_CHOICE: {
 		TEAM_PACKET* p = reinterpret_cast<TEAM_PACKET*>(packet);
 		if (p->teamcolor == RED)
-			game.players[p->id].team = RedTeam;
+			game.players[p->id].team = Red;
 		else if (p->teamcolor == BLUE)
-			game.players[p->id].team = BlueTeam;
+			game.players[p->id].team = Blue;
+
 		printf("player %d : %d\n", p->id, p->teamcolor);
 
 		for (const CPlayer p : game.players)
@@ -61,6 +62,7 @@ void ProcessPacket(char* packet)
 		LOGIN_PACKET* p = reinterpret_cast<LOGIN_PACKET*>(packet);
 		if(game.pid == -1)
 			game.pid = p->id;
+		game.players[p->id].state = ONLINE;
 		break;
 	}
 	case SC_LOGOUT: {

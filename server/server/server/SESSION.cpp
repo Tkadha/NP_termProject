@@ -5,6 +5,7 @@ void SESSION::ResetSESSION()
 {
 	closesocket(sock);
 	state = E_OFFLINE;
+	team_color = OBSERVER;
 	id = -1;
 	memset(p.name, 0, sizeof(p.name));
 	p.InfoReset();
@@ -54,6 +55,7 @@ bool SESSION::SendPlayerTeamPacket(int pid, E_TEAMCOLOR color)
 	p.type = SC_TEAM_CHOICE;
 	p.id = pid;
 	int retval;
+
 	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
 	if (retval == SOCKET_ERROR) return false;
 	return true;
