@@ -126,7 +126,7 @@ void PlayerThread(int id)
 {
 	game.players[id].SendLoginPacket(id);
 	for (int i = 0; i < MAXPLAYER; ++i) {	
-		if (game.players[i].state == E_ONLINE || id != i) {
+		if (game.players[i].state == E_ONLINE && id != i) {
 			game.players[id].SendLoginPacket(i);
 		}
 	}
@@ -147,7 +147,7 @@ void LogicThread()
 	{
 		WaitForSingleObject(event_logic, INFINITE);
 		SetEvent(event_event);
-		while (1) { // 여기 조건 플레이씬일떼만으로 설정하면 될듯
+		while (game.IsPlayScene()) { 
 			game.Update();
 			Sleep(1);
 		}
@@ -163,20 +163,24 @@ void EventThread()
 	while (1)
 	{
 		WaitForSingleObject(event_event, INFINITE);
-		while (1)	// 여기 조건 플레이씬일떼만으로 설정하면 될듯
+		while (game.IsPlayScene())	
 		{
 			Sleep(1000 * 15); // 여기는 타이머 대신 일단 써둠
 			int num = dis(gen);
 			if (num < 25) {		 // 바람 이벤트
 
+
 			}
 			else if (num < 50) { // 장판 이벤트
+
 
 			}
 			else if (num < 75) { // 아이템 이벤트
 
+
 			}
 			else {				 // 장애물 이벤트 
+
 
 			}
 		}

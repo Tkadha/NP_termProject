@@ -19,6 +19,8 @@ public:
 	void Update();
 	
 	void SwitchScene(CScene*);
+	
+	bool IsPlayScene() { return currentScene == &playScene; }
 };
 
 
