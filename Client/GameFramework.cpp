@@ -43,12 +43,18 @@ void CGameFramework::SwitchScene(CScene* newScene)
 void CGameFramework::InputProcess(WPARAM wParam, WPARAM lParam, UINT uMsg)
 {
 	inputManager->Update(wParam, lParam, uMsg);
+	std::wstring wPlayer = StringToWString(playerName);
 
 	switch (LOWORD(wParam)) {
 	case 110: // RED 버튼 클릭
-		SendMessage(hListBoxRed, LB_ADDSTRING, 0, (LPARAM)L"Player1");
-		SendMessage(hListBoxRed, LB_ADDSTRING, 0, (LPARAM)L"Player2");
-
+		DeleteItemByName(hListBoxBlue, wPlayer.c_str());
+		SendMessage(hListBoxRed, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
+		networkManager.SendColorPacket(RED);
+		break;
+	case 111: // BLUE 버튼 클릭
+		DeleteItemByName(hListBoxRed, wPlayer.c_str());
+		SendMessage(hListBoxBlue, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
+		networkManager.SendColorPacket(BLUE);
 		break;
 	case 114: // Start 버튼 클릭
 		networkManager.SendStartPacket();
@@ -61,4 +67,31 @@ void CGameFramework::PlayerUpdate(int id, XY pos)
 	if (players[id].state == OFFLINE)
 		players[id].state = ONLINE;
 	players[id].position = pos;
+}
+
+std::wstring CGameFramework::StringToWString(const std::string& str)
+{
+	int size_needed = MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), NULL, 0);
+	std::wstring wstr(size_needed, 0);
+	MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), &wstr[0], size_needed);
+	return wstr;
+}
+
+void CGameFramework::DeleteItemByName(HWND hListBox, const std::wstring& itemName)
+{
+	int count = SendMessage(hListBox, LB_GETCOUNT, 0, 0);
+	for (int i = 0; i < count; ++i)
+	{
+		// 인덱스 i의 항목 가져오기
+		wchar_t buffer[256];
+		SendMessage(hListBox, LB_GETTEXT, i, (LPARAM)buffer);
+
+		// 항목이 일치하면 삭제
+		if (itemName == buffer)
+		{
+			SendMessage(hListBox, LB_DELETESTRING, i, 0);
+			return;
+		}
+	}
+	
 }

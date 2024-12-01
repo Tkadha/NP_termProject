@@ -4,6 +4,9 @@
 #include "ClientNetwork.h"
 
 extern HWND hListBoxRed;
+extern HWND hListBoxBlue;
+extern HWND hListBoxLobby;
+extern std::string playerName;
 
 class CGameFramework
 {
@@ -34,7 +37,8 @@ public:
 	void PlayerUpdate(int id, XY pos);
 	void SetPos(XY pos) { currentScene->SetPos(pos); };
 	void SetBallPos(XY pos) { currentScene->SetBallPos(pos); };
-
+	std::wstring StringToWString(const std::string& str);
+	void DeleteItemByName(HWND hListBox, const std::wstring& itemName);
 };
 
 
