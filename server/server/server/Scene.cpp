@@ -180,9 +180,31 @@ void CPlayScene::Reset()
 	map.Reset();
 }
 
-void CPlayScene::Enter()
+void CPlayScene::Enter(std::array <SESSION, MAXPLAYER>& players)
 {
-	printf("Scene : Play\n");
+	int red{}, blue{};
+	for (SESSION player : players) {
+		if (player.state == E_OFFLINE) continue;
+		if (player.team_color == RED)
+			red++;
+		else if (player.team_color == BLUE)
+			blue++;
+			
+	}
+
+	double distance = 100.0f;	// 중앙선으로부터 거리
+	double redWidth = WindowHeight / (red + 1);
+	double blueWidth = WindowHeight / (blue + 1);
+	for (SESSION player : players) {
+		if (player.team_color == RED) {
+			player.p.position = { WindowWidth / 2 - distance,redWidth };
+			redWidth += redWidth;
+		}
+		else if (player.team_color == BLUE) {
+			player.p.position = { WindowWidth / 2 + distance,blueWidth };
+			blueWidth += blueWidth;
+		}
+	}
 }
 
 

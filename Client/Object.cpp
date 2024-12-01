@@ -7,7 +7,7 @@ CEllipseObject::CEllipseObject()
 	position = { 0,0 };
 	velocity = { 0,0 };
 
-	team = RedTeam;
+	team = Red;
 
 	graphicsC = new EllipseComponent;
 }
@@ -47,9 +47,9 @@ CSoccerGoal::CSoccerGoal()
 CSoccerGoal::CSoccerGoal(E_team team)
 {
 	size = { 80,152 };
-	if (team == RedTeam)
+	if (team == Red)
 		position = { 90 - size.x / 2 ,WindowHeight / 2 };
-	else if (team == BlueTeam)
+	else if (team == Blue)
 		position = { WindowWidth - (90 - size.x / 2),WindowHeight / 2 };
 
 	Rect bb(position, size);
@@ -70,11 +70,12 @@ void EllipseComponent::Render(CEllipseObject& object, HDC& dc)
 		hBrush = CreateSolidBrush(RGB(255, 255, 0));
 	else if (object.team == Object)
 		hBrush = CreateSolidBrush(RGB(255, 255, 255));
-	else if (object.team == RedTeam)
+	else if (object.team == Red)
 		hBrush = CreateSolidBrush(RGB(255, 0, 0));
-	else if (object.team == BlueTeam)
+	else if (object.team == Blue)
 		hBrush = CreateSolidBrush(RGB(0, 0, 255));
-
+	else if (object.team = Observer)
+		hBrush = (HBRUSH)GetStockObject(NULL_BRUSH);
 
 	CPlayer* playerPtr = dynamic_cast<CPlayer*>(&object);
 	if (playerPtr) {

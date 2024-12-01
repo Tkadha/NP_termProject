@@ -22,8 +22,9 @@
 
 
 enum E_team {
-	RedTeam,
-	BlueTeam,
+	Red,
+	Blue,
+	Observer,
 	Ball,
 	Object
 };
@@ -35,6 +36,14 @@ enum E_item {
 };
 
 enum E_STATE { ONLINE, OFFLINE };
+
+enum NETWORK_EVENT {
+	SendNone,
+	SendStart,
+	SendTeamBlue,
+	SendTeamRed,
+	SendMap
+};
 
 class XY
 {

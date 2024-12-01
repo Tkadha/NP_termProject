@@ -21,8 +21,6 @@ LPCTSTR lpszClass = L"Window Class Name";
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK SoccerProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK LobbyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-//CGameFramework g_GameFramework;
-
 
 HWND hWnd, lobbyWnd, playWnd;
 HWND hButtonRed, hButtonBlue, hButtonSoccer, hButtonBasketball, hButtonStart;
@@ -41,7 +39,20 @@ void ProcessPacket(char* packet)
 	{
 	case SC_TEAM_CHOICE: {
 		TEAM_PACKET* p = reinterpret_cast<TEAM_PACKET*>(packet);
-		//MessageBox(hWnd, L"You are Red", L"Button Click", MB_OK);
+		if (p->teamcolor == RED)
+			game.players[p->id].team = Red;
+		else if (p->teamcolor == BLUE)
+			game.players[p->id].team = Blue;
+
+		printf("player %d : %d\n", p->id, p->teamcolor);
+
+		for (const CPlayer p : game.players)
+		{
+			if (p.state == ONLINE) {
+				printf("%d\t", p.team);
+			}
+		}
+		printf("\n");
 		break;
 	}
 
@@ -55,7 +66,15 @@ void ProcessPacket(char* packet)
 	}
 	case SC_LOGIN: {
 		LOGIN_PACKET* p = reinterpret_cast<LOGIN_PACKET*>(packet);
-		//MessageBox(hWnd, wPlayer.c_str(), L"Button Click", MB_OK);
+		if(game.pid == -1)
+			game.pid = p->id;
+		game.players[p->id].state = ONLINE;
+		break;
+	}
+	case SC_LOGOUT: {
+		LOGIN_PACKET* p = reinterpret_cast<LOGIN_PACKET*>(packet);
+		printf("player %d logout\n", p->id);
+		game.players[p->id].state = OFFLINE;
 		break;
 	}
 	case SC_POS: {

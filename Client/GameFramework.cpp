@@ -42,22 +42,25 @@ void CGameFramework::SwitchScene(CScene* newScene)
 
 void CGameFramework::InputProcess(WPARAM wParam, WPARAM lParam, UINT uMsg)
 {
-	inputManager->Update(wParam, lParam, uMsg);
+
+	NETWORK_EVENT event = inputManager->Update(wParam, lParam, uMsg);
 	std::wstring wPlayer = StringToWString(playerName);
 
-	switch (LOWORD(wParam)) {
-	case 110: // RED 버튼 클릭
+	switch (event) {
+	case SendStart: // Start 버튼 클릭
+		networkManager.SendStartPacket();
+		break;
+
+	case SendTeamRed:
 		DeleteItemByName(hListBoxBlue, wPlayer.c_str());
 		SendMessage(hListBoxRed, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
 		networkManager.SendColorPacket(RED);
 		break;
-	case 111: // BLUE 버튼 클릭
+
+	case SendTeamBlue:
 		DeleteItemByName(hListBoxRed, wPlayer.c_str());
 		SendMessage(hListBoxBlue, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
 		networkManager.SendColorPacket(BLUE);
-		break;
-	case 114: // Start 버튼 클릭
-		networkManager.SendStartPacket();
 		break;
 	}
 }

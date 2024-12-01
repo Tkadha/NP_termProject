@@ -10,10 +10,10 @@ void CGameFramework::Update()
 void CGameFramework::SwitchScene(CScene* newScene)
 {
 	if (currentScene) {
-		currentScene->Exit();
+		currentScene->Exit(players);
 	}
 	currentScene = newScene;
 	if (currentScene) {
-		currentScene->Enter();
+		currentScene->Enter(players);
 	}
 }

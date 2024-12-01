@@ -19,7 +19,8 @@ constexpr char SC_NAME = 4;
 constexpr char SC_START = 5;
 constexpr char SC_POS = 6;
 constexpr char SC_SCENE = 7;
-constexpr char SC_EVENT = 8;
+constexpr char SC_LOGOUT = 8;
+constexpr char SC_EVENT = 9;
 
 
 

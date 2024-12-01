@@ -51,8 +51,8 @@ NetWorkManager::~NetWorkManager()
 }
 void NetWorkManager::Con() {
 
+	//const char* server_ip = "58.228.11.233";
 	const char* server_ip = "127.0.0.1";
-
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
 
 		err_quit("WSAStartup()");
@@ -60,6 +60,7 @@ void NetWorkManager::Con() {
 	}
 
 	sock = socket(AF_INET, SOCK_STREAM, 0);
+
 
 	if (sock == INVALID_SOCKET) {
 

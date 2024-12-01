@@ -1,12 +1,14 @@
 #define _CRT_SECURE_NO_WARNINGS // 구형 C 함수 사용 시 경고 끄기
 #define _WINSOCK_DEPRECATED_NO_WARNINGS // 구형 소켓 API 사용 시 경고 끄기
 #include <thread>
+#include <algorithm>
 #include "GameFramework.h"
 #include <random>
 #pragma comment(lib, "ws2_32") // ws2_32.lib 링크
 #define SERVERPORT 9000
 
 int FindRemainID();
+E_TEAMCOLOR GetLessTeam();
 
 // 소켓 함수 오류 출력 후 종료
 void err_quit(const char* msg)
@@ -124,17 +126,42 @@ void ProcessPacket(int id, char* packet)
 
 void PlayerThread(int id)
 {
+	game.players[id].id = id;
+	//if (game.isPlaying())
+		game.players[id].team_color = GetLessTeam();
+	//else
+	//	game.players[id].team_color = OBSERVER;
+
 	game.players[id].SendLoginPacket(id);
+	Sleep(1);
+	game.players[id].SendPlayerTeamPacket(id, game.players[id].team_color);
+
 	for (int i = 0; i < MAXPLAYER; ++i) {	
 		if (game.players[i].state == E_ONLINE && id != i) {
 			game.players[id].SendLoginPacket(i);
+			game.players[id].SendPlayerTeamPacket(i, game.players[i].team_color);
 		}
 	}
-	game.players[id].id = id;
+
+	for (int i = 0; i < MAXPLAYER; ++i) {
+		if (game.players[i].state == E_ONLINE && id != i) {
+			game.players[i].SendLoginPacket(id);
+			game.players[i].SendPlayerTeamPacket(id, game.players[id].team_color);
+		}
+	}
+
+
 	printf("%d make thread\n",id);
 	while (1) {
 		game.players[id].DoRecv();
-		if (game.players[id].state == E_OFFLINE) break;
+		if (game.players[id].state == E_OFFLINE) {
+			for (int i = 0; i < MAXPLAYER; ++i) {
+				if (game.players[i].state == E_ONLINE || id != i) {
+					game.players[i].SendLogoutPacket(id);
+				}
+			}
+			break;
+		}
 		ProcessPacket(id, game.players[id].recv_buf);
 	}
 	game.players[id].ResetSESSION();
@@ -196,6 +223,27 @@ int FindRemainID()
 	return -1;
 }
 
+E_TEAMCOLOR GetLessTeam()
+{
+	const int redplayers = std::count_if(game.players.begin(), game.players.end(), [](SESSION p) {
+		if (p.state == E_OFFLINE)
+			return false;
+		return p.team_color == RED;
+		});
+
+	const int blueplayers = std::count_if(game.players.begin(), game.players.end(), [](SESSION p) {
+		if (p.state == E_OFFLINE)
+			return false;
+		return p.team_color == BLUE;
+		});
+
+	printf("red : %d명\tblue : %d명\n", redplayers, blueplayers);
+
+	if (redplayers > blueplayers)
+		return BLUE;
+	else
+		return RED;
+}
 
 int main()
 {

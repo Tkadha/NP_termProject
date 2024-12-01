@@ -13,7 +13,7 @@ public:
 	InputManager() {};
 	BOOL KeyDownBuffer[256];
 
-	virtual void Update(WPARAM wParam, WPARAM lParam, UINT uMsg);
+	virtual NETWORK_EVENT Update(WPARAM wParam, WPARAM lParam, UINT uMsg);
 	BOOL* GetInput();
 };
 
@@ -21,14 +21,14 @@ class LobbyInputManager : public InputManager
 {
 public:
 	LobbyInputManager() {};
-	void Update(WPARAM wParam, WPARAM lParam, UINT uMsg);
+	NETWORK_EVENT Update(WPARAM wParam, WPARAM lParam, UINT uMsg);
 };
 
 class PlayInputManager : public InputManager
 {
 public:
 	PlayInputManager() {};
-	void Update(WPARAM wParam, WPARAM lParam, UINT uMsg);
+	NETWORK_EVENT Update(WPARAM wParam, WPARAM lParam, UINT uMsg);
 };
 
 
