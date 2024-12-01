@@ -24,9 +24,12 @@ LRESULT CALLBACK LobbyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 HWND hWnd, lobbyWnd, playWnd;
 HWND hButtonRed, hButtonBlue, hButtonSoccer, hButtonBasketball, hButtonStart;
+HWND hListBoxRed, hListBoxBlue;
 
 CGameFramework game{};
 
+
+CRITICAL_SECTION cs;
 void ProcessPacket(char* packet)
 {
 	switch (packet[1])
@@ -73,12 +76,14 @@ void ProcessPacket(char* packet)
 	}
 	case SC_POS: {
 		POS_PACKET* p = reinterpret_cast<POS_PACKET*>(packet);
+		EnterCriticalSection(&cs);
 		if (p->objtype == PLAYER) {
 			game.PlayerUpdate(p->id, { p->x, p->y });
 		}
 		else {
 			game.SetBallPos({ p->x, p->y });
 		}
+		LeaveCriticalSection(&cs);
 		break;
 	}
 	case SC_SCENE: {
@@ -91,17 +96,60 @@ void ProcessPacket(char* packet)
 
 void PlayerThread()
 {
+	char buffer[BUFSIZE * 2]{0};
 	while (1) {
 		game.networkManager.DoRecv();
-		ProcessPacket(game.networkManager.recv_buf);
+		
+		while (game.networkManager.remain_data > 0)
+		{
+			BASE_PACKET* bp = reinterpret_cast<BASE_PACKET*>(game.networkManager.recv_buf);
+			int packetsize = bp->size;
+			if (game.networkManager.remain_data >= packetsize) {
+				ProcessPacket(game.networkManager.recv_buf);
+				game.networkManager.remain_data -= packetsize;
+				std::memmove(game.networkManager.recv_buf, game.networkManager.recv_buf + packetsize, game.networkManager.remain_data);
+			}
+			else break;
+		}
+
+
+		/*int len = strlen(game.networkManager.recv_buf);
+		memcpy(buffer + remain_data, game.networkManager.recv_buf, len);
+		remain_data += len;
+		char* p = buffer;
+		while (remain_data > 0) {
+			int packet_size = p[0];
+			if (packet_size <= remain_data) {
+				ProcessPacket(p);
+				p += packet_size;
+				remain_data -= packet_size;
+			}
+			else break;
+		}
+		if (remain_data > 0) memcpy(buffer, p, remain_data);*/
+
+		//ProcessPacket(game.networkManager.recv_buf);
 	}
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
 	AllocConsole();
-	freopen("CONOUT$", "wt", stdout);
+	FILE* fp;
+	freopen_s(&fp, "CONOUT$", "w", stdout); // 표준 출력 연결
+	freopen_s(&fp, "CONIN$", "r", stdin);  // 표준 입력 연결
+	/*
+	std::cout << "플레이어 이름을 입력하세요: ";
 
+
+	// 사용자로부터 이름 입력받기
+	std::string playerName;
+	std::getline(std::cin, playerName);
+	const char* playerNameCStr = playerName.c_str();
+	game.networkManager.SendNamePacket(playerNameCStr);
+
+	std::cout << "Welcome, " << playerName << "!" << std::endl;
+	*/
 	MSG Message;
 	WNDCLASSEX WndClass;
 	g_hInst = hInstance;
@@ -188,6 +236,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		p_thread = std::thread(PlayerThread);
 		p_thread.detach();
 
+		InitializeCriticalSection(&cs);
+
 		lobbyWnd = CreateWindow(L"LobbyScene", NULL, WS_CHILD | WS_VISIBLE, 0, 0, WindowWidth, WindowHeight, hwnd, NULL, g_hInst, NULL);
 		playWnd = CreateWindow(L"PlayScene", NULL, WS_CHILD | WS_VISIBLE, 0, 0, WindowWidth, WindowHeight, hwnd, NULL, g_hInst, NULL);
 
@@ -248,6 +298,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		DestroyWindow(SoccerWindow);
 		break;
 	case WM_DESTROY:
+		DeleteCriticalSection(&cs);
 		game.networkManager.SendExitPacket();
 		KillTimer(hwnd, 1);
 		PostQuitMessage(0);
@@ -286,7 +337,9 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		memdc = CreateCompatibleDC(hdc);
 		oldBit = (HBITMAP)SelectObject(memdc, hBit);
 
+		EnterCriticalSection(&cs);
 		game.Render(memdc);
+		LeaveCriticalSection(&cs);
 
 		SelectObject(memdc, oldBit);
 		DeleteDC(memdc);
@@ -348,7 +401,8 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 LRESULT CALLBACK LobbyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	static HWND hButtonRed, hButtonBlue, hButtonSoccer, hButtonBasketball, hButtonStart;
+	
+	
 	HDC hdc;
 	PAINTSTRUCT ps;
 
@@ -370,7 +424,21 @@ LRESULT CALLBACK LobbyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			250, 200, 140, 60,
 			hwnd, (HMENU)111,
 			g_hInst, NULL);
+		// Red 플레이어 목록 리스트 박스 생성
+		hListBoxRed = CreateWindow(
+			L"LISTBOX", NULL,
+			WS_VISIBLE | WS_CHILD | WS_BORDER | LBS_STANDARD,
+			100, 270, 140, 150, // Red 버튼 아래 위치
+			hwnd, (HMENU)120,
+			g_hInst, NULL);
 
+		// Blue 플레이어 목록 리스트 박스 생성
+		hListBoxBlue = CreateWindow(
+			L"LISTBOX", NULL,
+			WS_VISIBLE | WS_CHILD | WS_BORDER | LBS_STANDARD,
+			250, 270, 140, 150, // Blue 버튼 아래 위치
+			hwnd, (HMENU)121,
+			g_hInst, NULL);
 		// Soccer 버튼 생성
 		hButtonSoccer = CreateWindow(
 			L"BUTTON", L"SOCCER",

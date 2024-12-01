@@ -3,7 +3,7 @@
 #include "Common.h"
 #include <thread>
 #include <array>
-#define BUFFER_SIZE 1024
+#include <string.h>
 
 class NetWorkManager
 {
@@ -13,11 +13,10 @@ public:
 	WSADATA wsa;
 	SOCKET sock;
 	struct sockaddr_in serv_addr;
-	char buffer[BUFFER_SIZE] = { 0 };
 	int id = -1;
-	char recv_buf[BUFSIZE];
+	char recv_buf[BUFSIZE]{};
 	E_TEAMCOLOR team_color;
-
+	int remain_data{};
 
 	NetWorkManager();
 	~NetWorkManager();
@@ -28,7 +27,7 @@ public:
 
 	bool SendColorPacket(E_TEAMCOLOR color);
 	bool SendMapPacket(E_MAPTYPE maptype);
-	bool SendNamePacket(char* name);
+	bool SendNamePacket(const char* name);
 	bool SendKeyPacket(WPARAM wParam);
 	bool SendStartPacket();
 	bool SendExitPacket();

@@ -3,10 +3,11 @@
 #include <thread>
 #include <algorithm>
 #include "GameFramework.h"
+#include <random>
 #pragma comment(lib, "ws2_32") // ws2_32.lib 링크
 #define SERVERPORT 9000
 
-int UserInGame();
+int FindRemainID();
 E_TEAMCOLOR GetLessTeam();
 
 // 소켓 함수 오류 출력 후 종료
@@ -53,6 +54,7 @@ CGameFramework game{};
 E_MAPTYPE maptype = SOCCER;
 
 HANDLE event_logic;
+HANDLE event_event;
 
 void ProcessPacket(int id, char* packet)
 {
@@ -61,6 +63,7 @@ void ProcessPacket(int id, char* packet)
 	case CS_TEAM_CHOICE: {
 		TEAM_PACKET* p = reinterpret_cast<TEAM_PACKET*>(packet);
 		game.players[id].team_color = p->teamcolor;
+		printf("%d", game.players[id].team_color);
 		for (int i = 0; i < MAXPLAYER; ++i) {
 			if (game.players[i].state == E_OFFLINE) continue;
 			game.players[i].SendPlayerTeamPacket(id, game.players[id].team_color);
@@ -87,7 +90,7 @@ void ProcessPacket(int id, char* packet)
 		break;
 	}
 	case CS_START: {		// event_ logic 깨우기 작성하기
-		//SetEvent(event_logic);
+		SetEvent(event_logic);
 		game.SwitchScene(&game.playScene);
 
 		SCENE_PACKET* p = reinterpret_cast<SCENE_PACKET*>(packet);
@@ -97,8 +100,8 @@ void ProcessPacket(int id, char* packet)
 		}
 		break;
 	}
-	case CS_EXIT: {		// event_ logic 깨우기 작성하기
-		START_PACKET* p = reinterpret_cast<START_PACKET*>(packet);
+	case CS_EXIT: {		// 플레이어가 모두 접속 종료할 경우 로비로 넘어가게 만들기
+		/*START_PACKET* p = reinterpret_cast<START_PACKET*>(packet);
 		game.players[p->id].state = E_OFFLINE;
 		if (UserInGame() == -1) {
 			game.SwitchScene(&game.lobbyScene);
@@ -106,7 +109,7 @@ void ProcessPacket(int id, char* packet)
 		}
 		for (int i = 0; i < MAXPLAYER; ++i) {
 			if (game.players[i].state == E_OFFLINE) continue;
-		}
+		}*/	
 		break;
 	}
 	case CS_KEY: {
@@ -148,7 +151,6 @@ void PlayerThread(int id)
 	}
 
 
-
 	printf("%d make thread\n",id);
 	while (1) {
 		game.players[id].DoRecv();
@@ -165,15 +167,55 @@ void PlayerThread(int id)
 	game.players[id].ResetSESSION();
 }
 
+
 void LogicThread()
 {
-	while (1) {
-		game.Update();
-		Sleep(1);
+	while (1)
+	{
+		WaitForSingleObject(event_logic, INFINITE);
+		SetEvent(event_event);
+		while (game.IsPlayScene()) { 
+			game.Update();
+			Sleep(1);
+		}
+		ResetEvent(event_logic);
 	}
 }
 
-int UserInGame()
+void EventThread()
+{
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<int> dis(0, 100);
+	while (1)
+	{
+		WaitForSingleObject(event_event, INFINITE);
+		while (game.IsPlayScene())	
+		{
+			Sleep(1000 * 15); // 여기는 타이머 대신 일단 써둠
+			int num = dis(gen);
+			if (num < 25) {		 // 바람 이벤트
+
+
+			}
+			else if (num < 50) { // 장판 이벤트
+
+
+			}
+			else if (num < 75) { // 아이템 이벤트
+
+
+			}
+			else {				 // 장애물 이벤트 
+
+
+			}
+		}
+		ResetEvent(event_event);
+	}
+}
+
+int FindRemainID()
 {
 	for (int i = 0; i < MAXPLAYER; ++i) 
 		if (game.players[i].state == E_OFFLINE) 
@@ -212,7 +254,8 @@ int main()
 
 	event_logic = CreateEvent(NULL, TRUE, FALSE, NULL);
 	if (event_logic == NULL) err_quit("CreateEvent()");
-
+	event_event = CreateEvent(NULL, TRUE, FALSE, NULL);
+	if (event_event == NULL) err_quit("CreateEvent()");
 
 	SOCKET listen_sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (listen_sock == INVALID_SOCKET) err_quit("socket()");
@@ -233,11 +276,12 @@ int main()
 	SOCKET client_sock;
 	struct sockaddr_in clientaddr;
 	int addrlen;
-	std::thread p_thread, logic_thread;
+	std::thread p_thread, logic_thread, event_thread;
 
-	logic_thread = std::thread(LogicThread); // 여기 스레드 함수도 쓰고
+	logic_thread = std::thread(LogicThread);
 	logic_thread.detach();
-
+	event_thread = std::thread(EventThread);
+	event_thread.detach();
 	while (1) {
 		addrlen = sizeof(clientaddr);
 		client_sock = accept(listen_sock, (struct sockaddr*)&clientaddr, &addrlen);
@@ -248,7 +292,7 @@ int main()
 			WSACleanup();
 			return 0;
 		}
-		int id = UserInGame();
+		int id = FindRemainID();
 		if (id != -1) {
 			game.players[id].state = E_ONLINE;
 			game.players[id].sock = client_sock;
@@ -261,5 +305,6 @@ int main()
 	closesocket(listen_sock);
 	WSACleanup();
 	CloseHandle(event_logic);
+	CloseHandle(event_event);
 	return 0;
 }

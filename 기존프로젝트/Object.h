@@ -119,6 +119,7 @@ class InputComponent
 {
 public:
 	XY accelation{ 4.16666666,4.16666666 };	// °¡¼Ó·Â
+	int wind = 0;
 
 	InputComponent() {};
 	InputComponent(double x, double y) : accelation(x, y) {};

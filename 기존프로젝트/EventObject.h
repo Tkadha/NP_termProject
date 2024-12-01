@@ -23,6 +23,7 @@ class CWindObject : public CEventObject, CObject
 
 public:
 	void Render(HDC& dc);
+	void Update(HDC& dc);
 };
 
 class CFloorObject : public CEventObject, CObject

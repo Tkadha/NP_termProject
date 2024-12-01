@@ -138,8 +138,17 @@ void InputComponent::Update(CPlayer& player, BOOL KeyDownBuffer[]) {
 	if (KeyDownBuffer[VK_RIGHT]) {
 		player.velocity.x += accelation.x;
 	}
+	if (KeyDownBuffer[VK_RETURN]) {
+		if (wind == 0) {
+			player.velocity.x += 4.0;
 
-	/*플레이어가 스페이스를 꾹 눌러도 공은 한 번만 찰 수 있도록
+		}
+		else {
+			player.velocity.y += 4.0;
+		}
+
+	}
+		/*플레이어가 스페이스를 꾹 눌러도 공은 한 번만 찰 수 있도록
 	hasKicked가 false일 때만 input을 받도록*/
 	if (KeyDownBuffer[VK_SPACE]) {
 		if (!player.hasKicked) {

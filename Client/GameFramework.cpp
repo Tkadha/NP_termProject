@@ -51,6 +51,9 @@ void CGameFramework::InputProcess(WPARAM wParam, WPARAM lParam, UINT uMsg)
 	case SendTeamRed:
 		players[pid].team = Red;
 		networkManager.SendColorPacket((E_TEAMCOLOR)players[pid].team);
+
+		SendMessage(hListBoxRed, LB_ADDSTRING, 0, (LPARAM)L"Player1");
+		SendMessage(hListBoxRed, LB_ADDSTRING, 0, (LPARAM)L"Player2");
 		break;
 	case SendTeamBlue:
 		players[pid].team = Blue;

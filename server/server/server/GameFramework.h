@@ -20,7 +20,7 @@ public:
 	
 	void SwitchScene(CScene*);
 
-	bool isPlaying();
+	bool IsPlayScene() { return currentScene == &playScene; }
 };
 
 

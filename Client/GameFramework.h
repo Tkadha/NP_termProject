@@ -3,6 +3,7 @@
 #include "Scene.h"
 #include "ClientNetwork.h"
 
+extern HWND hListBoxRed;
 
 class CGameFramework
 {

@@ -1,6 +1,6 @@
 #include "ClientNetwork.h"
 #pragma comment(lib, "ws2_32")
-
+#include <iostream>
 #define PORT 9000
 void err_quit(const char* msg)
 {
@@ -98,6 +98,7 @@ void NetWorkManager::DoRecv()
 	int retval;
 	memset(recv_buf, 0, sizeof(recv_buf));
 	retval = recv(sock, recv_buf, BUFSIZE, 0);
+	remain_data += retval;
 }
 
 bool NetWorkManager::SendColorPacket(E_TEAMCOLOR color) {
@@ -118,7 +119,6 @@ bool NetWorkManager::SendMapPacket(E_MAPTYPE maptype)
 	p.size = sizeof(TEAM_PACKET);
 	p.maptype = maptype;
 	p.type = CS_MAP_CHOICE;
-	p.id = id;
 	int retval;
 	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
 	if (retval == SOCKET_ERROR) return false;
@@ -127,9 +127,18 @@ bool NetWorkManager::SendMapPacket(E_MAPTYPE maptype)
 	return true;
 }
 
-bool NetWorkManager::SendNamePacket(char* name)
+bool NetWorkManager::SendNamePacket(const char* name)
 {
-	return false;
+	NAME_PACKET p;
+	p.size = sizeof(NAME_PACKET);
+	strcpy(p.name, name);
+	p.type = CS_NAME;
+	int retval;
+	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
+	if (retval == SOCKET_ERROR) return false;
+
+
+	return true;
 }
 
 bool NetWorkManager::SendKeyPacket(WPARAM wParam)
@@ -165,7 +174,6 @@ bool NetWorkManager::SendExitPacket()
 	START_PACKET p;
 	p.size = sizeof(START_PACKET);
 	p.type = CS_EXIT;
-	p.id = id;
 	int retval;
 	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
 	if (retval == SOCKET_ERROR) return false;
