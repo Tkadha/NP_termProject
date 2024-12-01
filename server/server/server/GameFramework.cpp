@@ -17,11 +17,3 @@ void CGameFramework::SwitchScene(CScene* newScene)
 		currentScene->Enter(players);
 	}
 }
-
-bool CGameFramework::isPlaying()
-{
-	if (currentScene == &playScene)
-		return true;
-	else
-		return false;
-}
