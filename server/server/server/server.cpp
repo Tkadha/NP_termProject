@@ -97,7 +97,8 @@ void ProcessPacket(int id, char* packet)
 		for (int i = 0; i < MAXPLAYER; ++i) {
 			if (game.players[i].state == E_OFFLINE) continue;
 			game.players[i].SendScenePacket(id, PLAY);
-		}
+		}	
+
 		break;
 	}
 	case CS_EXIT: {		// 플레이어가 모두 접속 종료할 경우 로비로 넘어가게 만들기

@@ -192,10 +192,11 @@ void CPlayScene::Enter(std::array <SESSION, MAXPLAYER>& players)
 			
 	}
 
-	double distance = 100.0f;	// 중앙선으로부터 거리
+	double distance = 150.0f;	// 중앙선으로부터 거리
 	double redWidth = WindowHeight / (red + 1);
 	double blueWidth = WindowHeight / (blue + 1);
-	for (SESSION player : players) {
+	for (SESSION& player : players) {
+		if (player.state == E_OFFLINE) continue;
 		if (player.team_color == RED) {
 			player.p.position = { WindowWidth / 2 - distance,redWidth };
 			redWidth += redWidth;
@@ -203,6 +204,16 @@ void CPlayScene::Enter(std::array <SESSION, MAXPLAYER>& players)
 		else if (player.team_color == BLUE) {
 			player.p.position = { WindowWidth / 2 + distance,blueWidth };
 			blueWidth += blueWidth;
+		}
+	}
+
+
+	for (int i = 0; i < MAXPLAYER; ++i) {
+		if (players[i].state == E_OFFLINE) continue;
+		for (int j = 0; j < MAXPLAYER; ++j) {
+			if (players[j].state == E_OFFLINE) continue;
+			//printf("player %d : { %f, %f }\n", j, players[j].p.position.x, players[j].p.position.y);
+			players[i].SendPosPacket(players[j].id, players[j].p.position.x, players[j].p.position.y, PLAYER);
 		}
 	}
 }
