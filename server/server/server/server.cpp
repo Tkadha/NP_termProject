@@ -98,6 +98,7 @@ void ProcessPacket(int id, char* packet)
 			if (game.players[i].state == E_OFFLINE) continue;
 			game.players[i].SendScenePacket(id, PLAY);
 		}
+
 		break;
 	}
 	case CS_EXIT: {		// 플레이어가 모두 접속 종료할 경우 로비로 넘어가게 만들기
@@ -109,7 +110,7 @@ void ProcessPacket(int id, char* packet)
 		}
 		for (int i = 0; i < MAXPLAYER; ++i) {
 			if (game.players[i].state == E_OFFLINE) continue;
-		}*/	
+		}*/
 		break;
 	}
 	case CS_KEY: {
@@ -128,15 +129,19 @@ void PlayerThread(int id)
 {
 	game.players[id].id = id;
 	//if (game.isPlaying())
-		game.players[id].team_color = GetLessTeam();
+	game.players[id].team_color = GetLessTeam();
 	//else
 	//	game.players[id].team_color = OBSERVER;
 
 	game.players[id].SendLoginPacket(id);
-	Sleep(1);
+	if(game.IsPlayScene())
+		game.players[id].SendScenePacket(id, PLAY);
+	else
+		game.players[id].SendScenePacket(id, LOBBY);
+
 	game.players[id].SendPlayerTeamPacket(id, game.players[id].team_color);
 
-	for (int i = 0; i < MAXPLAYER; ++i) {	
+	for (int i = 0; i < MAXPLAYER; ++i) {
 		if (game.players[i].state == E_ONLINE && id != i) {
 			game.players[id].SendLoginPacket(i);
 			game.players[id].SendPlayerTeamPacket(i, game.players[i].team_color);
@@ -151,7 +156,7 @@ void PlayerThread(int id)
 	}
 
 
-	printf("%d make thread\n",id);
+	printf("%d make thread\n", id);
 	while (1) {
 		game.players[id].DoRecv();
 		if (game.players[id].state == E_OFFLINE) {
@@ -174,7 +179,7 @@ void LogicThread()
 	{
 		WaitForSingleObject(event_logic, INFINITE);
 		SetEvent(event_event);
-		while (game.IsPlayScene()) { 
+		while (game.IsPlayScene()) {
 			game.Update();
 			Sleep(1);
 		}
@@ -190,7 +195,7 @@ void EventThread()
 	while (1)
 	{
 		WaitForSingleObject(event_event, INFINITE);
-		while (game.IsPlayScene())	
+		while (game.IsPlayScene())
 		{
 			Sleep(1000 * 15); // 여기는 타이머 대신 일단 써둠
 			int num = dis(gen);
@@ -217,9 +222,9 @@ void EventThread()
 
 int FindRemainID()
 {
-	for (int i = 0; i < MAXPLAYER; ++i) 
-		if (game.players[i].state == E_OFFLINE) 
-			return i;		
+	for (int i = 0; i < MAXPLAYER; ++i)
+		if (game.players[i].state == E_OFFLINE)
+			return i;
 	return -1;
 }
 

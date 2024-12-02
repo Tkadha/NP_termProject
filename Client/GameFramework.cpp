@@ -11,20 +11,29 @@ void CGameFramework::Render(HDC& dc)
 	currentScene->Render(dc, players);
 }
 
+void CGameFramework::InitScene()
+{
+	if (currentScene == &playScene)
+		ChangeScene(PLAY);
+	else if (currentScene == &lobbyScene)
+		ChangeScene(LOBBY);
+}
+
 void CGameFramework::ChangeScene(E_SCENEKIND scene)
 {
 	if (scene == PLAY) {
 		ShowWindow(lobbyWnd, SW_HIDE);
 		ShowWindow(playWnd, SW_SHOW);
-		PostMessage(hWnd, WM_SET_FOCUS_TO_CHILD, 0, 0);
+		PostMessage(hWnd, WM_SET_FOCUS_TO_PLAY, 0, 0);
 		SwitchScene(&playScene);
-		printf("Scene Change : Play\n");
+		return;
 	}
 	else if (scene == LOBBY) {
 		ShowWindow(playWnd, SW_HIDE);
 		ShowWindow(lobbyWnd, SW_SHOW);
-		SetFocus(lobbyWnd);
+		PostMessage(hWnd, WM_SET_FOCUS_TO_LOBBY, 0, 0);
 		SwitchScene(&lobbyScene);
+		return;
 	}
 }
 

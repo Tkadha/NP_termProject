@@ -69,8 +69,8 @@ public:
 	void Render(HDC& dc, std::array <CPlayer, MAXPLAYER> players);
 	void Update(BOOL KeyDownBuffer[], float timeElapsed);
 
-	void Enter();
-	void Exit();
+	void Enter() { printf("Enter : Lobby Scene\n"); };
+	void Exit() { printf("EXIT : Lobby Scene\n"); };
 
 	void setFocus() { SetFocus(lobbyWnd); };
 
@@ -96,10 +96,10 @@ public:
 	void Update();
 	void Render(HDC& dc, std::array <CPlayer, MAXPLAYER> players);
 
-	void Enter() {};
-	void Exit() {};
+	void Enter() { printf("Enter : Play Scene\n"); };
+	void Exit() { printf("EXIT : Play Scene\n"); };
 
-	void setFocus() { PostMessage(hWnd, WM_SET_FOCUS_TO_CHILD, 0, 0); };
+	void setFocus() { PostMessage(hWnd, WM_SET_FOCUS_TO_PLAY, 0, 0); };
 
 	// юс╫ц
 	void SetPos(XY pos);

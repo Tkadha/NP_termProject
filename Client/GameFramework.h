@@ -10,7 +10,7 @@ extern std::string playerName;
 
 class CGameFramework
 {
-	CScene* currentScene;
+	CScene* currentScene = nullptr;
 
 public:
 	std::array <CPlayer, MAXPLAYER> players;
@@ -23,7 +23,7 @@ public:
 
 	int pid{};
 
-	CGameFramework() { SwitchScene(&lobbyScene); networkManager.Con(); };
+	CGameFramework() { networkManager.Con(); };
 
 	void Update();
 public:
@@ -34,6 +34,8 @@ public:
 	void InputProcess(WPARAM wParam, WPARAM lParam, UINT uMsg);
 
 	void setFocus() { currentScene->setFocus(); };
+
+	void InitScene();
 
 	// юс╫ц
 	void PlayerUpdate(int id, XY pos);

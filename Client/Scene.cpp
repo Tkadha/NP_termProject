@@ -5,7 +5,7 @@
 CPlayScene::CPlayScene()
 {
 	ball.team = Ball;
-	ball.position = { 512,320 };
+	ball.position = { WindowWidth / 2,WindowHeight / 2 };
 }
 
 void CPlayScene::Update()
@@ -100,16 +100,7 @@ NETWORK_EVENT LobbyInputManager::Update(WPARAM wParam, WPARAM lParam, UINT uMsg)
 
 
 //----------------------------------------------------------------------------
-void CLobbyScene::Enter()
-{
-
-}
-
 void CLobbyScene::Update(BOOL KeyDownBuffer[], float timeElapsed)
-{
-}
-
-void CLobbyScene::Exit()
 {
 }
 

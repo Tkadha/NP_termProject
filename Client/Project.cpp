@@ -83,7 +83,7 @@ void ProcessPacket(char* packet)
 		if (p->objtype == PLAYER) {
 			game.PlayerUpdate(p->id, { p->x, p->y });
 		}
-		else {
+		else if(p->objtype == BALL) {
 			game.SetBallPos({ p->x, p->y });
 		}
 		LeaveCriticalSection(&cs);
@@ -243,9 +243,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		lobbyWnd = CreateWindow(L"LobbyScene", NULL, WS_CHILD | WS_VISIBLE, 0, 0, WindowWidth, WindowHeight, hwnd, NULL, g_hInst, NULL);
 		playWnd = CreateWindow(L"PlayScene", NULL, WS_CHILD | WS_VISIBLE, 0, 0, WindowWidth, WindowHeight, hwnd, NULL, g_hInst, NULL);
 
-		ShowWindow(playWnd, SW_HIDE);
-		SetFocus(lobbyWnd);
+		game.InitScene();
 
+		//ShowWindow(playWnd, SW_HIDE);
+		//SetFocus(lobbyWnd);
+		
+		//game.networkManager.Con();
 		break;
 	case WM_ACTIVATE:
 		if (wParam == WA_INACTIVE) {
@@ -287,8 +290,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_COMMAND:									// 버튼 메시지 처리?
 		SetFocus(hwnd);
 		break;
-	case WM_SET_FOCUS_TO_CHILD:
+	case WM_SET_FOCUS_TO_PLAY:
 		SetFocus(playWnd);
+		break;
+	case WM_SET_FOCUS_TO_LOBBY:
+		SetFocus(lobbyWnd);
 		break;
 	case WM_KEYUP:
 		KeyDownBuffer[wParam] = FALSE;

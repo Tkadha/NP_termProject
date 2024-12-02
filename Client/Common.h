@@ -18,7 +18,8 @@
 
 #define MAXPLAYER 10
 
-#define WM_SET_FOCUS_TO_CHILD 999
+#define WM_SET_FOCUS_TO_PLAY 999
+#define WM_SET_FOCUS_TO_LOBBY 998
 
 
 enum E_team {
