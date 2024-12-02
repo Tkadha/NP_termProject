@@ -9,6 +9,7 @@
 
 int FindRemainID();
 E_TEAMCOLOR GetLessTeam();
+bool IsGameEnd();
 
 // 소켓 함수 오류 출력 후 종료
 void err_quit(const char* msg)
@@ -169,6 +170,17 @@ void PlayerThread(int id)
 		}
 		ProcessPacket(id, game.players[id].recv_buf);
 	}
+
+	if (IsGameEnd()) {
+		game.SwitchScene(&game.lobbyScene);
+
+		for (int i = 0; i < MAXPLAYER; ++i) {
+			if (game.players[i].state == E_OFFLINE) continue;
+			game.players[i].SendScenePacket(id, LOBBY);
+		}
+	}
+
+
 	game.players[id].ResetSESSION();
 }
 
@@ -248,6 +260,18 @@ E_TEAMCOLOR GetLessTeam()
 		return BLUE;
 	else
 		return RED;
+}
+
+bool IsGameEnd()
+{
+	const int online = std::count_if(game.players.begin(), game.players.end(), [](SESSION p) {
+		return p.state == E_ONLINE;
+		});
+	
+	if (online == 0)
+		return true;
+	else
+		return false;
 }
 
 int main()
