@@ -80,7 +80,7 @@ void ProcessPacket(char* packet)
 		if (p->objtype == PLAYER) {
 			game.PlayerUpdate(p->id, { p->x, p->y });
 		}
-		else {
+		else if(p->objtype == BALL) {
 			game.SetBallPos({ p->x, p->y });
 		}
 		LeaveCriticalSection(&cs);
