@@ -63,6 +63,8 @@ public:
 	char key;
 };
 class START_PACKET : public BASE_PACKET {
+public:
+	int		id;
 };
 class POS_PACKET : public BASE_PACKET {
 public:
