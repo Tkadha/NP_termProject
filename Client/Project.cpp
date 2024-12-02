@@ -50,7 +50,7 @@ void ProcessPacket(char* packet)
 		else if (p->teamcolor == BLUE) {
 			game.players[p->id].team = Blue;
 			if (game.pid != p->id) {
-				SendMessage(hListBoxBlue, LB_ADDSTRING, 1, (LPARAM)wPlayer.c_str());
+				SendMessage(hListBoxBlue, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
 			}
 		}
 
