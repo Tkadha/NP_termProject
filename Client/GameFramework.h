@@ -43,6 +43,7 @@ public:
 	void SetBallPos(XY pos) { currentScene->SetBallPos(pos); };
 	std::wstring StringToWString(const std::string& str);
 	void DeleteItemByName(HWND hListBox, const std::wstring& itemName);
+	bool FindItemByName(HWND hListBox, const std::wstring& itemName);
 };
 
 

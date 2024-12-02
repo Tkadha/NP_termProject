@@ -62,14 +62,18 @@ void CGameFramework::InputProcess(WPARAM wParam, WPARAM lParam, UINT uMsg)
 
 	case SendTeamRed:
 		DeleteItemByName(hListBoxBlue, wPlayer.c_str());
-		SendMessage(hListBoxRed, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
-		networkManager.SendColorPacket(RED);
+		if (FindItemByName(hListBoxRed, wPlayer.c_str())) {
+			//SendMessage(hListBoxRed, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
+			networkManager.SendColorPacket(RED);
+		}
 		break;
 
 	case SendTeamBlue:
 		DeleteItemByName(hListBoxRed, wPlayer.c_str());
-		SendMessage(hListBoxBlue, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
-		networkManager.SendColorPacket(BLUE);
+		if (FindItemByName(hListBoxBlue, wPlayer.c_str())) {
+			//SendMessage(hListBoxBlue, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
+			networkManager.SendColorPacket(BLUE);
+		}
 		break;
 	}
 }
@@ -106,4 +110,22 @@ void CGameFramework::DeleteItemByName(HWND hListBox, const std::wstring& itemNam
 		}
 	}
 	
+}
+
+bool CGameFramework::FindItemByName(HWND hListBox, const std::wstring& itemName)
+{
+	int count = SendMessage(hListBox, LB_GETCOUNT, 0, 0);
+	for (int i = 0; i < count; ++i)
+	{
+		
+		wchar_t buffer[256];
+		SendMessage(hListBox, LB_GETTEXT, i, (LPARAM)buffer);
+
+
+		if (itemName == buffer)
+		{
+			return false;
+		}
+	}
+	return true;
 }

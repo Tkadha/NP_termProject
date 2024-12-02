@@ -39,10 +39,20 @@ void ProcessPacket(char* packet)
 	{
 	case SC_TEAM_CHOICE: {
 		TEAM_PACKET* p = reinterpret_cast<TEAM_PACKET*>(packet);
-		if (p->teamcolor == RED)
+		std::string str(game.players[p->id].name);
+		std::wstring wPlayer = game.StringToWString(str);
+		if (p->teamcolor == RED) {
 			game.players[p->id].team = Red;
-		else if (p->teamcolor == BLUE)
+			if (game.pid != p->id) {
+				SendMessage(hListBoxRed, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
+			}
+		}
+		else if (p->teamcolor == BLUE) {
 			game.players[p->id].team = Blue;
+			if (game.pid != p->id) {
+				SendMessage(hListBoxBlue, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
+			}
+		}
 
 		printf("player %d : %d\n", p->id, p->teamcolor);
 
@@ -61,7 +71,8 @@ void ProcessPacket(char* packet)
 		break;
 	}
 	case SC_NAME: {
-
+		NAME_PACKET*p = reinterpret_cast<NAME_PACKET*>(packet);
+		strcpy(game.players[p->id].name, p->name);
 		break;
 	}
 	case SC_LOGIN: {
