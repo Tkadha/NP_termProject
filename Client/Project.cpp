@@ -247,8 +247,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		//ShowWindow(playWnd, SW_HIDE);
 		//SetFocus(lobbyWnd);
-		
-		//game.networkManager.Con();
 		break;
 	case WM_ACTIVATE:
 		if (wParam == WA_INACTIVE) {
