@@ -3,8 +3,7 @@
 
 void CGameFramework::Update()
 {
-	timer.Tick();
-	currentScene->Update(timer.GetElapsedTime(), players);
+	currentScene->Update(players);
 }
 
 void CGameFramework::SwitchScene(CScene* newScene)

@@ -3,6 +3,7 @@
 #include <math.h>
 #include "SESSION.h"
 #include <array>
+#include "Timer.h"
 
 class InputManager
 {
@@ -36,7 +37,7 @@ public:
 class CScene
 {
 public:
-	virtual void Update(float timeElapsed, std::array <SESSION, MAXPLAYER>& players) {};
+	virtual void Update(std::array <SESSION, MAXPLAYER>& players) {};
 
 	virtual void Enter(std::array <SESSION, MAXPLAYER>& players) {};
 	virtual void Exit(std::array <SESSION, MAXPLAYER>& players) {};
@@ -57,7 +58,7 @@ private:
 public:
 	CLobbyScene() {};
 
-	void Update(float timeElapsed, std::array <SESSION, MAXPLAYER>& players);
+	void Update(std::array <SESSION, MAXPLAYER>& players);
 	
 	void Enter(std::array <SESSION, MAXPLAYER>& players) {
 		printf("Scene : Lobby\n");
@@ -69,6 +70,11 @@ class CPlayScene : public CScene
 {
 private:
 	PlayInputManager inputM;
+	CTimer timer;
+
+	std::chrono::steady_clock::time_point goalTime;
+	float goalDuration = 3.0f;
+	bool goal = false;
 
 public:
 	CPlayScene();
@@ -78,7 +84,7 @@ public:
 	CSoccerMap map;
 
 	void ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players);
-	void Update(float timeElapsed, std::array <SESSION, MAXPLAYER>& players);
+	void Update(std::array <SESSION, MAXPLAYER>& players);
 
 	void Reset(std::array <SESSION, MAXPLAYER>& players);
 

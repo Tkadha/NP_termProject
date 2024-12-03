@@ -81,21 +81,23 @@ BOOL GoalCheck(CEllipseObject& ball, CMap& map)
 }
 
 
-
 CPlayScene::CPlayScene()
 {
-	ball.position = { WindowWidth/2, WindowHeight/2 };
+	timer.Start();
 }
 
-void CPlayScene::Update(float timeElapsed, std::array <SESSION, MAXPLAYER>& players)
+void CPlayScene::Update(std::array <SESSION, MAXPLAYER>& players)
 {
+	timer.Tick();
+	float timeElapsed = timer.GetElapsedTime();
+
 	ObjectCollisionCheck(players);
 	for (SESSION& player : players) {
 		if (player.state == E_OFFLINE) continue;		
 		if (player.team_color == OBSERVER) continue;
 		double px = player.p.position.x;
 		double py = player.p.position.y;
-		player.p.Update(timeElapsed);
+		player.p.Update(timeElapsed, goal);		// 골이 들어가면 입력으로 인한 속도 변화 X
 		if (px != player.p.position.x || py != player.p.position.y) {
 			for (int i = 0; i < MAXPLAYER; ++i) {
 				if (players[i].state == E_OFFLINE) continue;
@@ -113,6 +115,13 @@ void CPlayScene::Update(float timeElapsed, std::array <SESSION, MAXPLAYER>& play
 		}
 	}
 	//printf("play Update\n");
+
+	if (goal) {
+		if (std::chrono::duration<float>(timer.Now() - goalTime).count() > goalDuration) {
+			goal = false;
+			Reset(players);
+		}
+	}
 }
 
 
@@ -164,12 +173,16 @@ void CPlayScene::ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players)
 		}
 	}
 
+	
 	// 공 <-> 맵(벽)
 	MapCollisionCheck(ball, map, -1.0);
 
-	if (GoalCheck(ball, map)) {
-		printf("Goal\n");
-		Reset(players);
+	if (!goal) {
+		if (GoalCheck(ball, map)) {
+			printf("Goal\n");
+			goalTime = timer.Now();
+			goal = true;
+		}
 	}
 }
 
@@ -284,7 +297,7 @@ void LobbyInputManager::Update(WPARAM wParam, WPARAM lParam, UINT uMsg) {
 
 
 //----------------------------------------------------------------------------
-void CLobbyScene::Update(float timeElapsed, std::array <SESSION, MAXPLAYER>& p)
+void CLobbyScene::Update(std::array <SESSION, MAXPLAYER>& p)
 {
 	//printf("lobby Update\n");
 }

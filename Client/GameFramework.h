@@ -16,8 +16,8 @@ public:
 	std::array <CPlayer, MAXPLAYER> players;
 
 	InputManager* inputManager;
-	CPlayScene playScene;
-	CLobbyScene lobbyScene;
+	CPlayScene playScene{};
+	CLobbyScene lobbyScene{};
 
 	NetWorkManager networkManager;
 

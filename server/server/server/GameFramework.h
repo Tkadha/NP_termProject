@@ -1,12 +1,10 @@
 #pragma once
 #include "Scene.h"
-#include "Timer.h"
 
 
 class CGameFramework
 {
 	CScene* currentScene;
-	CTimer timer;
 
 public:
 	std::array <SESSION, MAXPLAYER> players;
@@ -14,7 +12,7 @@ public:
 	CPlayScene playScene{};
 	CLobbyScene lobbyScene{};
 
-	CGameFramework() { timer.Start(); currentScene = &lobbyScene; };
+	CGameFramework() {currentScene = &lobbyScene; };
 public:
 	void Update();
 	

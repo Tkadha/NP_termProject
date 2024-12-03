@@ -10,9 +10,10 @@ CPlayer::CPlayer()
 	physicsC = new PhysicsComponent;
 }
 
-void CPlayer::Update(float timeElapsed)
+void CPlayer::Update(float timeElapsed, bool goal)
 {
-	inputC->Update(*this, KeyDownBuffer, timeElapsed);
+	if(!goal)
+		inputC->Update(*this, KeyDownBuffer, timeElapsed);
 	physicsC->Update(*this, timeElapsed);
 
 	std::clamp(velocity.x, maxVelocity.x, maxVelocity.x);

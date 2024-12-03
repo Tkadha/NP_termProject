@@ -15,7 +15,7 @@ public:
 
 	CPlayer();
 
-	void Update(float timeElapsed);
+	void Update(float timeElapsed, bool goal);
 
 	void Reset(XY pos);		// 게임 시작, 골 들어갔을 때
 

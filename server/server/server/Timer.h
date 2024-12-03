@@ -14,6 +14,8 @@ public:
     // 프레임마다 호출하여 lastTick 및 timeElapsed 갱신
     void Tick();
 
+    auto Now() { return std::chrono::steady_clock::now(); }
+
     float GetElapsedTime() const { return timeElapsed; }
 
 private:
