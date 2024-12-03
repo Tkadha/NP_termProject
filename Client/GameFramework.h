@@ -21,7 +21,7 @@ public:
 
 	NetWorkManager networkManager;
 
-	int pid{};
+	int pid = -1;
 
 	CGameFramework() { networkManager.Con(); };
 

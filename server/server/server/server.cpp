@@ -145,6 +145,7 @@ void PlayerThread(int id)
 		if (game.players[i].state == E_ONLINE && id != i) {
 			game.players[id].SendLoginPacket(i);
 			game.players[id].SendPlayerTeamPacket(i, game.players[i].team_color);
+			game.players[id].SendNamePacket(i, game.players[i].p.name);
 		}
 	}
 

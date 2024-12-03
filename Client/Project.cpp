@@ -41,15 +41,20 @@ void ProcessPacket(char* packet)
 		TEAM_PACKET* p = reinterpret_cast<TEAM_PACKET*>(packet);
 		std::string str(game.players[p->id].name);
 		std::wstring wPlayer = game.StringToWString(str);
+		std::cout << "클라이언트: " << game.pid << std::endl;
+		std::cout << "받은 id:" << p->id << std::endl;
+		std::cout << "받은 이름:" << game.players[p->id].name << std::endl;
 		if (p->teamcolor == RED) {
 			game.players[p->id].team = Red;
 			if (game.pid != p->id) {
+				game.DeleteItemByName(hListBoxBlue, wPlayer.c_str());
 				SendMessage(hListBoxRed, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
 			}
 		}
 		else if (p->teamcolor == BLUE) {
 			game.players[p->id].team = Blue;
 			if (game.pid != p->id) {
+				game.DeleteItemByName(hListBoxRed, wPlayer.c_str());
 				SendMessage(hListBoxBlue, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
 			}
 		}
@@ -162,6 +167,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	game.networkManager.SendNamePacket(playerNameCStr);
 	
 	std::cout << "Welcome, " << playerName << "!" << std::endl;
+
+	
 	
 	MSG Message;
 	WNDCLASSEX WndClass;
