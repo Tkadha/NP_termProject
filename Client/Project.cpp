@@ -52,16 +52,6 @@ void ProcessPacket(char* packet)
 				SendMessage(hListBoxBlue, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
 			}
 		}
-
-		printf("player %d : %d\n", p->id, p->teamcolor);
-
-		for (const CPlayer p : game.players)
-		{
-			if (p.state == ONLINE) {
-				printf("%d\t", p.team);
-			}
-		}
-		printf("\n");
 		break;
 	}
 
@@ -80,7 +70,6 @@ void ProcessPacket(char* packet)
 			game.pid = p->id;
 		game.players[p->id].state = ONLINE;
 
-		printf("pid : %d\n", game.pid);
 		break;
 	}
 	case SC_LOGOUT: {
