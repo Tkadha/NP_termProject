@@ -135,6 +135,7 @@ void PlayerThread(int id)
 	//	game.players[id].team_color = OBSERVER;
 
 	game.players[id].SendLoginPacket(id);
+	printf("Send Login id : %d", id);
 	if(game.IsPlayScene())
 		game.players[id].SendScenePacket(id, PLAY);
 	else

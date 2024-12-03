@@ -31,10 +31,9 @@ CGameFramework game{};
 
 
 CRITICAL_SECTION cs;
+
 void ProcessPacket(char* packet)
-{
-	
-	
+{	
 	switch (packet[1])
 	{
 	case SC_TEAM_CHOICE: {
@@ -80,6 +79,8 @@ void ProcessPacket(char* packet)
 		if(game.pid == -1)
 			game.pid = p->id;
 		game.players[p->id].state = ONLINE;
+
+		printf("pid : %d\n", game.pid);
 		break;
 	}
 	case SC_LOGOUT: {

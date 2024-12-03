@@ -5,6 +5,8 @@
 class EllipseComponent;
 class RectangleComponent;
 
+
+
 class CObject
 {
 public:
@@ -81,8 +83,18 @@ protected:
 	HBRUSH hBrush, oldBrush;
 	HPEN hPen, oldPen;
 
+	LOGFONT LogFont;
+	HFONT hF, oldF;
+
 public:
-	GraphicsComponent() {};
+	GraphicsComponent() {
+		ZeroMemory(&LogFont, sizeof(LOGFONT));
+		LogFont.lfHeight = 20;
+		LogFont.lfWeight = 27;
+		LogFont.lfCharSet = HANGEUL_CHARSET;
+		LogFont.lfPitchAndFamily = VARIABLE_PITCH | FF_ROMAN;
+		lstrcpy(LogFont.lfFaceName, TEXT("ÈÞ¸Õ¸ÅÁ÷Ã¼"));
+	};
 
 	virtual void Render(CEllipseObject& player, HDC& dc) {};
 	virtual void Render(CRectangleObject& player, HDC& dc, BOOL fill) {};

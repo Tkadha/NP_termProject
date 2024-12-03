@@ -99,6 +99,28 @@ void EllipseComponent::Render(CEllipseObject& object, HDC& dc)
 			DeleteObject(hPen);
 		}
 	}
+
+	if (playerPtr) {
+		hF = CreateFontIndirect(&LogFont);
+		oldF = (HFONT)SelectObject(dc, hF);
+		SetTextColor(dc, RGB(255, 255, 255));
+		SetBkMode(dc, 1);
+		wchar_t* name = NULL;
+		int chrSize = MultiByteToWideChar(CP_ACP, 0, playerPtr->name , -1, NULL, NULL);
+		name = new WCHAR[chrSize];
+		MultiByteToWideChar(CP_ACP, 0, playerPtr->name, strlen(playerPtr->name) + 1, name, chrSize);
+
+		SIZE textSize;
+		GetTextExtentPoint32(dc, name, lstrlenW(name), &textSize);
+
+		// 텍스트 출력 위치 계산
+		int textX = object.position.x - (textSize.cx / 2);
+		int textY = object.position.y - (textSize.cy / 2);
+
+		TextOut(dc, textX, textY, name, lstrlen(name));
+		SelectObject(dc, oldF);
+		DeleteObject(hF);
+	}
 }
 
 void RectangleComponent::Render(CRectangleObject& object, HDC dc, BOOL fill)
