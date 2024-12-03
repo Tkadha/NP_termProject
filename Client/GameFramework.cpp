@@ -63,7 +63,7 @@ void CGameFramework::InputProcess(WPARAM wParam, WPARAM lParam, UINT uMsg)
 	case SendTeamRed:
 		DeleteItemByName(hListBoxBlue, wPlayer.c_str());
 		if (FindItemByName(hListBoxRed, wPlayer.c_str())) {
-			//SendMessage(hListBoxRed, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
+			SendMessage(hListBoxRed, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
 			networkManager.SendColorPacket(RED);
 		}
 		break;
@@ -71,7 +71,7 @@ void CGameFramework::InputProcess(WPARAM wParam, WPARAM lParam, UINT uMsg)
 	case SendTeamBlue:
 		DeleteItemByName(hListBoxRed, wPlayer.c_str());
 		if (FindItemByName(hListBoxBlue, wPlayer.c_str())) {
-			//SendMessage(hListBoxBlue, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
+			SendMessage(hListBoxBlue, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
 			networkManager.SendColorPacket(BLUE);
 		}
 		break;
