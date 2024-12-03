@@ -169,40 +169,38 @@ void CPlayScene::ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players)
 
 	if (GoalCheck(ball, map)) {
 		printf("Goal\n");
-		ball.Reset();
+		Reset(players);
 	}
-}
-
-void CPlayScene::Reset()
-{
-	ball.position = { WindowWidth / 2,WindowHeight / 2 };
-
-	map.Reset();
 }
 
 void CPlayScene::Enter(std::array <SESSION, MAXPLAYER>& players)
 {
+	Reset(players);
+}
+
+void CPlayScene::Reset(std::array <SESSION, MAXPLAYER>& players)
+{
 	int red{}, blue{};
-	for (SESSION player : players) {
+	for (const SESSION player : players) {
 		if (player.state == E_OFFLINE) continue;
 		if (player.team_color == RED)
 			red++;
 		else if (player.team_color == BLUE)
 			blue++;
-			
+
 	}
 
 	double distance = 150.0f;	// 중앙선으로부터 거리
-	double redWidth = WindowHeight / (red + 1), redY{redWidth};
-	double blueWidth = WindowHeight / (blue + 1), blueY{blueWidth};
+	double redWidth = WindowHeight / (red + 1), redY{ redWidth };
+	double blueWidth = WindowHeight / (blue + 1), blueY{ blueWidth };
 	for (SESSION& player : players) {
 		if (player.state == E_OFFLINE) continue;
 		if (player.team_color == RED) {
-			player.p.position = { WindowWidth / 2 - distance,redY };
+			player.p.Reset({ WindowWidth / 2 - distance,redY });
 			redY += redWidth;
 		}
 		else if (player.team_color == BLUE) {
-			player.p.position = { WindowWidth / 2 + distance,blueY };
+			player.p.Reset({ WindowWidth / 2 + distance,blueY });
 			blueY += blueWidth;
 		}
 	}
@@ -217,13 +215,16 @@ void CPlayScene::Enter(std::array <SESSION, MAXPLAYER>& players)
 		}
 	}
 
-
-	ball.position = { WindowWidth / 2,WindowHeight / 2 };
+	ball.Reset();
 	for (int i = 0; i < MAXPLAYER; ++i) {
 		if (players[i].state == E_OFFLINE) continue;
 		players[i].SendPosPacket(-1, ball.position.x, ball.position.y, BALL);
 	}
+
+	map.Reset();
 }
+
+
 
 
 //----------------------------------------------------------------------------

@@ -80,7 +80,7 @@ public:
 	void ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players);
 	void Update(float timeElapsed, std::array <SESSION, MAXPLAYER>& players);
 
-	void Reset();
+	void Reset(std::array <SESSION, MAXPLAYER>& players);
 
 	void Enter(std::array <SESSION, MAXPLAYER>& players);
 	void Exit(std::array <SESSION, MAXPLAYER>& players) {};
