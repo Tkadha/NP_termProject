@@ -326,6 +326,7 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	static BOOL LMouse, RMouse;
 
+	XY camera;
 	// 메시지 처리하기
 	switch (uMsg) {
 	case WM_CREATE:
@@ -357,7 +358,13 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		hdc = BeginPaint(hwnd, &ps);
 		memdc = CreateCompatibleDC(hdc);
 		SelectObject(memdc, hBit);
-		BitBlt(hdc, 0, 0, WindowWidth, WindowHeight, memdc, 0, 0, SRCCOPY);
+		camera.x = game.players[game.pid].position.x - ScreenWidth / 2;
+		camera.y = game.players[game.pid].position.y - ScreenHeight / 2;
+
+		camera.x = max(0, min(camera.x, WindowWidth - ScreenWidth));
+		camera.y = max(0, min(camera.y, WindowHeight - ScreenHeight));
+		printf("camera : %f, %f\n", camera.x, camera.y);
+		BitBlt(hdc, 0, 0, ScreenWidth, ScreenHeight, memdc, camera.x, camera.y, SRCCOPY);
 		DeleteDC(memdc);
 
 		EndPaint(hwnd, &ps);

@@ -12,6 +12,8 @@
 
 #define WindowWidth 1440
 #define WindowHeight 900
+#define ScreenWidth 1280
+#define ScreenHeight  720
 
 #define PixelPerMeter 12
 #define MeterPerPixel 1/12
