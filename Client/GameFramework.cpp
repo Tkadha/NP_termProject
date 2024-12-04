@@ -26,6 +26,18 @@ void CGameFramework::ChangeScene(E_SCENEKIND scene)
 		ShowWindow(playWnd, SW_SHOW);
 		PostMessage(hWnd, WM_SET_FOCUS_TO_PLAY, 0, 0);
 		SwitchScene(&playScene);
+
+		// 자식 윈도우 크기에 맞춰 부모 윈도우 크기 변경
+		RECT childRect;
+		GetWindowRect(playWnd, &childRect);
+
+		// 부모 윈도우의 클라이언트 영역을 계산
+		RECT newParentRect = { 0, 0, childRect.right - childRect.left, childRect.bottom - childRect.top };
+		AdjustWindowRect(&newParentRect, GetWindowLong(hWnd, GWL_STYLE), FALSE);
+
+		// 부모 윈도우 크기 설정
+		SetWindowPos(hWnd, NULL, 0, 0, newParentRect.right - newParentRect.left, newParentRect.bottom - newParentRect.top,
+			SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
 		return;
 	}
 	else if (scene == LOBBY) {
@@ -33,6 +45,18 @@ void CGameFramework::ChangeScene(E_SCENEKIND scene)
 		ShowWindow(lobbyWnd, SW_SHOW);
 		PostMessage(hWnd, WM_SET_FOCUS_TO_LOBBY, 0, 0);
 		SwitchScene(&lobbyScene);
+
+		// 자식 윈도우 크기에 맞춰 부모 윈도우 크기 변경
+		RECT childRect;
+		GetWindowRect(lobbyWnd, &childRect);
+
+		// 부모 윈도우의 클라이언트 영역을 계산
+		RECT newParentRect = { 0, 0, childRect.right - childRect.left, childRect.bottom - childRect.top };
+		AdjustWindowRect(&newParentRect, GetWindowLong(hWnd, GWL_STYLE), FALSE);
+
+		// 부모 윈도우 크기 설정
+		SetWindowPos(hWnd, NULL, 0, 0, newParentRect.right - newParentRect.left, newParentRect.bottom - newParentRect.top,
+			SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
 		return;
 	}
 }
