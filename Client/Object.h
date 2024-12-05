@@ -46,6 +46,13 @@ public:
 	void Render(HDC& dc);
 };
 
+class CCenterCircle : public CEllipseObject
+{
+public:
+	CCenterCircle();
+
+	void Render(HDC& dc);
+};
 
 
 class CRectangleObject : public CObject
@@ -69,7 +76,7 @@ public:
 	CSoccerGoal();
 	CSoccerGoal(E_team team);
 
-	void Render(HDC dc);
+	void Render(HDC& dc);
 	Rect GetBB() { return BoundingBox; }
 };
 
@@ -97,6 +104,7 @@ public:
 	};
 
 	virtual void Render(CEllipseObject& player, HDC& dc) {};
+	virtual void Render(CEllipseObject& player, HDC& dc, BOOL fill) {};
 	virtual void Render(CRectangleObject& player, HDC& dc, BOOL fill) {};
 };
 
@@ -108,6 +116,7 @@ public:
 	EllipseComponent() {};
 
 	void Render(CEllipseObject& player, HDC& dc);
+	void Render(CEllipseObject& player, HDC& dc, BOOL fill);
 };
 
 class RectangleComponent : GraphicsComponent

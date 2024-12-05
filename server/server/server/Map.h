@@ -17,6 +17,7 @@ class CSoccerMap : public CMap
 public:
 	CGoalpost RedGoalpost[2], BlueGoalpost[2];
 	CSoccerGoal RedGoal{ RED }, BlueGoal{ BLUE };
+	CCenterCircle CenterCircle{};
 
 	CSoccerMap();
 

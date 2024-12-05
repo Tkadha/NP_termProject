@@ -74,7 +74,7 @@ private:
 
 	std::chrono::steady_clock::time_point goalTime;
 	float goalDuration = 3.0f;
-	bool goal = false;
+	bool goal = false, kickOff = false;
 
 public:
 	CPlayScene();

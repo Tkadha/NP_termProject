@@ -39,7 +39,6 @@ void CSoccerMap::Render(HDC& dc)
     LineTo(dc, rect.right, rect.bottom);
     hB = (HBRUSH)GetStockObject(NULL_BRUSH);
     oldB = (HBRUSH)SelectObject(dc, hB);
-    Ellipse(dc, WindowWidth/2 - 100, WindowHeight/2 - 100, WindowWidth/2 + 100, WindowHeight/2 + 100);
     Rectangle(dc, rect.left, rect.top, rect.right, rect.bottom);
     SelectObject(dc, oldP);
     DeleteObject(hP);
@@ -49,6 +48,7 @@ void CSoccerMap::Render(HDC& dc)
 
     RedGoal.Render(dc);
     BlueGoal.Render(dc);
+    centerCircle.Render(dc);
 
     for (int i = 0; i < 2; ++i) {
         BlueGoalpost[i].Render(dc);

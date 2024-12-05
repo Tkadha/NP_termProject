@@ -63,18 +63,40 @@ void CollisionUpdate(CEllipseObject& a, CEllipseObject& b, double repulsion)
 	}
 }
 
+void KickOffCheck(CEllipseObject& player, CEllipseObject& circle)
+{
+	double dx = player.position.x - circle.position.x;
+	double dy = player.position.y - circle.position.y;
+	double distance = sqrt(dx * dx + dy * dy);
+
+	if (distance < player.size + circle.size) {
+		double overlap = player.size + circle.size - distance;
+		double NormalX = dx / distance;
+		double NormalY = dy / distance;
+
+		player.position.x += overlap * NormalX;
+		player.position.y += overlap * NormalY;
+	}
+
+}
+
+
 BOOL GoalCheck(CEllipseObject& ball, CMap& map)
 {
 	if (CSoccerMap* sMap = dynamic_cast<CSoccerMap*>(&map)) {
 		Rect bb = sMap->RedGoal.GetBB();
 		if (ball.position.x - ball.size >= bb.left && ball.position.x + ball.size <= bb.right &&
-			ball.position.y - ball.size >= bb.top && ball.position.y + ball.size <= bb.bottom)
+			ball.position.y - ball.size >= bb.top && ball.position.y + ball.size <= bb.bottom) {
+			sMap->CenterCircle.team = RED;
 			return true;
+		}
 	
 		bb = sMap->BlueGoal.GetBB();
 		if (ball.position.x - ball.size >= bb.left && ball.position.x + ball.size <= bb.right &&
-			ball.position.y - ball.size >= bb.top && ball.position.y + ball.size <= bb.bottom)
+			ball.position.y - ball.size >= bb.top && ball.position.y + ball.size <= bb.bottom) {
+			sMap->CenterCircle.team = BLUE;
 			return true;
+		}
 	}
 
 	return false;
@@ -119,6 +141,7 @@ void CPlayScene::Update(std::array <SESSION, MAXPLAYER>& players)
 	if (goal) {
 		if (std::chrono::duration<float>(timer.Now() - goalTime).count() > goalDuration) {
 			goal = false;
+			kickOff = true;
 			Reset(players);
 		}
 	}
@@ -143,6 +166,11 @@ void CPlayScene::ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players)
 			else {
 				double repulsion = -0.1;
 				CollisionUpdate(player.p, ball, repulsion);
+			}
+			
+			if (kickOff) {
+				kickOff = false;
+				map.CenterCircle.team = OBSERVER;
 			}
 		}
 	}
@@ -182,6 +210,29 @@ void CPlayScene::ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players)
 			printf("Goal\n");
 			goalTime = timer.Now();
 			goal = true;
+		}
+	}
+
+	if (kickOff) {
+		for (SESSION& player : players) {
+			if (player.state == E_OFFLINE) continue;
+			if (player.team_color == OBSERVER) continue;
+			if (player.team_color == RED) {
+				if (player.p.position.x + player.p.size > WindowWidth / 2) {
+					player.p.position.x = WindowWidth / 2 - player.p.size;
+				}
+			}
+			else if (player.team_color == BLUE) {
+				if (player.p.position.x - player.p.size < WindowWidth / 2) {
+					player.p.position.x = WindowWidth / 2 + player.p.size;
+				}
+			}
+
+			// 플레이어 <-> 센터서클
+			if (player.team_color == map.CenterCircle.team) continue;
+			if (CollisionCheck(player.p, map.CenterCircle)) {
+				KickOffCheck(player.p, map.CenterCircle);
+			}
 		}
 	}
 }

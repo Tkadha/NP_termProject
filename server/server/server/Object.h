@@ -48,6 +48,14 @@ private:
 	//EllipseComponent graphicsC;
 };
 
+class CCenterCircle : public CEllipseObject
+{
+public:
+	E_TEAMCOLOR team;
+
+	CCenterCircle();
+
+};
 
 
 class CRectangleObject : public CObject
@@ -72,6 +80,7 @@ public:
 
 	Rect GetBB() { return BoundingBox; }
 };
+
 
 
 //--------------------------------------Component-----------------------------------------

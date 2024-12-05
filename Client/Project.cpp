@@ -363,7 +363,7 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		camera.x = max(0, min(camera.x, WindowWidth - ScreenWidth));
 		camera.y = max(0, min(camera.y, WindowHeight - ScreenHeight));
-		printf("camera : %f, %f\n", camera.x, camera.y);
+
 		BitBlt(hdc, 0, 0, ScreenWidth, ScreenHeight, memdc, camera.x, camera.y, SRCCOPY);
 		DeleteDC(memdc);
 

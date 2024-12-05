@@ -59,7 +59,19 @@ CSoccerGoal::CSoccerGoal(E_team team)
 	graphicsC = new RectangleComponent;
 }
 
-void CSoccerGoal::Render(HDC dc)
+void CSoccerGoal::Render(HDC& dc)
+{
+	graphicsC->Render(*this, dc, false);
+}
+
+CCenterCircle::CCenterCircle()
+{
+	position = { WindowWidth / 2, WindowHeight / 2 };
+	size = 100;
+	team = Object;
+}
+
+void CCenterCircle::Render(HDC& dc)
 {
 	graphicsC->Render(*this, dc, false);
 }
@@ -121,6 +133,44 @@ void EllipseComponent::Render(CEllipseObject& object, HDC& dc)
 		SelectObject(dc, oldF);
 		DeleteObject(hF);
 	}
+}
+
+void EllipseComponent::Render(CEllipseObject& object, HDC& dc, BOOL fill)
+{
+	if (fill) {
+		if (object.team == Ball)
+			hBrush = CreateSolidBrush(RGB(255, 255, 0));
+		else if (object.team == Object)
+			hBrush = CreateSolidBrush(RGB(255, 255, 255));
+		else if (object.team == Red)
+			hBrush = CreateSolidBrush(RGB(255, 0, 0));
+		else if (object.team == Blue)
+			hBrush = CreateSolidBrush(RGB(0, 0, 255));
+		else if (object.team = Observer)
+			hBrush = (HBRUSH)GetStockObject(NULL_BRUSH);
+	}
+	else {
+		hBrush = (HBRUSH)GetStockObject(NULL_BRUSH);
+	}
+
+	if(object.team == Red)
+		hPen = CreatePen(PS_SOLID, 3, RGB(255, 0, 0));
+	else if (object.team == Blue)
+		hPen = CreatePen(PS_SOLID, 3, RGB(0, 0, 255));
+	else if (object.team == Object)
+		hPen = CreatePen(PS_SOLID, 3, RGB(255, 255, 255));
+	oldPen = (HPEN)SelectObject(dc, hPen);
+
+
+	oldBrush = (HBRUSH)SelectObject(dc, hBrush);
+	Ellipse(dc, object.position.x - object.size,
+		object.position.y - object.size,
+		object.position.x + object.size,
+		object.position.y + object.size);
+	SelectObject(dc, oldPen);
+	DeleteObject(hPen);
+	SelectObject(dc, oldBrush);
+	DeleteObject(hBrush);
 }
 
 void RectangleComponent::Render(CRectangleObject& object, HDC dc, BOOL fill)

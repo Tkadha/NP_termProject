@@ -51,6 +51,16 @@ CSoccerGoal::CSoccerGoal(E_TEAMCOLOR team)
 }
 
 
+CCenterCircle::CCenterCircle()
+{
+	position = { WindowWidth / 2, WindowHeight / 2 };
+	size = 100;
+	team = OBSERVER;
+}
+
+
+
+
 void PhysicsComponent::Update(CEllipseObject& object, float timeElapsed) {
 	// ¿Ãµø
 	object.position.x += object.velocity.x * MeterPerPixel;
