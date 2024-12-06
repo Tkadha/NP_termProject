@@ -37,6 +37,8 @@ public:
 
 	void InitScene();
 
+	void MapUpdate(E_team circle);
+
 	// юс╫ц
 	void PlayerUpdate(int id, XY pos);
 	void SetPos(XY pos) { currentScene->SetPos(pos); };

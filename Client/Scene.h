@@ -36,11 +36,15 @@ public:
 class CScene
 {
 public:
+	virtual ~CScene() {};
+
 	virtual void Enter() {};
 	virtual void Update() {};
 	virtual void Render(HDC& dc, std::array <CPlayer, MAXPLAYER> players) {};
 	virtual void Exit() {};
 	virtual void setFocus() {};
+
+	virtual void CircleUpdate(E_team) {};
 	
 	// 임시로 만듬
 	virtual void SetPos(XY pos) {};
@@ -87,11 +91,11 @@ private:
 
 public:
 	CPlayScene();
-	//CSoccerMap soccerMap;
 
 	CBall ball;						// 공
 
-	CSoccerMap map;
+	CMap* map;
+	CSoccerMap soccerMap;
 
 	void Update();
 	void Render(HDC& dc, std::array <CPlayer, MAXPLAYER> players);
@@ -100,6 +104,8 @@ public:
 	void Exit() { printf("EXIT : Play Scene\n"); };
 
 	void setFocus() { PostMessage(hWnd, WM_SET_FOCUS_TO_PLAY, 0, 0); };
+
+	void CircleUpdate(E_team color);
 
 	// 임시
 	void SetPos(XY pos);

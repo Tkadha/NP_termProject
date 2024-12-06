@@ -8,6 +8,10 @@ public:
 
 	HBRUSH hB, oldB;
 	HPEN hP, oldP;
+
+	virtual ~CMap() {};
+
+	virtual void Render(HDC& dc) {};
 };
 
 class CSoccerMap : public CMap

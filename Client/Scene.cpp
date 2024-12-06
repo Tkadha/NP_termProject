@@ -6,6 +6,8 @@ CPlayScene::CPlayScene()
 {
 	ball.team = Ball;
 	ball.position = { WindowWidth / 2,WindowHeight / 2 };
+	
+	map = &soccerMap;
 }
 
 void CPlayScene::Update()
@@ -15,7 +17,7 @@ void CPlayScene::Update()
 
 void CPlayScene::Render(HDC& dc, std::array <CPlayer, MAXPLAYER> players)
 {
-	map.Render(dc);
+	map->Render(dc);
 	ball.Render(dc);
 	for (CPlayer& player : players) {
 		if (player.state == OFFLINE) continue;
@@ -31,6 +33,15 @@ void CPlayScene::SetPos(XY pos)
 void CPlayScene::SetBallPos(XY pos)
 {
 	ball.position = pos;
+}
+
+void CPlayScene::CircleUpdate(E_team color)
+{
+	if (CSoccerMap* sMap = dynamic_cast<CSoccerMap*>(map)) {
+		if (color == Observer)
+			color = Object;
+		sMap->centerCircle.team = color;
+	}
 }
 
 //----------------------------------------------------------------------------

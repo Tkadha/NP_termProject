@@ -143,6 +143,12 @@ void CPlayScene::Update(std::array <SESSION, MAXPLAYER>& players)
 			goal = false;
 			kickOff = true;
 			Reset(players);
+			for (SESSION& player : players) {
+				if (player.state == E_OFFLINE) continue;
+				if (CSoccerMap* sMap = dynamic_cast<CSoccerMap*>(&map)) {
+					player.SendPlayerTeamPacket(MAXPLAYER + 1, sMap->CenterCircle.team);
+				}
+			}
 		}
 	}
 }
@@ -171,6 +177,13 @@ void CPlayScene::ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players)
 			if (kickOff) {
 				kickOff = false;
 				map.CenterCircle.team = OBSERVER;
+
+				for (SESSION& player : players) {
+					if (player.state == E_OFFLINE) continue;
+					if (CSoccerMap* sMap = dynamic_cast<CSoccerMap*>(&map)) {
+						player.SendPlayerTeamPacket(MAXPLAYER + 1, sMap->CenterCircle.team);
+					}
+				}
 			}
 		}
 	}

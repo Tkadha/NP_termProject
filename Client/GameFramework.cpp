@@ -19,6 +19,13 @@ void CGameFramework::InitScene()
 		ChangeScene(LOBBY);
 }
 
+void CGameFramework::MapUpdate(E_team circle)
+{
+	if (CPlayScene* pScene = dynamic_cast<CPlayScene*>(currentScene)) {
+		pScene->CircleUpdate(circle);
+	}
+}
+
 void CGameFramework::ChangeScene(E_SCENEKIND scene)
 {
 	if (scene == PLAY) {

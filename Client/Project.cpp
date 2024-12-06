@@ -38,6 +38,10 @@ void ProcessPacket(char* packet)
 	{
 	case SC_TEAM_CHOICE: {
 		TEAM_PACKET* p = reinterpret_cast<TEAM_PACKET*>(packet);
+		if (p->id == MAXPLAYER + 1) {
+			game.MapUpdate((E_team)p->teamcolor);
+			break;
+		}
 		std::string str(game.players[p->id].name);
 		std::wstring wPlayer = game.StringToWString(str);
 		if (p->teamcolor == RED) {
