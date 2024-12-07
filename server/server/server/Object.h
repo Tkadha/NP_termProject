@@ -13,6 +13,7 @@ class CEllipseObject : public CObject
 {
 public:
 	XY velocity{};
+	XY wind_velocity{};
 	double friction{};		// ¸¶Âû °è¼ö
 	int size{};
 
@@ -58,7 +59,6 @@ public:
 	XY size;
 	//RGB color{ 100,100,100 };
 };
-
 
 
 class CSoccerGoal : public CRectangleObject

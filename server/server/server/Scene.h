@@ -80,8 +80,12 @@ public:
 	CPlayScene();
 
 	CBall ball;						// 공
-
 	CSoccerMap map;
+
+	CRectangleObject obstacle;		// 장애물
+	bool b_obtacle;
+
+	XY wind_way;
 
 	void ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players);
 	void Update(std::array <SESSION, MAXPLAYER>& players);

@@ -84,6 +84,7 @@ BOOL GoalCheck(CEllipseObject& ball, CMap& map)
 CPlayScene::CPlayScene()
 {
 	timer.Start();
+	b_obtacle = false;
 }
 
 void CPlayScene::Update(std::array <SESSION, MAXPLAYER>& players)

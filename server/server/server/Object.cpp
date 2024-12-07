@@ -53,8 +53,8 @@ CSoccerGoal::CSoccerGoal(E_TEAMCOLOR team)
 
 void PhysicsComponent::Update(CEllipseObject& object, float timeElapsed) {
 	// 이동
-	object.position.x += object.velocity.x * MeterPerPixel;
-	object.position.y += object.velocity.y * MeterPerPixel;
+	object.position.x += (object.velocity.x + object.wind_velocity.x) * MeterPerPixel;
+	object.position.y += (object.velocity.y + object.wind_velocity.y) * MeterPerPixel;
 
 
 	// 마찰력 적용

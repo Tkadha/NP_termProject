@@ -10,6 +10,7 @@
 int FindRemainID();
 E_TEAMCOLOR GetLessTeam();
 bool IsGameEnd();
+void WindWay(int);
 
 // 소켓 함수 오류 출력 후 종료
 void err_quit(const char* msg)
@@ -201,16 +202,24 @@ void EventThread()
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<int> dis(0, 100);
+	std::uniform_int_distribution<int> wind(0, 8);
 	while (1)
 	{
 		WaitForSingleObject(event_event, INFINITE);
+		printf("EventThread On\n");
+
 		while (game.IsPlayScene())
 		{
-			Sleep(1000 * 15); // 여기는 타이머 대신 일단 써둠
+			Sleep(1000 * 5); // 여기는 타이머 대신 일단 써둠 test용 5초
 			int num = dis(gen);
 			if (num < 25) {		 // 바람 이벤트
-
-
+				printf("Wind Event On\n");
+				WindWay(wind(gen));
+				//send하기
+				Sleep(1000 * 10);
+				printf("Wind Event Off\n");
+				WindWay(-1);
+				//send하기
 			}
 			else if (num < 50) { // 장판 이벤트
 
@@ -226,6 +235,58 @@ void EventThread()
 			}
 		}
 		ResetEvent(event_event);
+		printf("EventThread Sleep\n");
+
+	}
+}
+
+void WindWay(int wind)
+{
+	// 이거 하기전에 업데이트와 동기화 작업하기
+	for (SESSION& player : game.players) {
+		if (player.state == E_OFFLINE) continue;
+		if (player.team_color == OBSERVER) continue;
+		switch (wind)
+		{
+		case 0:	// 상
+			player.p.wind_velocity.x = 0.0;
+			player.p.wind_velocity.y = -20.0;
+			break;
+		case 1:	// 우상
+			player.p.wind_velocity.x = 20.0;
+			player.p.wind_velocity.y = -20.0;
+			break;
+		case 2:	// 우
+			player.p.wind_velocity.x = 20.0;
+			player.p.wind_velocity.y = 0.0;
+			break;
+		case 3:	// 우하
+			player.p.wind_velocity.x = 20.0;
+			player.p.wind_velocity.y = 20.0;
+			break;
+		case 4:	// 하
+			player.p.wind_velocity.x = 0.0;
+			player.p.wind_velocity.y = 20.0;
+			break;
+		case 5:	// 좌하
+			player.p.wind_velocity.x = -20.0;
+			player.p.wind_velocity.y = 20.0;
+			break;
+		case 6:	// 좌
+			player.p.wind_velocity.x = 20.0;
+			player.p.wind_velocity.y = 0.0;
+			break;
+		case 7:	// 좌상
+			player.p.wind_velocity.x = -20.0;
+			player.p.wind_velocity.y = -20.0;
+			break;
+		case -1:// 초기화
+			player.p.wind_velocity.x = 0.0;
+			player.p.wind_velocity.y = 0.0;
+			break;
+		default:
+			break;
+		}
 	}
 }
 
