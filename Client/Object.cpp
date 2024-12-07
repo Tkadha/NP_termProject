@@ -76,6 +76,99 @@ void CCenterCircle::Render(HDC& dc)
 	graphicsC->Render(*this, dc, false);
 }
 
+CRim::CRim()
+{
+	size = 20;
+
+	graphicsC = new EllipseComponent;
+}
+
+CRim::CRim(XY pos)
+{
+	position = pos; 
+	size = 20;
+
+	graphicsC = new EllipseComponent;
+}
+
+void CRim::Render(HDC& dc)
+{
+	graphicsC->Render(*this, dc, false);
+}
+
+CBackBoard::CBackBoard()
+{
+	size = { 8,128 };
+	graphicsC = new RectangleComponent;
+}
+
+CBackBoard::CBackBoard(XY pos) 
+{
+	position = pos; size = { 8,16 }; graphicsC = new RectangleComponent;
+}
+
+void CBackBoard::Render(HDC& dc)
+{
+	graphicsC->Render(*this, dc, true);
+}
+
+CBasketballGoal::CBasketballGoal(E_team team) :team(team)
+{
+	if (team == Red) {
+		XY position = { 126,WindowHeight/2 };
+		BackBoard.position = position;
+
+		position.x += offset;
+		Rim.position = position;
+	}
+	else if (team == Blue) {
+		XY position = { WindowWidth - 126,WindowHeight/2 };
+		BackBoard.position = position;
+
+		position.x -= offset;
+		Rim.position = position;
+	}
+	Rim.team = team;
+}
+
+void CBasketballGoal::Render(HDC& dc)
+{
+	hPen = CreatePen(PS_SOLID, 4, RGB(0, 0, 0));
+	oldPen = (HPEN)SelectObject(dc, hPen);
+	if (team == Red) {
+		// 백보드 <-> 벽 사이의 선
+		MoveToEx(dc, 95, BackBoard.position.y - BackBoard.size.y / 3, NULL);
+		LineTo(dc, BackBoard.position.x, BackBoard.position.y - BackBoard.size.y / 4);
+		MoveToEx(dc, 95, BackBoard.position.y + BackBoard.size.y / 3, NULL);
+		LineTo(dc, BackBoard.position.x, BackBoard.position.y + BackBoard.size.y / 4);
+	
+		// 백보드 <-> 림 사이의 선
+		MoveToEx(dc, BackBoard.position.x, BackBoard.position.y - 3, NULL);
+		LineTo(dc, Rim.position.x, Rim.position.y - Rim.size + 2);
+		MoveToEx(dc, BackBoard.position.x, BackBoard.position.y + 3, NULL);
+		LineTo(dc, Rim.position.x, Rim.position.y + Rim.size - 2);
+	}
+	else if (team == Blue) {
+		// 백보드 <-> 벽 사이의 선
+		MoveToEx(dc, WindowWidth - 90, BackBoard.position.y - BackBoard.size.y / 2, NULL);
+		LineTo(dc, BackBoard.position.x, BackBoard.position.y - BackBoard.size.y / 3);
+		MoveToEx(dc, WindowWidth - 90, BackBoard.position.y + BackBoard.size.y / 2, NULL);
+		LineTo(dc, BackBoard.position.x, BackBoard.position.y + BackBoard.size.y / 3);
+
+		// 백보드 <-> 림 사이의 선
+		MoveToEx(dc, BackBoard.position.x, BackBoard.position.y - 5, NULL);
+		LineTo(dc, Rim.position.x, Rim.position.y - Rim.size + 2);
+		MoveToEx(dc, BackBoard.position.x, BackBoard.position.y + 5, NULL);
+		LineTo(dc, Rim.position.x, Rim.position.y + Rim.size - 2);
+	}
+	SelectObject(dc, oldPen);
+	DeleteObject(hPen);
+
+
+	BackBoard.Render(dc);
+	Rim.Render(dc);
+}
+
 void EllipseComponent::Render(CEllipseObject& object, HDC& dc)
 {
 	if (object.team == Ball)

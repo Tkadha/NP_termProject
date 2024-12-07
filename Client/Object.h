@@ -54,7 +54,6 @@ public:
 	void Render(HDC& dc);
 };
 
-
 class CRectangleObject : public CObject
 {
 public:
@@ -80,6 +79,38 @@ public:
 	Rect GetBB() { return BoundingBox; }
 };
 
+
+class CRim : public CEllipseObject
+{
+public:
+	CRim();
+	CRim(XY pos);
+
+	void Render(HDC& dc);
+};
+
+class CBackBoard : public CRectangleObject
+{
+public:
+	CBackBoard();
+	CBackBoard(XY pos);
+
+	void Render(HDC& dc);
+};
+
+class CBasketballGoal
+{
+	HPEN hPen, oldPen;
+	int offset = 40;
+
+	CRim Rim;
+	CBackBoard BackBoard;
+public:
+	E_team team;
+	CBasketballGoal(E_team team);
+
+	void Render(HDC& dc);
+};
 
 //--------------------------------------Component-----------------------------------------
 

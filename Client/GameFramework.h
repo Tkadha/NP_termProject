@@ -38,6 +38,7 @@ public:
 	void InitScene();
 
 	void MapUpdate(E_team circle);
+	void ChangeMap(E_MAPTYPE maptype);
 
 	// юс╫ц
 	void PlayerUpdate(int id, XY pos);

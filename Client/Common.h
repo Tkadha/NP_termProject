@@ -45,7 +45,8 @@ enum NETWORK_EVENT {
 	SendStart,
 	SendTeamBlue,
 	SendTeamRed,
-	SendMap
+	SendSoccer,
+	SendBasketball
 };
 
 class XY

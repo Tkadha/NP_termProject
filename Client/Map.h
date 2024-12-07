@@ -9,6 +9,8 @@ public:
 	HBRUSH hB, oldB;
 	HPEN hP, oldP;
 
+	CCenterCircle centerCircle{};
+
 	virtual ~CMap() {};
 
 	virtual void Render(HDC& dc) {};
@@ -19,9 +21,16 @@ class CSoccerMap : public CMap
 public:
 	CGoalpost RedGoalpost[2], BlueGoalpost[2];
 	CSoccerGoal RedGoal{ Red }, BlueGoal{ Blue };
-	CCenterCircle centerCircle{};
 
 	CSoccerMap();
+
+	void Render(HDC& dc);
+};
+
+class CBasketballMap : public CMap
+{
+public:
+	CBasketballGoal RedGoal{ Red }, BlueGoal{ Blue };
 
 	void Render(HDC& dc);
 };

@@ -26,6 +26,13 @@ void CGameFramework::MapUpdate(E_team circle)
 	}
 }
 
+void CGameFramework::ChangeMap(E_MAPTYPE maptype)
+{
+	if (CPlayScene* pScene = dynamic_cast<CPlayScene*>(currentScene)) {
+		pScene->ChangeMap(maptype);
+	}
+}
+
 void CGameFramework::ChangeScene(E_SCENEKIND scene)
 {
 	if (scene == PLAY) {
@@ -106,6 +113,15 @@ void CGameFramework::InputProcess(WPARAM wParam, WPARAM lParam, UINT uMsg)
 			networkManager.SendColorPacket(BLUE);
 		}
 		break;
+	case SendSoccer: {
+		ChangeMap(SOCCER);
+		break;
+	}
+	case SendBasketball: {
+		ChangeMap(BASKETBALL);
+		break;
+	}
+
 	}
 }
 

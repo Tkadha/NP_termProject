@@ -7,6 +7,8 @@ extern HINSTANCE g_hInst;
 
 extern HWND lobbyWnd, playWnd;
 
+extern enum E_MAPTYPE;
+
 class InputManager
 {
 public:
@@ -96,6 +98,9 @@ public:
 
 	CMap* map;
 	CSoccerMap soccerMap;
+	CBasketballMap basketballMap;
+
+	void ChangeMap(E_MAPTYPE maptype);
 
 	void Update();
 	void Render(HDC& dc, std::array <CPlayer, MAXPLAYER> players);
