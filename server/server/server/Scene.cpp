@@ -299,6 +299,8 @@ void CPlayScene::Reset(std::array <SESSION, MAXPLAYER>& players)
 	}
 
 	map.Reset();
+	goal = false;
+	kickOff = false;
 }
 
 
