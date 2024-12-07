@@ -41,13 +41,11 @@ void ProcessPacket(char* packet)
 		TEAM_PACKET* p = reinterpret_cast<TEAM_PACKET*>(packet);
 		std::string str(game.players[p->id].name);
 		std::wstring wPlayer = game.StringToWString(str);
-		std::cout << "클라이언트: " << game.pid << std::endl;
-		std::cout << "받은 id:" << p->id << std::endl;
-		std::cout << "받은 이름:" << game.players[p->id].name << std::endl;
 		if (p->teamcolor == RED) {
 			game.players[p->id].team = Red;
 			if (game.pid != p->id) {
 				game.DeleteItemByName(hListBoxBlue, wPlayer.c_str());
+				game.DeleteItemByName(hListBoxLobby, wPlayer.c_str());
 				SendMessage(hListBoxRed, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
 			}
 		}
@@ -55,6 +53,7 @@ void ProcessPacket(char* packet)
 			game.players[p->id].team = Blue;
 			if (game.pid != p->id) {
 				game.DeleteItemByName(hListBoxRed, wPlayer.c_str());
+				game.DeleteItemByName(hListBoxLobby, wPlayer.c_str());
 				SendMessage(hListBoxBlue, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
 			}
 		}
@@ -78,6 +77,11 @@ void ProcessPacket(char* packet)
 	case SC_NAME: {
 		NAME_PACKET*p = reinterpret_cast<NAME_PACKET*>(packet);
 		strcpy(game.players[p->id].name, p->name);
+		std::string str(game.players[p->id].name);
+		std::wstring wPlayer = game.StringToWString(str);
+		if (game.pid != p->id) {
+			SendMessage(hListBoxLobby, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
+		}
 		break;
 	}
 	case SC_LOGIN: {
@@ -431,7 +435,8 @@ LRESULT CALLBACK LobbyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	
 	HDC hdc;
 	PAINTSTRUCT ps;
-
+	int index = 0;
+	
 	switch (uMsg)
 	{
 	case WM_CREATE: {
@@ -494,7 +499,15 @@ LRESULT CALLBACK LobbyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			400, 500, 224, 70,
 			hwnd, (HMENU)BUTTON_START,
 			g_hInst, NULL);
-
+		for (int i = 0; i < MAXPLAYER; i++) {
+			std::wstring wPlayer = game.StringToWString(game.players[i].name);
+			std::cout << "받은 이름:" << game.players[i].name << std::endl;
+			std::cout << "팀:" << game.players[i].team << std::endl;
+			if (game.players[i].state == OFFLINE) continue;
+			if(game.players[i].team == Red) SendMessage(hListBoxRed, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
+			else if(game.players[i].team == Blue)SendMessage(hListBoxBlue, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
+			else SendMessage(hListBoxLobby, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
+		}
 		break;
 	}
 	case WM_COMMAND: {

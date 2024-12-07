@@ -129,23 +129,22 @@ void PlayerThread(int id)
 {
 	game.players[id].id = id;
 	//if (game.isPlaying())
-	game.players[id].team_color = GetLessTeam();
+	//game.players[id].team_color = GetLessTeam();
 	//else
-	//	game.players[id].team_color = OBSERVER;
+	game.players[id].team_color = OBSERVER;
 
 	game.players[id].SendLoginPacket(id);
 	if(game.IsPlayScene())
 		game.players[id].SendScenePacket(id, PLAY);
 	else
 		game.players[id].SendScenePacket(id, LOBBY);
-
 	game.players[id].SendPlayerTeamPacket(id, game.players[id].team_color);
 
 	for (int i = 0; i < MAXPLAYER; ++i) {
 		if (game.players[i].state == E_ONLINE && id != i) {
 			game.players[id].SendLoginPacket(i);
-			game.players[id].SendPlayerTeamPacket(i, game.players[i].team_color);
 			game.players[id].SendNamePacket(i, game.players[i].p.name);
+			game.players[id].SendPlayerTeamPacket(i, game.players[i].team_color);
 		}
 	}
 
