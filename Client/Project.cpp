@@ -61,6 +61,7 @@ void ProcessPacket(char* packet)
 
 	case SC_MAP_CHOICE: {
 		MAP_PACKET* p = reinterpret_cast<MAP_PACKET*>(packet);
+		game.ChangeMap(p->maptype);
 		break;
 	}
 	case SC_NAME: {

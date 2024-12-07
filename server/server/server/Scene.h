@@ -37,6 +37,8 @@ public:
 class CScene
 {
 public:
+	E_MAPTYPE maptype;
+	
 	virtual void Update(std::array <SESSION, MAXPLAYER>& players) {};
 
 	virtual void Enter(std::array <SESSION, MAXPLAYER>& players) {};
@@ -81,8 +83,11 @@ public:
 
 	CBall ball;						// °ø
 
-	CSoccerMap map;
+	CMap* map;
+	CSoccerMap soccerMap;
+	CBasketballMap basketballMap;
 
+	void ChangeMap(E_MAPTYPE map);
 	void ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players);
 	void Update(std::array <SESSION, MAXPLAYER>& players);
 

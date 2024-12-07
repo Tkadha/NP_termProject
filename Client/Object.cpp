@@ -83,14 +83,6 @@ CRim::CRim()
 	graphicsC = new EllipseComponent;
 }
 
-CRim::CRim(XY pos)
-{
-	position = pos; 
-	size = 20;
-
-	graphicsC = new EllipseComponent;
-}
-
 void CRim::Render(HDC& dc)
 {
 	graphicsC->Render(*this, dc, false);
@@ -100,11 +92,6 @@ CBackBoard::CBackBoard()
 {
 	size = { 8,128 };
 	graphicsC = new RectangleComponent;
-}
-
-CBackBoard::CBackBoard(XY pos) 
-{
-	position = pos; size = { 8,16 }; graphicsC = new RectangleComponent;
 }
 
 void CBackBoard::Render(HDC& dc)

@@ -84,7 +84,6 @@ class CRim : public CEllipseObject
 {
 public:
 	CRim();
-	CRim(XY pos);
 
 	void Render(HDC& dc);
 };
@@ -93,7 +92,6 @@ class CBackBoard : public CRectangleObject
 {
 public:
 	CBackBoard();
-	CBackBoard(XY pos);
 
 	void Render(HDC& dc);
 };

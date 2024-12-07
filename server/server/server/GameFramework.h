@@ -18,6 +18,7 @@ public:
 	void Update();
 	
 	void SwitchScene(CScene*);
+	void ChangeMap(E_MAPTYPE);
 
 	bool IsPlayScene() { return currentScene == &playScene; }
 };

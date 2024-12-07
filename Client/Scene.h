@@ -38,6 +38,7 @@ public:
 class CScene
 {
 public:
+	E_MAPTYPE maptype{};
 	virtual ~CScene() {};
 
 	virtual void Enter() {};
@@ -75,8 +76,8 @@ public:
 	void Render(HDC& dc, std::array <CPlayer, MAXPLAYER> players);
 	void Update(BOOL KeyDownBuffer[], float timeElapsed);
 
-	void Enter() { printf("Enter : Lobby Scene\n"); };
-	void Exit() { printf("EXIT : Lobby Scene\n"); };
+	void Enter() { };
+	void Exit() { };
 
 	void setFocus() { SetFocus(lobbyWnd); };
 
@@ -105,8 +106,8 @@ public:
 	void Update();
 	void Render(HDC& dc, std::array <CPlayer, MAXPLAYER> players);
 
-	void Enter() { printf("Enter : Play Scene\n"); };
-	void Exit() { printf("EXIT : Play Scene\n"); };
+	void Enter() { ChangeMap(maptype); };
+	void Exit() { };
 
 	void setFocus() { PostMessage(hWnd, WM_SET_FOCUS_TO_PLAY, 0, 0); };
 

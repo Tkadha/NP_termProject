@@ -83,6 +83,33 @@ public:
 
 
 
+class CRim : public CEllipseObject
+{
+public:
+	E_TEAMCOLOR team;
+	CRim();
+};
+
+class CBackBoard : public CRectangleObject
+{
+public:
+	CBackBoard();
+};
+
+class CBasketballGoal
+{
+	int offset = 40;
+
+	CRim Rim;
+	CBackBoard BackBoard;
+public:
+	E_TEAMCOLOR team;
+	CBasketballGoal(E_TEAMCOLOR team);
+
+	void Reset();
+
+};
+
 //--------------------------------------Component-----------------------------------------
 class PhysicsComponent
 {

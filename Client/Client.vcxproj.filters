@@ -62,5 +62,8 @@
     <ClInclude Include="ClientNetwork.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="..\server\server\server\protocol.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

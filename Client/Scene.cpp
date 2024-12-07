@@ -17,6 +17,7 @@ void CPlayScene::Update()
 
 void CPlayScene::ChangeMap(E_MAPTYPE maptype)
 {
+	printf("Scene : Change Map %d\n",maptype);
 	if (maptype == SOCCER) {
 		map = &soccerMap;
 	}

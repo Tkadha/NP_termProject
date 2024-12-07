@@ -24,6 +24,15 @@ public:
 	void Reset();
 };
 
+
+class CBasketballMap : public CMap
+{
+public:
+	CBasketballGoal RedGoal{ RED }, BlueGoal{ BLUE };
+
+	void Reset();
+};
+
 class CLobbyMap : public CMap
 {
 public:

@@ -8,11 +8,11 @@ BOOL CollisionCheck(CEllipseObject& a, CEllipseObject& b)
 		return FALSE;
 }
 
-void MapCollisionCheck(CEllipseObject& a, CMap& map, double repulsion)
+void MapCollisionCheck(CEllipseObject& a, CMap *map, double repulsion)
 {
-	Rect m = map.rect;
+	Rect m = map->rect;
 	if (a.position.x - a.size < m.left) {
-		if (CSoccerMap* sMap = dynamic_cast<CSoccerMap*>(&map)) {
+		if (CSoccerMap* sMap = dynamic_cast<CSoccerMap*>(map)) {
 			if (sMap->RedGoal.GetBB().top < a.position.y && a.position.y < sMap->RedGoal.GetBB().bottom) {
 
 			}
@@ -25,7 +25,7 @@ void MapCollisionCheck(CEllipseObject& a, CMap& map, double repulsion)
 		}
 	}
 	if (a.position.x + a.size > m.right) {
-		if (CSoccerMap* sMap = dynamic_cast<CSoccerMap*>(&map)) {
+		if (CSoccerMap* sMap = dynamic_cast<CSoccerMap*>(map)) {
 			if (sMap->BlueGoal.GetBB().top < a.position.y && a.position.y < sMap->BlueGoal.GetBB().bottom) {
 
 			}
@@ -81,9 +81,9 @@ void KickOffCheck(CEllipseObject& player, CEllipseObject& circle)
 }
 
 
-BOOL GoalCheck(CEllipseObject& ball, CMap& map)
+BOOL GoalCheck(CEllipseObject& ball, CMap *map)
 {
-	if (CSoccerMap* sMap = dynamic_cast<CSoccerMap*>(&map)) {
+	if (CSoccerMap* sMap = dynamic_cast<CSoccerMap*>(map)) {
 		Rect bb = sMap->RedGoal.GetBB();
 		if (ball.position.x - ball.size >= bb.left && ball.position.x + ball.size <= bb.right &&
 			ball.position.y - ball.size >= bb.top && ball.position.y + ball.size <= bb.bottom) {
@@ -106,6 +106,8 @@ BOOL GoalCheck(CEllipseObject& ball, CMap& map)
 CPlayScene::CPlayScene()
 {
 	timer.Start();
+	map = &soccerMap;
+	maptype = SOCCER;
 }
 
 void CPlayScene::Update(std::array <SESSION, MAXPLAYER>& players)
@@ -136,7 +138,6 @@ void CPlayScene::Update(std::array <SESSION, MAXPLAYER>& players)
 			players[i].SendPosPacket(-1, ball.position.x, ball.position.y, BALL);
 		}
 	}
-	//printf("play Update\n");
 
 	if (goal) {
 		if (std::chrono::duration<float>(timer.Now() - goalTime).count() > goalDuration) {
@@ -145,9 +146,7 @@ void CPlayScene::Update(std::array <SESSION, MAXPLAYER>& players)
 			Reset(players);
 			for (SESSION& player : players) {
 				if (player.state == E_OFFLINE) continue;
-				if (CSoccerMap* sMap = dynamic_cast<CSoccerMap*>(&map)) {
-					player.SendPlayerTeamPacket(MAXPLAYER + 1, sMap->CenterCircle.team);
-				}
+					player.SendPlayerTeamPacket(MAXPLAYER + 1, map->CenterCircle.team);
 			}
 		}
 	}
@@ -161,30 +160,40 @@ void CPlayScene::ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players)
 		if ( player.state == E_OFFLINE) continue;
 		if (player.team_color == OBSERVER) continue;
 		if (CollisionCheck(player.p, ball)) {
-			if (player.p.input) {
-				if (!player.p.hasKicked) {
-					ball.velocity.x = (ball.position.x - player.p.position.x) / 100 * player.p.power * PixelPerMeter;
-					ball.velocity.y = (ball.position.y - player.p.position.y) / 100 * player.p.power * PixelPerMeter;
-					player.p.input = false;
-					player.p.hasKicked = true;
+			if (maptype == SOCCER) {
+				if (player.p.input) {
+					if (!player.p.hasKicked) {
+						ball.velocity.x = (ball.position.x - player.p.position.x) / 100 * player.p.power * PixelPerMeter;
+						ball.velocity.y = (ball.position.y - player.p.position.y) / 100 * player.p.power * PixelPerMeter;
+						player.p.input = false;
+						player.p.hasKicked = true;
+					}
+				}
+				else {
+					double repulsion = -0.1;
+					CollisionUpdate(player.p, ball, repulsion);
 				}
 			}
-			else {
-				double repulsion = -0.1;
-				CollisionUpdate(player.p, ball, repulsion);
-			}
-			
-			if (kickOff) {
-				kickOff = false;
-				map.CenterCircle.team = OBSERVER;
-
-				for (SESSION& player : players) {
-					if (player.state == E_OFFLINE) continue;
-					if (CSoccerMap* sMap = dynamic_cast<CSoccerMap*>(&map)) {
-						player.SendPlayerTeamPacket(MAXPLAYER + 1, sMap->CenterCircle.team);
+			else if (maptype == BASKETBALL) {
+				if (player.p.input) {
+					if (!player.p.hasKicked) {
+						ball.velocity.x = (ball.position.x - player.p.position.x) / 100 * player.p.power * PixelPerMeter;
+						ball.velocity.y = (ball.position.y - player.p.position.y) / 100 * player.p.power * PixelPerMeter;
+						player.p.input = false;
+						player.p.hasKicked = true;
 					}
 				}
 			}
+			if (kickOff) {
+				kickOff = false;
+				map->CenterCircle.team = OBSERVER;
+
+				for (SESSION& player : players) {
+					if (player.state == E_OFFLINE) continue;
+					player.SendPlayerTeamPacket(MAXPLAYER + 1, map->CenterCircle.team);
+				}
+			}
+
 		}
 	}
 
@@ -202,17 +211,22 @@ void CPlayScene::ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players)
 		}
 	}
 
+	// if 축구
+	if (CSoccerMap* sMap = dynamic_cast<CSoccerMap*>(map)) {
 	// 공 <-> 골대
-	for (int i = 0; i < 2; ++i) {
-		if (CollisionCheck(ball, map.RedGoalpost[i])) {
-			double repulsion = -1.2;
-			CollisionUpdate(ball, map.RedGoalpost[i], repulsion);
-		}
-		else if (CollisionCheck(ball, map.BlueGoalpost[i])) {
-			double repulsion = -1.2;
-			CollisionUpdate(ball, map.BlueGoalpost[i], repulsion);
+		for (int i = 0; i < 2; ++i) {
+			if (CollisionCheck(ball, sMap->RedGoalpost[i])) {
+				double repulsion = -1.2;
+				CollisionUpdate(ball, sMap->RedGoalpost[i], repulsion);
+			}
+			else if (CollisionCheck(ball, sMap->BlueGoalpost[i])) {
+				double repulsion = -1.2;
+				CollisionUpdate(ball, sMap->BlueGoalpost[i], repulsion);
+			}
 		}
 	}
+	// else if 농구
+	// 백보드 충돌처리
 
 	
 	// 공 <-> 맵(벽)
@@ -242,9 +256,9 @@ void CPlayScene::ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players)
 			}
 
 			// 플레이어 <-> 센터서클
-			if (player.team_color == map.CenterCircle.team) continue;
-			if (CollisionCheck(player.p, map.CenterCircle)) {
-				KickOffCheck(player.p, map.CenterCircle);
+			if (player.team_color == map->CenterCircle.team) continue;
+			if (CollisionCheck(player.p, map->CenterCircle)) {
+				KickOffCheck(player.p, map->CenterCircle);
 			}
 		}
 	}
@@ -253,6 +267,7 @@ void CPlayScene::ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players)
 void CPlayScene::Enter(std::array <SESSION, MAXPLAYER>& players)
 {
 	Reset(players);
+	ChangeMap(maptype);
 }
 
 void CPlayScene::Reset(std::array <SESSION, MAXPLAYER>& players)
@@ -280,6 +295,11 @@ void CPlayScene::Reset(std::array <SESSION, MAXPLAYER>& players)
 			player.p.Reset({ WindowWidth / 2 + distance,blueY });
 			blueY += blueWidth;
 		}
+
+		if (maptype == SOCCER)
+			player.p.power = 16;
+		else if (maptype == BASKETBALL)
+			player.p.power = -12;
 	}
 
 
@@ -298,12 +318,18 @@ void CPlayScene::Reset(std::array <SESSION, MAXPLAYER>& players)
 		players[i].SendPosPacket(-1, ball.position.x, ball.position.y, BALL);
 	}
 
-	map.Reset();
+	map->Reset();
 	goal = false;
 	kickOff = false;
 }
 
-
+void CPlayScene::ChangeMap(E_MAPTYPE type)
+{
+	if (type == SOCCER)
+		map = &soccerMap;
+	else if (type == BASKETBALL)
+		map = &basketballMap;
+}
 
 
 //----------------------------------------------------------------------------
