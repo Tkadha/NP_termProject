@@ -26,9 +26,9 @@ constexpr char SC_EVENT = 9;
 
 enum E_MAPTYPE { SOCCER, BASKETBALL };
 enum E_TEAMCOLOR { RED, BLUE, OBSERVER };
-enum E_OBJTYPE { BALL, PLAYER };
+enum E_OBJTYPE { BALL, PLAYER, OBSTACLE, FLOOR };
 enum E_SCENEKIND { PLAY, LOBBY };
-enum E_EVENTTYPE {WIND, FLOOR, ITEM, OBSTACLE };
+enum E_EVENTTYPE { WIND, FLOOR, OBSTACLE };
 
 
 #pragma pack (push, 1)
@@ -80,8 +80,5 @@ class EVENT_PACKET : public BASE_PACKET {
 public:
 	E_EVENTTYPE eventtype;
 	char onoff;	// 1이면 on 0이면 off
-	char way;
-	double x, y;
-	int size;
 };
 #pragma pack (pop)
