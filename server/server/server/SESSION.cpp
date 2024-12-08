@@ -14,12 +14,17 @@ void SESSION::ResetSESSION()
 void SESSION::DoRecv()
 {
 	int retval;
+	char remain_buf[BUFSIZE]{};
+	memcpy(remain_buf, recv_buf, remain_data);
 	memset(recv_buf, 0, sizeof(recv_buf));
-	retval = recv(sock, recv_buf, BUFSIZE, 0);
+	retval = recv(sock, recv_buf, BUFSIZE - remain_data, 0);
 	if (retval == 0 || retval == -1) {
 		state = E_OFFLINE;
 		printf("logout\n");
 	}
+	memcpy(remain_buf + remain_data, recv_buf, retval);
+	remain_data += retval;
+	memcpy(recv_buf, remain_buf, remain_data);
 
 }
 

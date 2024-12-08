@@ -170,7 +170,18 @@ void PlayerThread(int id)
 			}
 			break;
 		}
-		ProcessPacket(id, game.players[id].recv_buf);
+		//ProcessPacket(id, game.players[id].recv_buf);
+		while (game.players[id].remain_data > 0)
+		{
+			BASE_PACKET* bp = reinterpret_cast<BASE_PACKET*>(game.players[id].recv_buf);
+			int packetsize = bp->size;
+			if (game.players[id].remain_data >= packetsize) {
+				ProcessPacket(id, game.players[id].recv_buf);
+				game.players[id].remain_data -= packetsize;
+				std::memmove(game.players[id].recv_buf, game.players[id].recv_buf + packetsize, game.players[id].remain_data);
+			}
+			else break;
+		}
 	}
 
 	if (IsGameEnd()) {

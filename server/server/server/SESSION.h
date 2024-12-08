@@ -14,6 +14,7 @@ public:
 	int id;
 	char recv_buf[BUFSIZE];
 	E_TEAMCOLOR team_color;
+	int remain_data{};
 
 	CPlayer p{};
 
