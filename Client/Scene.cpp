@@ -1,4 +1,5 @@
 #include "Scene.h"
+#include "../server/server/server/protocol.h"
 
 
 
@@ -6,16 +7,28 @@ CPlayScene::CPlayScene()
 {
 	ball.team = Ball;
 	ball.position = { WindowWidth / 2,WindowHeight / 2 };
+	
+	map = &basketballMap;
 }
 
 void CPlayScene::Update()
 {
 }
 
+void CPlayScene::ChangeMap(E_MAPTYPE maptype)
+{
+	printf("Scene : Change Map %d\n",maptype);
+	if (maptype == SOCCER) {
+		map = &soccerMap;
+	}
+	else if(maptype == BASKETBALL){
+		map = &basketballMap;
+	}
+}
 
 void CPlayScene::Render(HDC& dc, std::array <CPlayer, MAXPLAYER> players)
 {
-	map.Render(dc);
+	map->Render(dc);
 	ball.Render(dc);
 	for (CPlayer& player : players) {
 		if (player.state == OFFLINE) continue;
@@ -33,6 +46,13 @@ void CPlayScene::SetBallPos(XY pos)
 	ball.position = pos;
 }
 
+void CPlayScene::CircleUpdate(E_team color)
+{
+	if (color == Observer)
+		color = Object;
+	map->centerCircle.team = color;
+}
+
 //----------------------------------------------------------------------------
 NETWORK_EVENT InputManager::Update(WPARAM wParam, WPARAM lParam, UINT uMsg) 
 {
@@ -48,8 +68,7 @@ NETWORK_EVENT PlayInputManager::Update(WPARAM wParam, WPARAM lParam, UINT uMsg)
 {
 	switch (uMsg) {
 	case WM_KEYDOWN:
-		KeyDownBuffer[wParam] = TRUE;
-		
+		KeyDownBuffer[wParam] = TRUE;		
 		break;
 
 	case WM_KEYUP:
@@ -63,7 +82,6 @@ NETWORK_EVENT LobbyInputManager::Update(WPARAM wParam, WPARAM lParam, UINT uMsg)
 {
 	switch (LOWORD(wParam)) {
 	case 110: // Red 버튼 클릭
-
 		//MessageBox(hWnd, L"Red Team Selected!", L"Button Click", MB_OK);
 		// Red 팀 관련 처리 추가
 		return SendTeamRed;
@@ -79,12 +97,14 @@ NETWORK_EVENT LobbyInputManager::Update(WPARAM wParam, WPARAM lParam, UINT uMsg)
 		//MessageBox(hWnd, L"Soccer Mode Selected!", L"Button Click", MB_OK);
 		//gCurrentState = 1; // 축구 모드로 상태 전환
 		//PostQuitMessage(0); // 메시지 루프 종료 -> WinMain에서 새로운 윈도우 생성
+		return SendSoccer;
 		break;
 
 	case 113: // Basketball 버튼 클릭
 		//MessageBox(hWnd, L"Basketball Mode Selected!", L"Button Click", MB_OK);
 		//gCurrentState = 2; // 농구 모드로 상태 전환
 		//PostQuitMessage(0); // 메시지 루프 종료 -> WinMain에서 새로운 윈도우 생성
+		return SendBasketball;
 		break;
 
 	case 114: // Start 버튼 클릭

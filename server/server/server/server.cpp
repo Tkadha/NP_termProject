@@ -54,7 +54,6 @@ void err_display(int errcode)
 }
 
 CGameFramework game{};
-E_MAPTYPE maptype = SOCCER;
 
 HANDLE event_logic;
 HANDLE event_event;
@@ -76,10 +75,10 @@ void ProcessPacket(int id, char* packet)
 
 	case CS_MAP_CHOICE: {
 		MAP_PACKET* p = reinterpret_cast<MAP_PACKET*>(packet);
-		maptype = p->maptype;
+		game.ChangeMap(p->maptype);
 		for (int i = 0; i < MAXPLAYER; ++i) {
 			if (game.players[i].state == E_OFFLINE) continue;
-			game.players[i].SendMapPacket(id, maptype);
+			game.players[i].SendMapPacket(id, p->maptype);
 		}
 		break;
 	}

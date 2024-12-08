@@ -51,6 +51,64 @@ CSoccerGoal::CSoccerGoal(E_TEAMCOLOR team)
 }
 
 
+CCenterCircle::CCenterCircle()
+{
+	position = { WindowWidth / 2, WindowHeight / 2 };
+	size = 100;
+	team = OBSERVER;
+}
+
+CRim::CRim()
+{
+	size = 15;
+	RimSize = 20;
+}
+
+CBackBoard::CBackBoard()
+{
+	size = { 8,128 };
+}
+
+CBasketballGoal::CBasketballGoal(E_TEAMCOLOR team) :team(team)
+{
+	if (team == RED) {
+		XY position = { 126,WindowHeight / 2 };
+		BackBoard.position = position;
+
+		position.x += offset;
+		Rim.position = position;
+	}
+	else if (team == BLUE) {
+		XY position = { WindowWidth - 126,WindowHeight / 2 };
+		BackBoard.position = position;
+
+		position.x -= offset;
+		Rim.position = position;
+	}
+	Rim.team = team;
+}
+
+void CBasketballGoal::Reset()
+{
+	if (team == RED) {
+		XY position = { 126,WindowHeight / 2 };
+		BackBoard.position = position;
+
+		position.x += offset;
+		Rim.position = position;
+	}
+	else if (team == BLUE) {
+		XY position = { WindowWidth - 126,WindowHeight / 2 };
+		BackBoard.position = position;
+
+		position.x -= offset;
+		Rim.position = position;
+	}
+	
+
+}
+
+
 void PhysicsComponent::Update(CEllipseObject& object, float timeElapsed) {
 	// ¿Ãµø
 	object.position.x += (object.velocity.x + object.wind_velocity.x) * MeterPerPixel;
