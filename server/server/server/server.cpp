@@ -220,7 +220,7 @@ void EventThread()
 			std::this_thread::sleep_for(std::chrono::seconds(5));
 			int num = dis(gen);
 
-			if (num < 5) {		 // 바람 이벤트
+			if (num < 33) {		 // 바람 이벤트
 
 				printf("Wind Event On\n");
 				int wind_way = wind(gen);
@@ -240,14 +240,14 @@ void EventThread()
 				}
 			}
 
-			else if (num < 10) { // 장판 이벤트
+			else if (num < 66) { // 장판 이벤트
 
 				printf("floor Event On\n");
 				game.playScene.b_floor = true;
 				game.playScene.floor.position.x = rect_x(gen);
 				game.playScene.floor.position.y = rect_y(gen);
-				game.playScene.floor.size.x = 130;
-				game.playScene.floor.size.y = 130;
+				game.playScene.floor.size.x = 260;
+				game.playScene.floor.size.y = 260;
 				for (int i = 0; i < MAXPLAYER; ++i) {
 					if (game.players[i].state == E_OFFLINE) continue;
 					game.players[i].SendEventPacket(F, 1);
@@ -265,6 +265,11 @@ void EventThread()
 					if (game.players[i].state == E_OFFLINE) continue;
 					game.players[i].SendEventPacket(F, 0);
 				}
+				for (int i = 0; i < MAXPLAYER; ++i) {
+					if (game.players[i].state == E_OFFLINE) continue;
+					game.players[i].p.f_friction = 0.0;
+				}
+				game.playScene.ball.f_friction = 0.0;
 			}
 			else {				 // 장애물 이벤트 
 				printf("obtacle Event On\n");

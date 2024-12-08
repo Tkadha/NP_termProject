@@ -31,6 +31,7 @@ void CPlayScene::Render(HDC& dc, std::array <CPlayer, MAXPLAYER> players)
 	map->Render(dc);
 	ball.Render(dc);
 	if (obstacle.on == true) obstacle.Render(dc);
+	if (floor.on == true)floor.Render(dc);
 	for (CPlayer& player : players) {
 		if (player.state == OFFLINE) continue;
 		player.Render(dc);

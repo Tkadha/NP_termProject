@@ -102,6 +102,7 @@ public:
 	CSoccerMap soccerMap;
 	CBasketballMap basketballMap;
 	CObstacle obstacle;
+	CFloor floor;
 	void ChangeMap(E_MAPTYPE maptype);
 
 	void Update();

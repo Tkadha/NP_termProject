@@ -1,6 +1,7 @@
 #include "Object.h"
 #include "Player.h"
 #include <algorithm>
+#include <random>
 
 CEllipseObject::CEllipseObject()
 {
@@ -109,6 +110,21 @@ void CObstacle::Render(HDC& dc)
 	graphicsC->Render(*this, dc, true);
 }
 void CObstacle::SetOn(bool sw)
+{
+	on = sw;
+}
+
+CFloor::CFloor()
+{
+	size = { 260,260 };
+	graphicsC = new RectangleComponent;
+}
+void CFloor::Render(HDC& dc)
+{
+	if (on == true)
+		graphicsC->Render(*this, dc, true);
+}
+void CFloor::SetOn(bool sw)
 {
 	on = sw;
 }
@@ -268,8 +284,10 @@ void EllipseComponent::Render(CEllipseObject& object, HDC& dc, BOOL fill)
 
 void RectangleComponent::Render(CRectangleObject& object, HDC dc, BOOL fill)
 {
+	
 	if (fill) {
-		hBrush = CreateSolidBrush(RGB(255, 255, 255));
+		
+		hBrush = CreateSolidBrush(RGB(150, 150, 0));
 		oldBrush = (HBRUSH)SelectObject(dc, hBrush);
 		Rectangle(dc, object.position.x - object.size.x / 2,
 			object.position.y - object.size.y / 2,

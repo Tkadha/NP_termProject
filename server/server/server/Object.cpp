@@ -104,7 +104,7 @@ void CBasketballGoal::Reset()
 		position.x -= offset;
 		Rim.position = position;
 	}
-	
+
 
 }
 
@@ -116,7 +116,7 @@ void PhysicsComponent::Update(CEllipseObject& object, float timeElapsed) {
 
 
 	// ¸¶Âû·Â Àû¿ë
-	object.velocity.x /= (object.friction / object.f_friction);
-	object.velocity.y /= (object.friction / object.f_friction);
+	object.velocity.x /= (object.friction - object.f_friction);
+	object.velocity.y /= (object.friction - object.f_friction);
 
 }

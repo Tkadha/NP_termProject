@@ -59,7 +59,7 @@ direction CollisionCheck(CEllipseObject& a, CRectangleObject& b)
 
 }
 
-void MapCollisionCheck(CEllipseObject& a, CMap *map, double repulsion)
+void MapCollisionCheck(CEllipseObject& a, CMap* map, double repulsion)
 {
 	Rect m = map->rect;
 	if (a.position.x - a.size < m.left) {
@@ -149,7 +149,7 @@ void KickOffCheck(CEllipseObject& player, CEllipseObject& circle)
 
 }
 
-BOOL GoalCheck(CEllipseObject& ball, CMap *map)
+BOOL GoalCheck(CEllipseObject& ball, CMap* map)
 {
 	if (CSoccerMap* sMap = dynamic_cast<CSoccerMap*>(map)) {
 		Rect bb = sMap->RedGoal.GetBB();
@@ -158,7 +158,7 @@ BOOL GoalCheck(CEllipseObject& ball, CMap *map)
 			sMap->CenterCircle.team = RED;
 			return true;
 		}
-	
+
 		bb = sMap->BlueGoal.GetBB();
 		if (ball.position.x - ball.size >= bb.left && ball.position.x + ball.size <= bb.right &&
 			ball.position.y - ball.size >= bb.top && ball.position.y + ball.size <= bb.bottom) {
@@ -182,16 +182,16 @@ BOOL GoalCheck(CEllipseObject& ball, CMap *map)
 
 bool IsInRect(CEllipseObject& obj, CRectangleObject& floor)
 {
-	double rectLeft = floor.position.x;              
-	double rectTop = floor.position.y;               
-	double rectRight = floor.position.x + floor.size.x; 
-	double rectBottom = floor.position.y + floor.size.y; 
+	double rectLeft = floor.position.x - floor.size.x / 2;
+	double rectTop = floor.position.y - floor.size.y / 2;
+	double rectRight = floor.position.x + floor.size.x / 2;
+	double rectBottom = floor.position.y + floor.size.y / 2;
 
 	double ellipseCenterX = obj.position.x;
 	double ellipseCenterY = obj.position.y;
 
-	double ellipseRadiusX = obj.size / 2.0; 
-	double ellipseRadiusY = obj.size / 2.0; 
+	double ellipseRadiusX = obj.size;
+	double ellipseRadiusY = obj.size;
 
 	return (ellipseCenterX - ellipseRadiusX >= rectLeft) &&
 		(ellipseCenterX + ellipseRadiusX <= rectRight) &&
@@ -215,7 +215,7 @@ void CPlayScene::Update(std::array <SESSION, MAXPLAYER>& players)
 
 	ObjectCollisionCheck(players);
 	for (SESSION& player : players) {
-		if (player.state == E_OFFLINE) continue;		
+		if (player.state == E_OFFLINE) continue;
 		if (player.team_color == OBSERVER) continue;
 		double px = player.p.position.x;
 		double py = player.p.position.y;
@@ -244,7 +244,7 @@ void CPlayScene::Update(std::array <SESSION, MAXPLAYER>& players)
 			Reset(players);
 			for (SESSION& player : players) {
 				if (player.state == E_OFFLINE) continue;
-					player.SendPlayerTeamPacket(MAXPLAYER + 1, map->CenterCircle.team);
+				player.SendPlayerTeamPacket(MAXPLAYER + 1, map->CenterCircle.team);
 			}
 		}
 	}
@@ -255,7 +255,7 @@ void CPlayScene::ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players)
 {
 	// 플레이어 <-> 공
 	for (SESSION& player : players) {
-		if ( player.state == E_OFFLINE) continue;
+		if (player.state == E_OFFLINE) continue;
 		if (player.team_color == OBSERVER) continue;
 		if (CollisionCheck(player.p, ball)) {
 			if (maptype == SOCCER) {
@@ -317,12 +317,12 @@ void CPlayScene::ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players)
 			if (CollisionCheck(player.p, obstacle)) {
 				double repulsion = 1.2;
 				CollisionUpdate(player.p, obstacle, repulsion);
-			}		
+			}
 		}
 	}
 
 	if (CSoccerMap* sMap = dynamic_cast<CSoccerMap*>(map)) {
-	// 공 <-> 골대
+		// 공 <-> 골대
 		for (int i = 0; i < 2; ++i) {
 			if (CollisionCheck(ball, sMap->RedGoalpost[i])) {
 				double repulsion = -1.2;
@@ -342,7 +342,7 @@ void CPlayScene::ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players)
 	}
 
 	// 공 <-> 장애물
-	if (b_obtacle && CollisionCheck(ball,obstacle)) {
+	if (b_obtacle && CollisionCheck(ball, obstacle)) {
 		double repulsion = -1.2;
 		CollisionUpdate(ball, obstacle, repulsion);
 	}
@@ -354,11 +354,11 @@ void CPlayScene::ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players)
 		for (SESSION& player : players) {
 			if (player.state == E_OFFLINE) continue;
 			if (player.team_color == OBSERVER) continue;
-			if (IsInRect(player.p, floor)) player.p.f_friction = 2.0;
-			else player.p.f_friction = 1.0;
+			if (IsInRect(player.p, floor)) player.p.f_friction = 0.05;
+			else player.p.f_friction = 0.0;
 		}
-		if (IsInRect(ball, floor)) ball.f_friction = 2.0;
-		else ball.f_friction = 1.0;
+		if (IsInRect(ball, floor)) ball.f_friction = 0.05;
+		else ball.f_friction = 0.0;
 	}
 
 

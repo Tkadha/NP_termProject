@@ -107,6 +107,9 @@ void ProcessPacket(char* packet)
 			std::cout << game.playScene.obstacle.position.x << std::endl;
 			std::cout << game.playScene.obstacle.position.y << std::endl;
 		}
+		else if (p->objtype == FLOOR) {
+			game.playScene.floor.position = { p->x,p->y };
+		}
 		LeaveCriticalSection(&cs);
 		break;
 	}
@@ -121,7 +124,8 @@ void ProcessPacket(char* packet)
 
 		}
 		else if (p->eventtype == F) {
-
+			if (p->onoff == 1) game.playScene.floor.SetOn(true);
+			else game.playScene.floor.SetOn(false);
 		}
 		else if (p->eventtype == O) {
 			if(p->onoff == 1) game.playScene.obstacle.SetOn(true);

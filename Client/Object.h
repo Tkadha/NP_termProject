@@ -60,6 +60,7 @@ public:
 	CRectangleObject() {};
 
 	XY size;
+	int type;
 	//RGB color{ 100,100,100 };
 
 	RectangleComponent* graphicsC;
@@ -104,7 +105,15 @@ public:
 	void Render(HDC& dc);
 	void SetOn(bool sw);
 };
+class CFloor : public CRectangleObject
+{
+public:
+	BOOL on;
+	CFloor();
 
+	void Render(HDC& dc);
+	void SetOn(bool sw);
+};
 class CBasketballGoal
 {
 	HPEN hPen, oldPen;
@@ -162,6 +171,7 @@ class RectangleComponent : GraphicsComponent
 protected:
 
 public:
+	
 	RectangleComponent() {};
 
 	void Render(CRectangleObject& player, HDC dc, BOOL fill);

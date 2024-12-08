@@ -6,21 +6,21 @@ class PhysicsComponent;
 class CObject
 {
 public:
-	XY position;
+    XY position;
 };
 
 class CEllipseObject : public CObject
 {
 public:
-	XY velocity{};
-	XY wind_velocity{};
-	double friction{};		// 마찰 계수
-	double f_friction{ 1.0 };
-	int size{};
+    XY velocity{};
+    XY wind_velocity{};
+    double friction{};        // 마찰 계수
+    double f_friction{ 0.0 };
+    int size{};
 
-	CEllipseObject();
+    CEllipseObject();
 
-	virtual void Update(float timeElapsed) {};
+    virtual void Update(float timeElapsed) {};
 };
 
 
@@ -28,34 +28,34 @@ public:
 class CBall : public CEllipseObject
 {
 public:
-	CBall();
+    CBall();
 
-	void Update(float timeElapsed);
-	
-	void Reset();
+    void Update(float timeElapsed);
+
+    void Reset();
 private:
-	PhysicsComponent* physicsC;
+    PhysicsComponent* physicsC;
 };
 
-class CGoalpost : public CEllipseObject			// 골대 동그란거
+class CGoalpost : public CEllipseObject            // 골대 동그란거
 {
 public:
-	// 반지름
-	int size = 16;
+    // 반지름
+    int size = 16;
 
-	CGoalpost() {};
+    CGoalpost() {};
 
-	void BuildObject(int index);
+    void BuildObject(int index);
 private:
-	//EllipseComponent graphicsC;
+    //EllipseComponent graphicsC;
 };
 
 class CCenterCircle : public CEllipseObject
 {
 public:
-	E_TEAMCOLOR team;
+    E_TEAMCOLOR team;
 
-	CCenterCircle();
+    CCenterCircle();
 
 };
 
@@ -63,23 +63,23 @@ public:
 class CRectangleObject : public CObject
 {
 public:
-	CRectangleObject() {};
+    CRectangleObject() {};
 
-	XY size;
-	//RGB color{ 100,100,100 };
+    XY size;
+    //RGB color{ 100,100,100 };
 };
 
 
 class CSoccerGoal : public CRectangleObject
 {
 private:
-	Rect BoundingBox;
+    Rect BoundingBox;
 
 public:
-	CSoccerGoal() {};
-	CSoccerGoal(E_TEAMCOLOR team);
+    CSoccerGoal() {};
+    CSoccerGoal(E_TEAMCOLOR team);
 
-	Rect GetBB() { return BoundingBox; }
+    Rect GetBB() { return BoundingBox; }
 };
 
 
@@ -87,29 +87,29 @@ public:
 class CRim : public CEllipseObject
 {
 public:
-	E_TEAMCOLOR team;
-	double RimSize;
-	CRim();
+    E_TEAMCOLOR team;
+    double RimSize;
+    CRim();
 };
 
 class CBackBoard : public CRectangleObject
 {
 public:
-	CBackBoard();
+    CBackBoard();
 };
 
 class CBasketballGoal
 {
-	int offset = 40;
+    int offset = 40;
 
 public:
-	CRim Rim;
-	CBackBoard BackBoard;
+    CRim Rim;
+    CBackBoard BackBoard;
 
-	E_TEAMCOLOR team;
-	CBasketballGoal(E_TEAMCOLOR team);
+    E_TEAMCOLOR team;
+    CBasketballGoal(E_TEAMCOLOR team);
 
-	void Reset();
+    void Reset();
 
 };
 
@@ -117,5 +117,5 @@ public:
 class PhysicsComponent
 {
 public:
-	void Update(CEllipseObject& p, float timeElapsed);
+    void Update(CEllipseObject& p, float timeElapsed);
 };
