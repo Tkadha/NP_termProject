@@ -142,7 +142,7 @@ bool SESSION::SendEventPacket(E_EVENTTYPE eventtype, char onoff, char way)
 	return true;
 }
 
-bool SESSION::SendEventPacket(E_EVENTTYPE eventtype, char onoff, CEllipseObject& obs)
+bool SESSION::SendEventPacket(E_EVENTTYPE eventtype, char onoff, CRectangleObject& obs)
 {
 	EVENT_PACKET p;
 	p.size = sizeof(EVENT_PACKET);
@@ -151,7 +151,8 @@ bool SESSION::SendEventPacket(E_EVENTTYPE eventtype, char onoff, CEllipseObject&
 	p.onoff = onoff;
 	p.x = obs.position.x;
 	p.y = obs.position.y;
-	p.size = obs.size;
+	p.recsize.x = obs.size.x;
+	p.recsize.y = obs.size.y;
 	int retval;
 	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
 	if (retval == SOCKET_ERROR) return false;

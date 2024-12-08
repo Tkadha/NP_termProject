@@ -90,7 +90,7 @@ public:
 	//CSoccerMap soccerMap;
 
 	CBall ball;						// °ø
-
+	CEllipseObject obstacle;
 	CSoccerMap map;
 
 	void Update();

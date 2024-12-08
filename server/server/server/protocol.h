@@ -83,5 +83,6 @@ public:
 	char way;
 	double x, y;
 	int size;
+	XY recsize;
 };
 #pragma pack (pop)

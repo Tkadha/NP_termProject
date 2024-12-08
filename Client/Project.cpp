@@ -25,6 +25,7 @@ LRESULT CALLBACK LobbyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 HWND hWnd, lobbyWnd, playWnd;
 HWND hButtonRed, hButtonBlue, hButtonSoccer, hButtonBasketball, hButtonStart;
 HWND hListBoxRed, hListBoxBlue, hListBoxLobby;
+HBITMAP hArrowBitmap = NULL;
 std::string playerName;
 
 CGameFramework game{};
@@ -106,6 +107,15 @@ void ProcessPacket(char* packet)
 	}
 	case SC_EVENT: {
 		EVENT_PACKET* p = reinterpret_cast<EVENT_PACKET*>(packet);
+		if (p->eventtype == WIND) {
+
+		}
+		else if (p->eventtype == FLOOR) {
+
+		}
+		else if (p->eventtype == OBSTACLE) {
+			
+		}
 		break;
 	}
 	}
@@ -350,6 +360,7 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		LogFont.lfCharSet = HANGEUL_CHARSET;
 		LogFont.lfPitchAndFamily = VARIABLE_PITCH | FF_ROMAN;
 		lstrcpy(LogFont.lfFaceName, TEXT("ÈÞ¸Õ¸ÅÁ÷Ã¼"));
+
 		SetTimer(hwnd, 1, 5, NULL);
 		break;
 	case WM_TIMER:

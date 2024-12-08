@@ -263,7 +263,8 @@ void EventThread()
 				game.playScene.b_obtacle = true;
 				game.playScene.obstacle.position.x = rect_x(gen);
 				game.playScene.obstacle.position.y = rect_y(gen);
-				game.playScene.obstacle.size = 20;
+				game.playScene.obstacle.size.x = 20;
+				game.playScene.obstacle.size.y = 20;
 				for (int i = 0; i < MAXPLAYER; ++i) {
 					if (game.players[i].state == E_OFFLINE) continue;
 					game.players[i].SendEventPacket(OBSTACLE, 1,game.playScene.obstacle);
@@ -273,7 +274,8 @@ void EventThread()
 				game.playScene.b_obtacle = false;
 				game.playScene.obstacle.position.x = 0;
 				game.playScene.obstacle.position.y = 0;
-				game.playScene.obstacle.size = 0;
+				game.playScene.obstacle.size.x = 0;
+				game.playScene.obstacle.size.y = 0;
 				for (int i = 0; i < MAXPLAYER; ++i) {
 					if (game.players[i].state == E_OFFLINE) continue;
 					game.players[i].SendEventPacket(OBSTACLE, 0, game.playScene.obstacle);
