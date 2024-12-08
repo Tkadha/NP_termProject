@@ -105,7 +105,7 @@ void ProcessPacket(char* packet)
 		break;
 	}
 	case SC_EVENT: {
-
+		EVENT_PACKET* p = reinterpret_cast<EVENT_PACKET*>(packet);
 		break;
 	}
 	}
