@@ -208,8 +208,8 @@ void EventThread()
 	std::uniform_int_distribution<int> dis(1, 100);
 	std::uniform_int_distribution<int> wind(0, 7);
 
-	std::uniform_int_distribution<int> rect_x(90 + 20, WindowWidth - 90 - 20);
-	std::uniform_int_distribution<int> rect_y(30 + 20, WindowHeight - 30 - 20);
+	std::uniform_int_distribution<int> rect_x(WindowWidth/2 - 300, WindowWidth/2 + 300);
+	std::uniform_int_distribution<int> rect_y(WindowHeight/2 - 200, WindowHeight/2 + 200);
 	while (1)
 	{
 		WaitForSingleObject(event_event, INFINITE);
@@ -219,7 +219,9 @@ void EventThread()
 		{
 			std::this_thread::sleep_for(std::chrono::seconds(5));
 			int num = dis(gen);
+
 			if (num < 5) {		 // 바람 이벤트
+
 				printf("Wind Event On\n");
 				int wind_way = wind(gen);
 				WindWay(wind_way);
@@ -237,12 +239,15 @@ void EventThread()
 					game.players[i].SendEventPacket(W, 0);
 				}
 			}
+
 			else if (num < 10) { // 장판 이벤트
+
+				printf("floor Event On\n");
 				game.playScene.b_floor = true;
 				game.playScene.floor.position.x = rect_x(gen);
 				game.playScene.floor.position.y = rect_y(gen);
-				game.playScene.floor.size.x = 40;
-				game.playScene.floor.size.y = 40;
+				game.playScene.floor.size.x = 130;
+				game.playScene.floor.size.y = 130;
 				for (int i = 0; i < MAXPLAYER; ++i) {
 					if (game.players[i].state == E_OFFLINE) continue;
 					game.players[i].SendEventPacket(F, 1);
@@ -250,7 +255,8 @@ void EventThread()
 				}
 				std::this_thread::sleep_for(std::chrono::seconds(10));
 
-				game.playScene.b_floor = false;		
+				printf("floor Event Off\n");
+				game.playScene.b_floor = false;
 				game.playScene.floor.position.x = 0;
 				game.playScene.floor.position.y = 0;
 				game.playScene.floor.size.x = 0;
@@ -265,9 +271,8 @@ void EventThread()
 				game.playScene.b_obtacle = true;
 				game.playScene.obstacle.position.x = rect_x(gen);
 				game.playScene.obstacle.position.y = rect_y(gen);
-				game.playScene.obstacle.size.x = 40;
-				game.playScene.obstacle.size.y = 40;
-
+				game.playScene.obstacle.size.x = 60;
+				game.playScene.obstacle.size.y = 130;
 				for (int i = 0; i < MAXPLAYER; ++i) {
 					if (game.players[i].state == E_OFFLINE) continue;
 					game.players[i].SendEventPacket(O, 1);

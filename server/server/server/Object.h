@@ -15,6 +15,7 @@ public:
 	XY velocity{};
 	XY wind_velocity{};
 	double friction{};		// ¸¶Âû °è¼ö
+	double f_friction{ 1.0 };
 	int size{};
 
 	CEllipseObject();

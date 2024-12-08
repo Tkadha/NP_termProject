@@ -149,7 +149,6 @@ void KickOffCheck(CEllipseObject& player, CEllipseObject& circle)
 
 }
 
-
 BOOL GoalCheck(CEllipseObject& ball, CMap *map)
 {
 	if (CSoccerMap* sMap = dynamic_cast<CSoccerMap*>(map)) {
@@ -181,6 +180,24 @@ BOOL GoalCheck(CEllipseObject& ball, CMap *map)
 	return false;
 }
 
+bool IsInRect(CEllipseObject& obj, CRectangleObject& floor)
+{
+	double rectLeft = floor.position.x;              
+	double rectTop = floor.position.y;               
+	double rectRight = floor.position.x + floor.size.x; 
+	double rectBottom = floor.position.y + floor.size.y; 
+
+	double ellipseCenterX = obj.position.x;
+	double ellipseCenterY = obj.position.y;
+
+	double ellipseRadiusX = obj.size / 2.0; 
+	double ellipseRadiusY = obj.size / 2.0; 
+
+	return (ellipseCenterX - ellipseRadiusX >= rectLeft) &&
+		(ellipseCenterX + ellipseRadiusX <= rectRight) &&
+		(ellipseCenterY - ellipseRadiusY >= rectTop) &&
+		(ellipseCenterY + ellipseRadiusY <= rectBottom);
+}
 
 CPlayScene::CPlayScene()
 {
@@ -332,6 +349,18 @@ void CPlayScene::ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players)
 
 	// °ø <-> ¸Ê(º®)
 	MapCollisionCheck(ball, map, -1.0);
+
+	if (b_floor) {
+		for (SESSION& player : players) {
+			if (player.state == E_OFFLINE) continue;
+			if (player.team_color == OBSERVER) continue;
+			if (IsInRect(player.p, floor)) player.p.f_friction = 2.0;
+			else player.p.f_friction = 1.0;
+		}
+		if (IsInRect(ball, floor)) ball.f_friction = 2.0;
+		else ball.f_friction = 1.0;
+	}
+
 
 	if (!goal) {
 		if (GoalCheck(ball, map)) {

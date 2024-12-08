@@ -116,7 +116,7 @@ void PhysicsComponent::Update(CEllipseObject& object, float timeElapsed) {
 
 
 	// 마찰력 적용
-	object.velocity.x /= object.friction;
-	object.velocity.y /= object.friction;
+	object.velocity.x /= (object.friction / object.f_friction);
+	object.velocity.y /= (object.friction / object.f_friction);
 
 }
