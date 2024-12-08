@@ -4,6 +4,7 @@
 #include <algorithm>
 #include "GameFramework.h"
 #include <random>
+#include <chrono>
 #pragma comment(lib, "ws2_32") // ws2_32.lib 링크
 #define SERVERPORT 9000
 
@@ -182,7 +183,6 @@ void PlayerThread(int id)
 		}
 	}
 
-
 	game.players[id].ResetSESSION();
 }
 
@@ -201,6 +201,7 @@ void LogicThread()
 	}
 }
 
+
 void EventThread()
 {
 	std::random_device rd;
@@ -208,79 +209,87 @@ void EventThread()
 	std::uniform_int_distribution<int> dis(1, 100);
 	std::uniform_int_distribution<int> wind(0, 7);
 
-	Rect rect{ 90, WindowWidth - 90, 30, WindowHeight - 30 };
 	std::uniform_int_distribution<int> rect_x(90 + 20, WindowWidth - 90 - 20);
 	std::uniform_int_distribution<int> rect_y(30 + 20, WindowHeight - 30 - 20);
-
 	while (1)
 	{
 		WaitForSingleObject(event_event, INFINITE);
 		printf("EventThread On\n");
 
+		auto start = std::chrono::high_resolution_clock::now();
 		while (game.IsPlayScene())
 		{
-			Sleep(1000 * 5); // 여기는 타이머 대신 일단 써둠 test용 5초
+			std::this_thread::sleep_for(std::chrono::seconds(5));
 			int num = dis(gen);
-			if (num < 25) {		 // 바람 이벤트
+			if (num < 33) {		 // 바람 이벤트
 				printf("Wind Event On\n");
 				int wind_way = wind(gen);
 				WindWay(wind_way);
+
 				for (int i = 0; i < MAXPLAYER; ++i) {
 					if (game.players[i].state == E_OFFLINE) continue;
-					game.players[i].SendEventPacket(WIND, 1, wind_way);
+					game.players[i].SendEventPacket(WIND, 1);
 				}
-				Sleep(1000 * 10);
+				std::this_thread::sleep_for(std::chrono::seconds(10));
+
 				printf("Wind Event Off\n");
 				WindWay(-1);
 				for (int i = 0; i < MAXPLAYER; ++i) {
 					if (game.players[i].state == E_OFFLINE) continue;
-					game.players[i].SendEventPacket(WIND,0, wind_way);
+					game.players[i].SendEventPacket(WIND, 0);
 				}
 			}
-			else if (num < 50) { // 장판 이벤트
+			else if (num < 66) { // 장판 이벤트
 				game.playScene.b_floor = true;
 				game.playScene.floor.position.x = rect_x(gen);
 				game.playScene.floor.position.y = rect_y(gen);
 				game.playScene.floor.size.x = 40;
 				game.playScene.floor.size.y = 40;
+				for (int i = 0; i < MAXPLAYER; ++i) {
+					if (game.players[i].state == E_OFFLINE) continue;
+					game.players[i].SendEventPacket(FLOOR, 1);
+					game.players[i].SendPosPacket(-1, game.playScene.floor.position.x, game.playScene.floor.position.y, E_OBJTYPE::FLOOR);
+				}
+				std::this_thread::sleep_for(std::chrono::seconds(10));
 
-				//send하기
-
-				Sleep(1000 * 10);
 				game.playScene.b_floor = false;		
 				game.playScene.floor.position.x = 0;
 				game.playScene.floor.position.y = 0;
 				game.playScene.floor.size.x = 0;
 				game.playScene.floor.size.y = 0;
-
-				//send하기
-			}
-			else if (num < 75) { // 아이템 이벤트
-
+				for (int i = 0; i < MAXPLAYER; ++i) {
+					if (game.players[i].state == E_OFFLINE) continue;
+					game.players[i].SendEventPacket(FLOOR, 0);
+				}
 			}
 			else {				 // 장애물 이벤트 
 				printf("obtacle Event On\n");
 				game.playScene.b_obtacle = true;
 				game.playScene.obstacle.position.x = rect_x(gen);
 				game.playScene.obstacle.position.y = rect_y(gen);
-				game.playScene.obstacle.size.x = 20;
-				game.playScene.obstacle.size.y = 20;
+				game.playScene.obstacle.size.x = 40;
+				game.playScene.obstacle.size.y = 40;
+
 				for (int i = 0; i < MAXPLAYER; ++i) {
 					if (game.players[i].state == E_OFFLINE) continue;
-					game.players[i].SendEventPacket(OBSTACLE, 1,game.playScene.obstacle);
-				}
-				Sleep(1000 * 10);
+					game.players[i].SendEventPacket(OBSTACLE, 1);
+					game.players[i].SendPosPacket(-1, game.playScene.obstacle.position.x, game.playScene.obstacle.position.y, E_OBJTYPE::OBSTACLE);
+				}				
+				std::this_thread::sleep_for(std::chrono::seconds(10));
+
 				printf("obtacle Event Off\n");
 				game.playScene.b_obtacle = false;
 				game.playScene.obstacle.position.x = 0;
 				game.playScene.obstacle.position.y = 0;
+
 				game.playScene.obstacle.size.x = 0;
 				game.playScene.obstacle.size.y = 0;
+
+				
 				for (int i = 0; i < MAXPLAYER; ++i) {
 					if (game.players[i].state == E_OFFLINE) continue;
-					game.players[i].SendEventPacket(OBSTACLE, 0, game.playScene.obstacle);
+					game.players[i].SendEventPacket(OBSTACLE, 0);
 				}
-
 			}
 		}
 		ResetEvent(event_event);
@@ -290,7 +299,6 @@ void EventThread()
 
 void WindWay(int wind)
 {
-	// 이거 하기전에 업데이트와 동기화 작업하기
 	for (SESSION& player : game.players) {
 		if (player.state == E_OFFLINE) continue;
 		if (player.team_color == OBSERVER) continue;
@@ -335,6 +343,47 @@ void WindWay(int wind)
 		default:
 			break;
 		}
+	}
+	switch (wind)
+	{
+	case 0:	// 상
+		game.playScene.ball.wind_velocity.x = 0.0;
+		game.playScene.ball.wind_velocity.y = -20.0;
+		break;
+	case 1:	// 우상
+		game.playScene.ball.wind_velocity.x = 20.0;
+		game.playScene.ball.wind_velocity.y = -20.0;
+		break;
+	case 2:	// 우
+		game.playScene.ball.wind_velocity.x = 20.0;
+		game.playScene.ball.wind_velocity.y = 0.0;
+		break;
+	case 3:	// 우하
+		game.playScene.ball.wind_velocity.x = 20.0;
+		game.playScene.ball.wind_velocity.y = 20.0;
+		break;
+	case 4:	// 하
+		game.playScene.ball.wind_velocity.x = 0.0;
+		game.playScene.ball.wind_velocity.y = 20.0;
+		break;
+	case 5:	// 좌하
+		game.playScene.ball.wind_velocity.x = -20.0;
+		game.playScene.ball.wind_velocity.y = 20.0;
+		break;
+	case 6:	// 좌
+		game.playScene.ball.wind_velocity.x = 20.0;
+		game.playScene.ball.wind_velocity.y = 0.0;
+		break;
+	case 7:	// 좌상
+		game.playScene.ball.wind_velocity.x = -20.0;
+		game.playScene.ball.wind_velocity.y = -20.0;
+		break;
+	case -1:// 초기화
+		game.playScene.ball.wind_velocity.x = 0.0;
+		game.playScene.ball.wind_velocity.y = 0.0;
+		break;
+	default:
+		break;
 	}
 }
 
