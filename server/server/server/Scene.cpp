@@ -298,7 +298,7 @@ void CPlayScene::ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players)
 			if (player.state == E_OFFLINE) continue;
 			if (player.team_color == OBSERVER) continue;
 			if (CollisionCheck(player.p, obstacle)) {
-				double repulsion = -1.2;
+				double repulsion = 1.2;
 				CollisionUpdate(player.p, obstacle, repulsion);
 			}		
 		}

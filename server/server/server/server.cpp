@@ -219,7 +219,7 @@ void EventThread()
 		{
 			std::this_thread::sleep_for(std::chrono::seconds(5));
 			int num = dis(gen);
-			if (num < 33) {		 // 바람 이벤트
+			if (num < 5) {		 // 바람 이벤트
 				printf("Wind Event On\n");
 				int wind_way = wind(gen);
 				WindWay(wind_way);
@@ -237,7 +237,7 @@ void EventThread()
 					game.players[i].SendEventPacket(W, 0);
 				}
 			}
-			else if (num < 66) { // 장판 이벤트
+			else if (num < 10) { // 장판 이벤트
 				game.playScene.b_floor = true;
 				game.playScene.floor.position.x = rect_x(gen);
 				game.playScene.floor.position.y = rect_y(gen);
@@ -301,35 +301,35 @@ void WindWay(int wind)
 		{
 		case 0:	// 상
 			player.p.wind_velocity.x = 0.0;
-			player.p.wind_velocity.y = -20.0;
+			player.p.wind_velocity.y = -10.0;
 			break;
 		case 1:	// 우상
-			player.p.wind_velocity.x = 20.0;
-			player.p.wind_velocity.y = -20.0;
+			player.p.wind_velocity.x = 10.0;
+			player.p.wind_velocity.y = -10.0;
 			break;
 		case 2:	// 우
-			player.p.wind_velocity.x = 20.0;
+			player.p.wind_velocity.x = 10.0;
 			player.p.wind_velocity.y = 0.0;
 			break;
 		case 3:	// 우하
-			player.p.wind_velocity.x = 20.0;
-			player.p.wind_velocity.y = 20.0;
+			player.p.wind_velocity.x = 10.0;
+			player.p.wind_velocity.y = 10.0;
 			break;
 		case 4:	// 하
 			player.p.wind_velocity.x = 0.0;
-			player.p.wind_velocity.y = 20.0;
+			player.p.wind_velocity.y = 10.0;
 			break;
 		case 5:	// 좌하
-			player.p.wind_velocity.x = -20.0;
-			player.p.wind_velocity.y = 20.0;
+			player.p.wind_velocity.x = -10.0;
+			player.p.wind_velocity.y = 10.0;
 			break;
 		case 6:	// 좌
-			player.p.wind_velocity.x = 20.0;
+			player.p.wind_velocity.x = 10.0;
 			player.p.wind_velocity.y = 0.0;
 			break;
 		case 7:	// 좌상
-			player.p.wind_velocity.x = -20.0;
-			player.p.wind_velocity.y = -20.0;
+			player.p.wind_velocity.x = -10.0;
+			player.p.wind_velocity.y = -10.0;
 			break;
 		case -1:// 초기화
 			player.p.wind_velocity.x = 0.0;
@@ -343,35 +343,35 @@ void WindWay(int wind)
 	{
 	case 0:	// 상
 		game.playScene.ball.wind_velocity.x = 0.0;
-		game.playScene.ball.wind_velocity.y = -20.0;
+		game.playScene.ball.wind_velocity.y = -10.0;
 		break;
 	case 1:	// 우상
-		game.playScene.ball.wind_velocity.x = 20.0;
-		game.playScene.ball.wind_velocity.y = -20.0;
+		game.playScene.ball.wind_velocity.x = 10.0;
+		game.playScene.ball.wind_velocity.y = -10.0;
 		break;
 	case 2:	// 우
-		game.playScene.ball.wind_velocity.x = 20.0;
+		game.playScene.ball.wind_velocity.x = 10.0;
 		game.playScene.ball.wind_velocity.y = 0.0;
 		break;
 	case 3:	// 우하
-		game.playScene.ball.wind_velocity.x = 20.0;
-		game.playScene.ball.wind_velocity.y = 20.0;
+		game.playScene.ball.wind_velocity.x = 10.0;
+		game.playScene.ball.wind_velocity.y = 10.0;
 		break;
 	case 4:	// 하
 		game.playScene.ball.wind_velocity.x = 0.0;
-		game.playScene.ball.wind_velocity.y = 20.0;
+		game.playScene.ball.wind_velocity.y = 10.0;
 		break;
 	case 5:	// 좌하
-		game.playScene.ball.wind_velocity.x = -20.0;
-		game.playScene.ball.wind_velocity.y = 20.0;
+		game.playScene.ball.wind_velocity.x = -10.0;
+		game.playScene.ball.wind_velocity.y = 10.0;
 		break;
 	case 6:	// 좌
-		game.playScene.ball.wind_velocity.x = 20.0;
+		game.playScene.ball.wind_velocity.x = 10.0;
 		game.playScene.ball.wind_velocity.y = 0.0;
 		break;
 	case 7:	// 좌상
-		game.playScene.ball.wind_velocity.x = -20.0;
-		game.playScene.ball.wind_velocity.y = -20.0;
+		game.playScene.ball.wind_velocity.x = -10.0;
+		game.playScene.ball.wind_velocity.y = -10.0;
 		break;
 	case -1:// 초기화
 		game.playScene.ball.wind_velocity.x = 0.0;

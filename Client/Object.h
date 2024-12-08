@@ -95,6 +95,15 @@ public:
 
 	void Render(HDC& dc);
 };
+class CObstacle : public CRectangleObject
+{
+public:
+	BOOL on;
+	CObstacle();
+
+	void Render(HDC& dc);
+	void SetOn(bool sw);
+};
 
 class CBasketballGoal
 {
@@ -157,3 +166,4 @@ public:
 
 	void Render(CRectangleObject& player, HDC dc, BOOL fill);
 };
+

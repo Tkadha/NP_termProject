@@ -80,8 +80,5 @@ class EVENT_PACKET : public BASE_PACKET {
 public:
 	E_EVENTTYPE eventtype;
 	char onoff;	// 1이면 on 0이면 off
-	double x, y;
-	int size;
-	XY recsize;
 };
 #pragma pack (pop)

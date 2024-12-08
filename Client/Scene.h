@@ -101,7 +101,7 @@ public:
 	CMap* map;
 	CSoccerMap soccerMap;
 	CBasketballMap basketballMap;
-
+	CObstacle obstacle;
 	void ChangeMap(E_MAPTYPE maptype);
 
 	void Update();

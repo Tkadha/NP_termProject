@@ -102,6 +102,11 @@ void ProcessPacket(char* packet)
 		else if(p->objtype == BALL) {
 			game.SetBallPos({ p->x, p->y });
 		}
+		else if (p->objtype == OBSTACLE) {
+			game.playScene.obstacle.position = { p->x,p->y };
+			std::cout << game.playScene.obstacle.position.x << std::endl;
+			std::cout << game.playScene.obstacle.position.y << std::endl;
+		}
 		LeaveCriticalSection(&cs);
 		break;
 	}
@@ -112,14 +117,16 @@ void ProcessPacket(char* packet)
 	}
 	case SC_EVENT: {
 		EVENT_PACKET* p = reinterpret_cast<EVENT_PACKET*>(packet);
-		if (p->eventtype == WIND) {
+		if (p->eventtype == W) {
 
 		}
-		else if (p->eventtype == FLOOR) {
+		else if (p->eventtype == F) {
 
 		}
-		else if (p->eventtype == OBSTACLE) {
-			
+		else if (p->eventtype == O) {
+			if(p->onoff == 1) game.playScene.obstacle.SetOn(true);
+			else game.playScene.obstacle.SetOn(false);
+			std::cout << game.playScene.obstacle.on << std::endl;
 		}
 		break;
 	}
@@ -353,7 +360,7 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	static HBITMAP hBit;
 	HBITMAP oldBit;
 	static LOGFONT LogFont;
-
+	int TextX = 1440;
 	static BOOL LMouse, RMouse;
 
 	XY camera;
@@ -379,7 +386,8 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		EnterCriticalSection(&cs);
 		game.Render(memdc);
 		LeaveCriticalSection(&cs);
-
+		TextOut(memdc, TextX, 450, L"Win !!!", lstrlen(L"Win !!!"));
+		TextX -= 5;
 		SelectObject(memdc, oldBit);
 		DeleteDC(memdc);
 		InvalidateRect(hwnd, NULL, FALSE);

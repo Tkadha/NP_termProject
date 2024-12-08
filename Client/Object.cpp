@@ -98,7 +98,20 @@ void CBackBoard::Render(HDC& dc)
 {
 	graphicsC->Render(*this, dc, true);
 }
-
+CObstacle::CObstacle()
+{
+	size = { 60,130 };
+	graphicsC = new RectangleComponent;
+}
+void CObstacle::Render(HDC& dc)
+{
+	if(on == true)
+	graphicsC->Render(*this, dc, true);
+}
+void CObstacle::SetOn(bool sw)
+{
+	on = sw;
+}
 CBasketballGoal::CBasketballGoal(E_team team) :team(team)
 {
 	if (team == Red) {
