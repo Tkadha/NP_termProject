@@ -127,15 +127,35 @@ bool SESSION::SendScenePacket(int pid, E_SCENEKIND scene)
 	return true;
 }
 
-bool SESSION::SendEventPacket(E_EVENTTYPE eventtype)
+bool SESSION::SendEventPacket(E_EVENTTYPE eventtype, char onoff, char way)
 {
 	EVENT_PACKET p;
-	p.size = sizeof(SCENE_PACKET);
+	p.size = sizeof(EVENT_PACKET);
 	p.type = SC_EVENT;
 	p.eventtype = eventtype;
+	p.onoff = onoff;
+	p.way = way;
 	int retval;
 	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
 	if (retval == SOCKET_ERROR) return false;
 
 	return true;
 }
+
+bool SESSION::SendEventPacket(E_EVENTTYPE eventtype, char onoff, CEllipseObject& obs)
+{
+	EVENT_PACKET p;
+	p.size = sizeof(EVENT_PACKET);
+	p.type = SC_EVENT;
+	p.eventtype = eventtype;
+	p.onoff = onoff;
+	p.x = obs.position.x;
+	p.y = obs.position.y;
+	p.size = obs.size;
+	int retval;
+	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
+	if (retval == SOCKET_ERROR) return false;
+
+	return true;
+}
+

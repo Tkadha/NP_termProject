@@ -32,7 +32,7 @@ void CPlayer::InfoReset()
 {
 	friction = 1.05;
 	size = 20;
-	maxVelocity = { 50,50 };
+	maxVelocity = { 1000,1000 };
 	power = 16;
 	memset(KeyDownBuffer, 0, sizeof(KeyDownBuffer));
 }
