@@ -78,7 +78,7 @@ void CCenterCircle::Render(HDC& dc)
 
 CRim::CRim()
 {
-	size = 20;
+	size = 15;
 
 	graphicsC = new EllipseComponent;
 }

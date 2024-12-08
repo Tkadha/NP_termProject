@@ -1,6 +1,6 @@
 #pragma once
 #include "Map.h"
-#include <math.h>
+//#include <math.h>
 #include "SESSION.h"
 #include <array>
 #include "Timer.h"

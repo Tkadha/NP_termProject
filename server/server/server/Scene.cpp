@@ -1,4 +1,19 @@
+//#define NOMINMAX
 #include "Scene.h"
+#include <cmath>
+#include <algorithm>
+
+template <typename T>
+T Max(T a, T b) {
+	return (a > b) ? a : b;
+}
+
+template <typename T>
+T Min(T a, T b) {
+	return (a < b) ? a : b;
+}
+
+enum direction { None, Left, Right, Top, Bottom };
 
 BOOL CollisionCheck(CEllipseObject& a, CEllipseObject& b)
 {
@@ -6,6 +21,42 @@ BOOL CollisionCheck(CEllipseObject& a, CEllipseObject& b)
 		return TRUE;
 	else
 		return FALSE;
+}
+
+BOOL CollisionCheck(CEllipseObject& a, CRim& b)
+{
+	if ((a.position.x - b.position.x) * (a.position.x - b.position.x) + (a.position.y - b.position.y) * (a.position.y - b.position.y) <= (a.size + b.RimSize) * (a.size + b.RimSize)) {
+		a.position = b.position;
+		a.velocity = { 0,0 };
+		return TRUE;
+	}
+	else
+		return FALSE;
+}
+
+direction CollisionCheck(CEllipseObject& a, CRectangleObject& b)
+{
+	float left = b.position.x - b.size.x / 2;
+	float right = b.position.x + b.size.x / 2;
+	float top = b.position.y - b.size.y / 2;
+	float bottom = b.position.y + b.size.y / 2;
+
+	float nearestX = Max(left, Min((float)a.position.x, right));
+	float nearestY = Max(top, Min((float)a.position.y, bottom));
+
+	float deltaX = a.position.x - nearestX;
+	float deltaY = a.position.y - nearestY;
+	float distanceSquared = deltaX * deltaX + deltaY * deltaY;
+
+	if (distanceSquared > a.size * a.size) {
+		return None;
+	}
+
+	if (nearestX == left) return Left;
+	if (nearestX == right) return Right;
+	if (nearestY == top) return Top;
+	if (nearestY == bottom) return Bottom;
+
 }
 
 void MapCollisionCheck(CEllipseObject& a, CMap *map, double repulsion)
@@ -63,6 +114,17 @@ void CollisionUpdate(CEllipseObject& a, CEllipseObject& b, double repulsion)
 	}
 }
 
+void CollisionUpdate(CEllipseObject& a, CRectangleObject& b, double repulsion)
+{
+	direction dir = CollisionCheck(a, b);
+	if (dir == Left || dir == Right) {
+		a.velocity.x *= -repulsion;
+	}
+	else if (dir == Top || dir == Bottom) {
+		a.velocity.y *= -repulsion;
+	}
+}
+
 void KickOffCheck(CEllipseObject& player, CEllipseObject& circle)
 {
 	double dx = player.position.x - circle.position.x;
@@ -70,6 +132,7 @@ void KickOffCheck(CEllipseObject& player, CEllipseObject& circle)
 	double distance = sqrt(dx * dx + dy * dy);
 
 	if (distance < player.size + circle.size) {
+
 		double overlap = player.size + circle.size - distance;
 		double NormalX = dx / distance;
 		double NormalY = dy / distance;
@@ -95,6 +158,16 @@ BOOL GoalCheck(CEllipseObject& ball, CMap *map)
 		if (ball.position.x - ball.size >= bb.left && ball.position.x + ball.size <= bb.right &&
 			ball.position.y - ball.size >= bb.top && ball.position.y + ball.size <= bb.bottom) {
 			sMap->CenterCircle.team = BLUE;
+			return true;
+		}
+	}
+	else if (CBasketballMap* bMap = dynamic_cast<CBasketballMap*>(map)) {
+		if (CollisionCheck(ball, bMap->RedGoal.Rim)) {
+			bMap->CenterCircle.team = RED;
+			return true;
+		}
+		if (CollisionCheck(ball, bMap->BlueGoal.Rim)) {
+			bMap->CenterCircle.team = RED;
 			return true;
 		}
 	}
@@ -211,7 +284,6 @@ void CPlayScene::ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players)
 		}
 	}
 
-	// if 축구
 	if (CSoccerMap* sMap = dynamic_cast<CSoccerMap*>(map)) {
 	// 공 <-> 골대
 		for (int i = 0; i < 2; ++i) {
@@ -225,8 +297,12 @@ void CPlayScene::ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players)
 			}
 		}
 	}
-	// else if 농구
-	// 백보드 충돌처리
+	else if (CBasketballMap* bMap = dynamic_cast<CBasketballMap*>(map)) {
+		// 백보드 충돌처리
+		double repulsion = 0.625;
+		CollisionUpdate(ball, bMap->RedGoal.BackBoard, repulsion);
+		CollisionUpdate(ball, bMap->BlueGoal.BackBoard, repulsion);
+	}
 
 	
 	// 공 <-> 맵(벽)

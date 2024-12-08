@@ -60,7 +60,8 @@ CCenterCircle::CCenterCircle()
 
 CRim::CRim()
 {
-	size = 20;
+	size = 15;
+	RimSize = 20;
 }
 
 CBackBoard::CBackBoard()

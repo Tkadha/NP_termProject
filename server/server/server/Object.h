@@ -87,6 +87,7 @@ class CRim : public CEllipseObject
 {
 public:
 	E_TEAMCOLOR team;
+	double RimSize;
 	CRim();
 };
 
@@ -100,9 +101,10 @@ class CBasketballGoal
 {
 	int offset = 40;
 
+public:
 	CRim Rim;
 	CBackBoard BackBoard;
-public:
+
 	E_TEAMCOLOR team;
 	CBasketballGoal(E_TEAMCOLOR team);
 
