@@ -25,7 +25,7 @@ BOOL CollisionCheck(CEllipseObject& a, CEllipseObject& b)
 
 BOOL CollisionCheck(CEllipseObject& a, CRim& b)
 {
-	if ((a.position.x - b.position.x) * (a.position.x - b.position.x) + (a.position.y - b.position.y) * (a.position.y - b.position.y) <= (a.size + b.RimSize) * (a.size + b.RimSize)) {
+	if ((a.position.x - b.position.x) * (a.position.x - b.position.x) + (a.position.y - b.position.y) * (a.position.y - b.position.y) <= (a.size + b.size) * (a.size + b.size)) {
 		a.position = b.position;
 		a.velocity = { 0,0 };
 		return TRUE;
@@ -34,7 +34,7 @@ BOOL CollisionCheck(CEllipseObject& a, CRim& b)
 		return FALSE;
 }
 
-direction CollisionCheck(CEllipseObject& a, CRectangleObject& b)
+BOOL CollisionCheck(CEllipseObject& a, CRectangleObject& b)
 {
 	float left = b.position.x - b.size.x / 2;
 	float right = b.position.x + b.size.x / 2;
@@ -49,13 +49,14 @@ direction CollisionCheck(CEllipseObject& a, CRectangleObject& b)
 	float distanceSquared = deltaX * deltaX + deltaY * deltaY;
 
 	if (distanceSquared > a.size * a.size) {
-		return None;
+		return FALSE;
 	}
 
-	if (nearestX == left) return Left;
+	return TRUE;
+	/*if (nearestX == left) return Left;
 	if (nearestX == right) return Right;
 	if (nearestY == top) return Top;
-	if (nearestY == bottom) return Bottom;
+	if (nearestY == bottom) return Bottom;*/
 
 }
 
@@ -116,13 +117,45 @@ void CollisionUpdate(CEllipseObject& a, CEllipseObject& b, double repulsion)
 
 void CollisionUpdate(CEllipseObject& a, CRectangleObject& b, double repulsion)
 {
-	direction dir = CollisionCheck(a, b);
-	if (dir == Left || dir == Right) {
+	if(a.position.y >= b.position.y - b.size.y / 2 && a.position.y <= b.position.y + b.size.y / 2){
+		if (a.position.x + a.size > b.position.x - b.size.x / 2 &&
+			a.position.x + a.size < b.position.x + b.size.x / 2) {
+			//a.position.x = b.position.x - b.size.x / 2 - a.size;
+			a.velocity.x *= repulsion;
+		}
+		else if (a.position.x - a.size > b.position.x - b.size.x / 2 &&
+			a.position.x - a.size < b.position.x + b.size.x / 2) {
+			//a.position.x = b.position.x + b.size.x / 2 + a.size;
+			a.velocity.x *= repulsion;
+		}
+	}
+	if (a.position.x >= b.position.x - b.size.x / 2 && a.position.x <= b.position.x + b.size.x / 2) {
+		if (a.position.y + a.size >= b.position.y - b.size.y / 2 &&
+			a.position.y + a.size <= b.position.y + b.size.y / 2) {
+			//a.position.y = b.position.y - b.size.y / 2 - a.size;
+			a.velocity.y *= repulsion;
+		}
+		else if (a.position.y - a.size >= b.position.y - b.size.y / 2 &&
+			a.position.y - a.size <= b.position.y + b.size.y / 2) {
+			//a.position.y = b.position.y + b.size.y / 2 + a.size;
+			a.velocity.y *= repulsion;
+		}
+	}
+
+	/*if (CollisionCheck(a, b)) {
+		if (a.position.y >= b.position.y - b.size.y / 2 &&
+			a.position.y <= b.position.y + b.size.y / 2)
+			a.velocity.x *= -repulsion;
+		if (a.position.x >= b.position.x - b.size.x / 2 &&
+			a.position.x <= b.position.x + b.size.x / 2)
+			a.velocity.y *= -repulsion;
+	}*/
+	/*if (dir == Left || dir == Right) {
 		a.velocity.x *= -repulsion;
 	}
-	else if (dir == Top || dir == Bottom) {
+	if (dir == Top || dir == Bottom) {
 		a.velocity.y *= -repulsion;
-	}
+	}*/
 }
 
 void KickOffCheck(CEllipseObject& player, CEllipseObject& circle)
@@ -151,6 +184,8 @@ BOOL GoalCheck(CEllipseObject& ball, CMap *map)
 		if (ball.position.x - ball.size >= bb.left && ball.position.x + ball.size <= bb.right &&
 			ball.position.y - ball.size >= bb.top && ball.position.y + ball.size <= bb.bottom) {
 			sMap->CenterCircle.team = RED;
+			ball.velocity.x *= 0.16;
+			ball.velocity.y *= 0.16;
 			return true;
 		}
 	
@@ -158,6 +193,8 @@ BOOL GoalCheck(CEllipseObject& ball, CMap *map)
 		if (ball.position.x - ball.size >= bb.left && ball.position.x + ball.size <= bb.right &&
 			ball.position.y - ball.size >= bb.top && ball.position.y + ball.size <= bb.bottom) {
 			sMap->CenterCircle.team = BLUE;
+			ball.velocity.x *= 0.16;
+			ball.velocity.y *= 0.16;
 			return true;
 		}
 	}
@@ -167,7 +204,7 @@ BOOL GoalCheck(CEllipseObject& ball, CMap *map)
 			return true;
 		}
 		if (CollisionCheck(ball, bMap->BlueGoal.Rim)) {
-			bMap->CenterCircle.team = RED;
+			bMap->CenterCircle.team = BLUE;
 			return true;
 		}
 	}
@@ -299,7 +336,7 @@ void CPlayScene::ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players)
 	}
 	else if (CBasketballMap* bMap = dynamic_cast<CBasketballMap*>(map)) {
 		// 백보드 충돌처리
-		double repulsion = 0.625;
+		double repulsion = -0.625;
 		CollisionUpdate(ball, bMap->RedGoal.BackBoard, repulsion);
 		CollisionUpdate(ball, bMap->BlueGoal.BackBoard, repulsion);
 	}
@@ -313,6 +350,11 @@ void CPlayScene::ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players)
 			printf("Goal\n");
 			goalTime = timer.Now();
 			goal = true;
+
+			for (int i = 0; i < MAXPLAYER; ++i) {
+				if (players[i].state == E_OFFLINE) continue;
+				players[i].SendPosPacket(-1, ball.position.x, ball.position.y, BALL);
+			}
 		}
 	}
 
@@ -330,7 +372,6 @@ void CPlayScene::ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players)
 					player.p.position.x = WindowWidth / 2 + player.p.size;
 				}
 			}
-
 			// 플레이어 <-> 센터서클
 			if (player.team_color == map->CenterCircle.team) continue;
 			if (CollisionCheck(player.p, map->CenterCircle)) {
@@ -344,6 +385,7 @@ void CPlayScene::Enter(std::array <SESSION, MAXPLAYER>& players)
 {
 	Reset(players);
 	ChangeMap(maptype);
+	kickOff = false;
 }
 
 void CPlayScene::Reset(std::array <SESSION, MAXPLAYER>& players)
@@ -396,7 +438,6 @@ void CPlayScene::Reset(std::array <SESSION, MAXPLAYER>& players)
 
 	map->Reset();
 	goal = false;
-	kickOff = false;
 }
 
 void CPlayScene::ChangeMap(E_MAPTYPE type)

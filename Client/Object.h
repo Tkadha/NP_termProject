@@ -99,7 +99,9 @@ public:
 class CBasketballGoal
 {
 	HPEN hPen, oldPen;
-	int offset = 40;
+
+	int offset = 80;
+	double backboaredOffset = 200;
 
 	CRim Rim;
 	CBackBoard BackBoard;

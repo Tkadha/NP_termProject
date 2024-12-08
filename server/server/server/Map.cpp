@@ -39,7 +39,8 @@ void CSoccerMap::Reset()
 
 void CBasketballMap::Reset()
 {
-
+    RedGoal.Reset();
+    BlueGoal.Reset();
 }
 
 

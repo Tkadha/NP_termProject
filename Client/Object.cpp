@@ -90,7 +90,7 @@ void CRim::Render(HDC& dc)
 
 CBackBoard::CBackBoard()
 {
-	size = { 8,128 };
+	size = { 16,128 };
 	graphicsC = new RectangleComponent;
 }
 
@@ -102,14 +102,14 @@ void CBackBoard::Render(HDC& dc)
 CBasketballGoal::CBasketballGoal(E_team team) :team(team)
 {
 	if (team == Red) {
-		XY position = { 126,WindowHeight/2 };
+		XY position = { backboaredOffset,WindowHeight / 2 };
 		BackBoard.position = position;
 
 		position.x += offset;
 		Rim.position = position;
 	}
 	else if (team == Blue) {
-		XY position = { WindowWidth - 126,WindowHeight/2 };
+		XY position = { WindowWidth - backboaredOffset,WindowHeight / 2 };
 		BackBoard.position = position;
 
 		position.x -= offset;

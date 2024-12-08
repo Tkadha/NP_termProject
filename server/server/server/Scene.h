@@ -84,8 +84,8 @@ public:
 	CBall ball;						// °ø
 
 	CMap* map;
-	CSoccerMap soccerMap;
-	CBasketballMap basketballMap;
+	CSoccerMap soccerMap{};
+	CBasketballMap basketballMap{};
 
 	void ChangeMap(E_MAPTYPE map);
 	void ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players);

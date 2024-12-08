@@ -65,7 +65,7 @@ void NetWorkManager::Con() {
 	if (sock == INVALID_SOCKET) {
 
 		err_quit("socket()");
-
+			
 	}
 
 	serv_addr.sin_family = AF_INET;

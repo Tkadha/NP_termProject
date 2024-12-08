@@ -99,8 +99,8 @@ public:
 
 class CBasketballGoal
 {
-	int offset = 40;
-
+	int offset = 80;
+	double backboaredOffset = 200;
 public:
 	CRim Rim;
 	CBackBoard BackBoard;
