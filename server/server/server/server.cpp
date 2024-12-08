@@ -201,8 +201,13 @@ void EventThread()
 {
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	std::uniform_int_distribution<int> dis(0, 100);
-	std::uniform_int_distribution<int> wind(0, 8);
+	std::uniform_int_distribution<int> dis(1, 100);
+	std::uniform_int_distribution<int> wind(0, 7);
+
+	Rect rect{ 90, WindowWidth - 90, 30, WindowHeight - 30 };
+	std::uniform_int_distribution<int> rect_x(90 + 20, WindowWidth - 90 - 20);
+	std::uniform_int_distribution<int> rect_y(30 + 20, WindowHeight - 30 - 20);
+
 	while (1)
 	{
 		WaitForSingleObject(event_event, INFINITE);
@@ -214,29 +219,66 @@ void EventThread()
 			int num = dis(gen);
 			if (num < 25) {		 // 바람 이벤트
 				printf("Wind Event On\n");
-				WindWay(wind(gen));
-				//send하기
+				int wind_way = wind(gen);
+				WindWay(wind_way);
+				for (int i = 0; i < MAXPLAYER; ++i) {
+					if (game.players[i].state == E_OFFLINE) continue;
+					game.players[i].SendEventPacket(WIND, 1, wind_way);
+				}
 				Sleep(1000 * 10);
 				printf("Wind Event Off\n");
 				WindWay(-1);
-				//send하기
+				for (int i = 0; i < MAXPLAYER; ++i) {
+					if (game.players[i].state == E_OFFLINE) continue;
+					game.players[i].SendEventPacket(WIND,0, wind_way);
+				}
 			}
 			else if (num < 50) { // 장판 이벤트
+				game.playScene.b_floor = true;
+				game.playScene.floor.position.x = rect_x(gen);
+				game.playScene.floor.position.y = rect_y(gen);
+				game.playScene.floor.size.x = 40;
+				game.playScene.floor.size.y = 40;
 
+				//send하기
 
+				Sleep(1000 * 10);
+				game.playScene.b_floor = false;		
+				game.playScene.floor.position.x = 0;
+				game.playScene.floor.position.y = 0;
+				game.playScene.floor.size.x = 0;
+				game.playScene.floor.size.y = 0;
+
+				//send하기
 			}
 			else if (num < 75) { // 아이템 이벤트
 
-
 			}
 			else {				 // 장애물 이벤트 
-
+				printf("obtacle Event On\n");
+				game.playScene.b_obtacle = true;
+				game.playScene.obstacle.position.x = rect_x(gen);
+				game.playScene.obstacle.position.y = rect_y(gen);
+				game.playScene.obstacle.size = 20;
+				for (int i = 0; i < MAXPLAYER; ++i) {
+					if (game.players[i].state == E_OFFLINE) continue;
+					game.players[i].SendEventPacket(OBSTACLE, 1,game.playScene.obstacle);
+				}
+				Sleep(1000 * 10);
+				printf("obtacle Event Off\n");
+				game.playScene.b_obtacle = false;
+				game.playScene.obstacle.position.x = 0;
+				game.playScene.obstacle.position.y = 0;
+				game.playScene.obstacle.size = 0;
+				for (int i = 0; i < MAXPLAYER; ++i) {
+					if (game.players[i].state == E_OFFLINE) continue;
+					game.players[i].SendEventPacket(OBSTACLE, 0, game.playScene.obstacle);
+				}
 
 			}
 		}
 		ResetEvent(event_event);
 		printf("EventThread Sleep\n");
-
 	}
 }
 

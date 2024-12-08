@@ -7,7 +7,11 @@ BOOL CollisionCheck(CEllipseObject& a, CEllipseObject& b)
 	else
 		return FALSE;
 }
+BOOL CollisionCheck(CEllipseObject& a, CRectangleObject& b)
+{
+	// 코드 작성하기
 
+}
 void MapCollisionCheck(CEllipseObject& a, CMap& map, double repulsion)
 {
 	Rect m = map.rect;
@@ -85,6 +89,7 @@ CPlayScene::CPlayScene()
 {
 	timer.Start();
 	b_obtacle = false;
+	b_floor = false;
 }
 
 void CPlayScene::Update(std::array <SESSION, MAXPLAYER>& players)
@@ -148,6 +153,7 @@ void CPlayScene::ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players)
 		}
 	}
 
+	// 플레이어 <-> 플레이어
 	for (int i = 0; i < MAXPLAYER; ++i) {
 		if (players[i].state == E_OFFLINE) continue;
 		if (players[i].team_color == OBSERVER) continue;
@@ -159,6 +165,17 @@ void CPlayScene::ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players)
 				double repulsion = -1.2;		// 반발력 계수
 				CollisionUpdate(players[i].p, players[j].p, repulsion);
 			}
+		}
+	}
+	// 플레이어 <-> 장애물
+	if (b_obtacle) {
+		for (SESSION& player : players) {
+			if (player.state == E_OFFLINE) continue;
+			if (player.team_color == OBSERVER) continue;
+			if (CollisionCheck(player.p, obstacle)) {
+				double repulsion = -1.2;
+				CollisionUpdate(player.p, obstacle, repulsion);
+			}		
 		}
 	}
 
@@ -174,7 +191,12 @@ void CPlayScene::ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players)
 		}
 	}
 
-	
+	// 공 <-> 장애물
+	if (b_obtacle && CollisionCheck(ball,obstacle)) {
+		double repulsion = -1.2;
+		CollisionUpdate(ball, obstacle, repulsion);
+	}
+
 	// 공 <-> 맵(벽)
 	MapCollisionCheck(ball, map, -1.0);
 

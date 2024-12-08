@@ -82,10 +82,10 @@ public:
 	CBall ball;						// 공
 	CSoccerMap map;
 
-	CRectangleObject obstacle;		// 장애물
+	CEllipseObject obstacle;		// 장애물
+	CRectangleObject floor;			// 장판
 	bool b_obtacle;
-
-	XY wind_way;
+	bool b_floor;
 
 	void ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players);
 	void Update(std::array <SESSION, MAXPLAYER>& players);
