@@ -104,6 +104,10 @@ void ProcessPacket(char* packet)
 		game.ChangeScene(p->scenekind);
 		break;
 	}
+	case SC_EVENT: {
+
+		break;
+	}
 	}
 }
 
