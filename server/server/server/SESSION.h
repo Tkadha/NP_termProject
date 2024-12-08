@@ -35,6 +35,5 @@ public:
 	bool SendStartPacket();
 	bool SendPosPacket(int pid, double x, double y, E_OBJTYPE objtype);
 	bool SendScenePacket(int pid, E_SCENEKIND scene);
-	bool SendEventPacket(E_EVENTTYPE eventtype, char onoff, char way);
-	bool SendEventPacket(E_EVENTTYPE eventtype, char onoff, CEllipseObject& obs);
+	bool SendEventPacket(E_EVENTTYPE eventtype, char onoff);
 };

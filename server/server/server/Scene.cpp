@@ -22,9 +22,6 @@ BOOL CollisionCheck(CEllipseObject& a, CEllipseObject& b)
 	else
 		return FALSE;
 }
-BOOL CollisionCheck(CEllipseObject& a, CRectangleObject& b)
-{
-	// 코드 작성하기
 
 BOOL CollisionCheck(CEllipseObject& a, CRim& b)
 {
@@ -71,10 +68,12 @@ void MapCollisionCheck(CEllipseObject& a, CMap *map, double repulsion)
 
 			}
 			else {
+				a.position.x = m.left + a.size;
 				a.velocity.x *= repulsion;
 			}
 		}
 		else {
+			a.position.x = m.left + a.size;
 			a.velocity.x *= repulsion;
 		}
 	}
@@ -84,17 +83,21 @@ void MapCollisionCheck(CEllipseObject& a, CMap *map, double repulsion)
 
 			}
 			else {
+				a.position.x = m.right - a.size;
 				a.velocity.x *= repulsion;
 			}
 		}
 		else {
+			a.position.x = m.right - a.size;
 			a.velocity.x *= repulsion;
 		}
 	}
 	if (a.position.y - a.size < m.top) {
+		a.position.y = m.top + a.size;
 		a.velocity.y *= repulsion;
 	}
 	if (a.position.y + a.size > m.bottom) {
+		a.position.y = m.bottom - a.size;
 		a.velocity.y *= repulsion;
 	}
 }
