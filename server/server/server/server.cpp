@@ -54,7 +54,6 @@ void err_display(int errcode)
 }
 
 CGameFramework game{};
-E_MAPTYPE maptype = SOCCER;
 
 HANDLE event_logic;
 HANDLE event_event;
@@ -76,10 +75,10 @@ void ProcessPacket(int id, char* packet)
 
 	case CS_MAP_CHOICE: {
 		MAP_PACKET* p = reinterpret_cast<MAP_PACKET*>(packet);
-		maptype = p->maptype;
+		game.ChangeMap(p->maptype);
 		for (int i = 0; i < MAXPLAYER; ++i) {
 			if (game.players[i].state == E_OFFLINE) continue;
-			game.players[i].SendMapPacket(id, maptype);
+			game.players[i].SendMapPacket(id, p->maptype);
 		}
 		break;
 	}
@@ -216,7 +215,6 @@ void EventThread()
 		WaitForSingleObject(event_event, INFINITE);
 		printf("EventThread On\n");
 
-		auto start = std::chrono::high_resolution_clock::now();
 		while (game.IsPlayScene())
 		{
 			std::this_thread::sleep_for(std::chrono::seconds(5));
@@ -228,7 +226,7 @@ void EventThread()
 
 				for (int i = 0; i < MAXPLAYER; ++i) {
 					if (game.players[i].state == E_OFFLINE) continue;
-					game.players[i].SendEventPacket(WIND, 1);
+					game.players[i].SendEventPacket(W, 1);
 				}
 				std::this_thread::sleep_for(std::chrono::seconds(10));
 
@@ -236,7 +234,7 @@ void EventThread()
 				WindWay(-1);
 				for (int i = 0; i < MAXPLAYER; ++i) {
 					if (game.players[i].state == E_OFFLINE) continue;
-					game.players[i].SendEventPacket(WIND, 0);
+					game.players[i].SendEventPacket(W, 0);
 				}
 			}
 			else if (num < 66) { // 장판 이벤트
@@ -247,7 +245,7 @@ void EventThread()
 				game.playScene.floor.size.y = 40;
 				for (int i = 0; i < MAXPLAYER; ++i) {
 					if (game.players[i].state == E_OFFLINE) continue;
-					game.players[i].SendEventPacket(FLOOR, 1);
+					game.players[i].SendEventPacket(F, 1);
 					game.players[i].SendPosPacket(-1, game.playScene.floor.position.x, game.playScene.floor.position.y, E_OBJTYPE::FLOOR);
 				}
 				std::this_thread::sleep_for(std::chrono::seconds(10));
@@ -259,7 +257,7 @@ void EventThread()
 				game.playScene.floor.size.y = 0;
 				for (int i = 0; i < MAXPLAYER; ++i) {
 					if (game.players[i].state == E_OFFLINE) continue;
-					game.players[i].SendEventPacket(FLOOR, 0);
+					game.players[i].SendEventPacket(F, 0);
 				}
 			}
 			else {				 // 장애물 이벤트 
@@ -272,7 +270,7 @@ void EventThread()
 
 				for (int i = 0; i < MAXPLAYER; ++i) {
 					if (game.players[i].state == E_OFFLINE) continue;
-					game.players[i].SendEventPacket(OBSTACLE, 1);
+					game.players[i].SendEventPacket(O, 1);
 					game.players[i].SendPosPacket(-1, game.playScene.obstacle.position.x, game.playScene.obstacle.position.y, E_OBJTYPE::OBSTACLE);
 				}				
 				std::this_thread::sleep_for(std::chrono::seconds(10));
@@ -281,14 +279,11 @@ void EventThread()
 				game.playScene.b_obtacle = false;
 				game.playScene.obstacle.position.x = 0;
 				game.playScene.obstacle.position.y = 0;
-
 				game.playScene.obstacle.size.x = 0;
 				game.playScene.obstacle.size.y = 0;
-
-				
 				for (int i = 0; i < MAXPLAYER; ++i) {
 					if (game.players[i].state == E_OFFLINE) continue;
-					game.players[i].SendEventPacket(OBSTACLE, 0);
+					game.players[i].SendEventPacket(O, 0);
 				}
 			}
 		}

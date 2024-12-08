@@ -1,6 +1,6 @@
 #pragma once
 #include "Map.h"
-#include <math.h>
+//#include <math.h>
 #include "SESSION.h"
 #include <array>
 #include "Timer.h"
@@ -37,6 +37,8 @@ public:
 class CScene
 {
 public:
+	E_MAPTYPE maptype;
+	
 	virtual void Update(std::array <SESSION, MAXPLAYER>& players) {};
 
 	virtual void Enter(std::array <SESSION, MAXPLAYER>& players) {};
@@ -74,19 +76,23 @@ private:
 
 	std::chrono::steady_clock::time_point goalTime;
 	float goalDuration = 3.0f;
-	bool goal = false;
+	bool goal = false, kickOff = false;
 
 public:
 	CPlayScene();
 
 	CBall ball;						// 공
-	CSoccerMap map;
 
+
+	CMap* map;
+	CSoccerMap soccerMap;
+	CBasketballMap basketballMap;
 	CRectangleObject obstacle;		// 장애물
 	CRectangleObject floor;			// 장판
 	bool b_obtacle;
 	bool b_floor;
 
+	void ChangeMap(E_MAPTYPE map);
 	void ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players);
 	void Update(std::array <SESSION, MAXPLAYER>& players);
 

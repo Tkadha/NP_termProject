@@ -39,7 +39,6 @@ void CSoccerMap::Render(HDC& dc)
     LineTo(dc, rect.right, rect.bottom);
     hB = (HBRUSH)GetStockObject(NULL_BRUSH);
     oldB = (HBRUSH)SelectObject(dc, hB);
-    Ellipse(dc, WindowWidth/2 - 100, WindowHeight/2 - 100, WindowWidth/2 + 100, WindowHeight/2 + 100);
     Rectangle(dc, rect.left, rect.top, rect.right, rect.bottom);
     SelectObject(dc, oldP);
     DeleteObject(hP);
@@ -49,6 +48,7 @@ void CSoccerMap::Render(HDC& dc)
 
     RedGoal.Render(dc);
     BlueGoal.Render(dc);
+    centerCircle.Render(dc);
 
     for (int i = 0; i < 2; ++i) {
         BlueGoalpost[i].Render(dc);
@@ -57,9 +57,40 @@ void CSoccerMap::Render(HDC& dc)
 }
 
 
+void CBasketballMap::Render(HDC& dc)
+{
+	hB = CreateSolidBrush(RGB(100, 100, 100));
+	oldB = (HBRUSH)SelectObject(dc, hB);
+	Rectangle(dc, 0, 0, WindowWidth, WindowHeight);
+	SelectObject(dc, oldB);
+	DeleteObject(hB);
+
+    hP = CreatePen(PS_SOLID, 5, RGB(255, 255, 255));
+    oldP = (HPEN)SelectObject(dc, hP);
+    MoveToEx(dc, WindowWidth / 2, rect.top, NULL);
+    LineTo(dc, WindowWidth / 2, rect.bottom);;
+    MoveToEx(dc, rect.left, rect.top, NULL);
+    LineTo(dc, rect.left, rect.top);
+    MoveToEx(dc, rect.right, rect.top, NULL);
+    LineTo(dc, rect.right, rect.bottom);
+    hB = (HBRUSH)GetStockObject(NULL_BRUSH);
+    oldB = (HBRUSH)SelectObject(dc, hB);
+    Rectangle(dc, rect.left, rect.top, rect.right, rect.bottom);
+    SelectObject(dc, oldP);
+    DeleteObject(hP);
+    SelectObject(dc, oldB);
+    DeleteObject(hB);
+	centerCircle.Render(dc);
+
+    // °ñ´ë
+    RedGoal.Render(dc);
+    BlueGoal.Render(dc);
+}
+
 void CLobbyMap::Render(HDC& dc)
 {
 }
+
 
 
 

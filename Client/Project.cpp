@@ -39,6 +39,10 @@ void ProcessPacket(char* packet)
 	{
 	case SC_TEAM_CHOICE: {
 		TEAM_PACKET* p = reinterpret_cast<TEAM_PACKET*>(packet);
+		if (p->id == MAXPLAYER + 1) {
+			game.MapUpdate((E_team)p->teamcolor);
+			break;
+		}
 		std::string str(game.players[p->id].name);
 		std::wstring wPlayer = game.StringToWString(str);
 		if (p->teamcolor == RED) {
@@ -62,6 +66,7 @@ void ProcessPacket(char* packet)
 
 	case SC_MAP_CHOICE: {
 		MAP_PACKET* p = reinterpret_cast<MAP_PACKET*>(packet);
+		game.ChangeMap(p->maptype);
 		break;
 	}
 	case SC_NAME: {
@@ -267,7 +272,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		InitializeCriticalSection(&cs);
 
 		lobbyWnd = CreateWindow(L"LobbyScene", NULL, WS_CHILD | WS_VISIBLE, 0, 0, WindowWidth, WindowHeight, hwnd, NULL, g_hInst, NULL);
-		playWnd = CreateWindow(L"PlayScene", NULL, WS_CHILD | WS_VISIBLE, 0, 0, WindowWidth, WindowHeight, hwnd, NULL, g_hInst, NULL);
+		playWnd = CreateWindow(L"PlayScene", NULL, WS_CHILD | WS_VISIBLE, 0, 0, ScreenWidth, ScreenHeight, hwnd, NULL, g_hInst, NULL);
 
 		game.InitScene();
 
@@ -351,6 +356,7 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	static BOOL LMouse, RMouse;
 
+	XY camera;
 	// 메시지 처리하기
 	switch (uMsg) {
 	case WM_CREATE:
@@ -383,7 +389,13 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		hdc = BeginPaint(hwnd, &ps);
 		memdc = CreateCompatibleDC(hdc);
 		SelectObject(memdc, hBit);
-		BitBlt(hdc, 0, 0, WindowWidth, WindowHeight, memdc, 0, 0, SRCCOPY);
+		camera.x = game.players[game.pid].position.x - ScreenWidth / 2;
+		camera.y = game.players[game.pid].position.y - ScreenHeight / 2;
+
+		camera.x = max(0, min(camera.x, WindowWidth - ScreenWidth));
+		camera.y = max(0, min(camera.y, WindowHeight - ScreenHeight));
+
+		BitBlt(hdc, 0, 0, ScreenWidth, ScreenHeight, memdc, camera.x, camera.y, SRCCOPY);
 		DeleteDC(memdc);
 
 		EndPaint(hwnd, &ps);

@@ -6,6 +6,7 @@ class CMap
 public:
 	Rect rect{ 90, WindowWidth - 90, 30, WindowHeight - 30 };
 	BOOL mapEdit[128][80]{};
+	CCenterCircle CenterCircle{};
 
 	virtual ~CMap() {};
 
@@ -19,6 +20,15 @@ public:
 	CSoccerGoal RedGoal{ RED }, BlueGoal{ BLUE };
 
 	CSoccerMap();
+
+	void Reset();
+};
+
+
+class CBasketballMap : public CMap
+{
+public:
+	CBasketballGoal RedGoal{ RED }, BlueGoal{ BLUE };
 
 	void Reset();
 };

@@ -37,6 +37,9 @@ void CSoccerMap::Reset()
 }
 
 
+void CBasketballMap::Reset()
+{
 
+}
 
 

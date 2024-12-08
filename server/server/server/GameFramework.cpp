@@ -16,3 +16,8 @@ void CGameFramework::SwitchScene(CScene* newScene)
 		currentScene->Enter(players);
 	}
 }
+
+void CGameFramework::ChangeMap(E_MAPTYPE type)
+{
+	playScene.maptype = type;
+}

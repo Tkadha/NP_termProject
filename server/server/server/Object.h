@@ -49,6 +49,14 @@ private:
 	//EllipseComponent graphicsC;
 };
 
+class CCenterCircle : public CEllipseObject
+{
+public:
+	E_TEAMCOLOR team;
+
+	CCenterCircle();
+
+};
 
 
 class CRectangleObject : public CObject
@@ -73,6 +81,36 @@ public:
 	Rect GetBB() { return BoundingBox; }
 };
 
+
+
+class CRim : public CEllipseObject
+{
+public:
+	E_TEAMCOLOR team;
+	double RimSize;
+	CRim();
+};
+
+class CBackBoard : public CRectangleObject
+{
+public:
+	CBackBoard();
+};
+
+class CBasketballGoal
+{
+	int offset = 40;
+
+public:
+	CRim Rim;
+	CBackBoard BackBoard;
+
+	E_TEAMCOLOR team;
+	CBasketballGoal(E_TEAMCOLOR team);
+
+	void Reset();
+
+};
 
 //--------------------------------------Component-----------------------------------------
 class PhysicsComponent

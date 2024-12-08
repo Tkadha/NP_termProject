@@ -7,6 +7,8 @@ extern HINSTANCE g_hInst;
 
 extern HWND lobbyWnd, playWnd;
 
+extern enum E_MAPTYPE;
+
 class InputManager
 {
 public:
@@ -36,11 +38,16 @@ public:
 class CScene
 {
 public:
+	E_MAPTYPE maptype{};
+	virtual ~CScene() {};
+
 	virtual void Enter() {};
 	virtual void Update() {};
 	virtual void Render(HDC& dc, std::array <CPlayer, MAXPLAYER> players) {};
 	virtual void Exit() {};
 	virtual void setFocus() {};
+
+	virtual void CircleUpdate(E_team) {};
 	
 	// 임시로 만듬
 	virtual void SetPos(XY pos) {};
@@ -69,8 +76,8 @@ public:
 	void Render(HDC& dc, std::array <CPlayer, MAXPLAYER> players);
 	void Update(BOOL KeyDownBuffer[], float timeElapsed);
 
-	void Enter() { printf("Enter : Lobby Scene\n"); };
-	void Exit() { printf("EXIT : Lobby Scene\n"); };
+	void Enter() { };
+	void Exit() { };
 
 	void setFocus() { SetFocus(lobbyWnd); };
 
@@ -87,19 +94,25 @@ private:
 
 public:
 	CPlayScene();
-	//CSoccerMap soccerMap;
 
 	CBall ball;						// 공
-	CEllipseObject obstacle;
-	CSoccerMap map;
+
+
+	CMap* map;
+	CSoccerMap soccerMap;
+	CBasketballMap basketballMap;
+
+	void ChangeMap(E_MAPTYPE maptype);
 
 	void Update();
 	void Render(HDC& dc, std::array <CPlayer, MAXPLAYER> players);
 
-	void Enter() { printf("Enter : Play Scene\n"); };
-	void Exit() { printf("EXIT : Play Scene\n"); };
+	void Enter() { ChangeMap(maptype); };
+	void Exit() { };
 
 	void setFocus() { PostMessage(hWnd, WM_SET_FOCUS_TO_PLAY, 0, 0); };
+
+	void CircleUpdate(E_team color);
 
 	// 임시
 	void SetPos(XY pos);
