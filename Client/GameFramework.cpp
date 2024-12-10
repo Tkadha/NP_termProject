@@ -89,7 +89,7 @@ void CGameFramework::InputProcess(WPARAM wParam, WPARAM lParam, UINT uMsg)
 {
 
 	NETWORK_EVENT event = inputManager->Update(wParam, lParam, uMsg);
-	std::wstring wPlayer = StringToWString(playerName);
+	std::wstring wPlayer = StringToWString(players[pid].name);
 
 	switch (event) {
 	case SendStart: // Start 버튼 클릭
@@ -98,28 +98,35 @@ void CGameFramework::InputProcess(WPARAM wParam, WPARAM lParam, UINT uMsg)
 
 	case SendTeamRed:
 		DeleteItemByName(hListBoxBlue, wPlayer.c_str());
-		DeleteItemByName(hListBoxLobby, wPlayer.c_str());
+		DeleteItemByName(hListBoxObserver, wPlayer.c_str());
 		if (FindItemByName(hListBoxRed, wPlayer.c_str())) {
 			SendMessage(hListBoxRed, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
 			networkManager.SendColorPacket(RED);
+			EnableWindow(hButtonRed, FALSE);
+			EnableWindow(hButtonBlue, TRUE);
 		}
 		break;
 
 	case SendTeamBlue:
 		DeleteItemByName(hListBoxRed, wPlayer.c_str());
-		DeleteItemByName(hListBoxLobby, wPlayer.c_str());
+		DeleteItemByName(hListBoxObserver, wPlayer.c_str());
 		if (FindItemByName(hListBoxBlue, wPlayer.c_str())) {
 			SendMessage(hListBoxBlue, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
 			networkManager.SendColorPacket(BLUE);
+			EnableWindow(hButtonBlue, FALSE);
+			EnableWindow(hButtonRed, TRUE);
 		}
 		break;
 	case SendSoccer: {
 		networkManager.SendMapPacket(SOCCER);
+		EnableWindow(hButtonSoccer, FALSE);
+		EnableWindow(hButtonBasketball, TRUE);
 		break;
 	}
 	case SendBasketball: {
 		networkManager.SendMapPacket(BASKETBALL);
-		printf("Send Map : BAKSETBALL\n");
+		EnableWindow(hButtonSoccer, TRUE);
+		EnableWindow(hButtonBasketball, FALSE);
 		break;
 	}
 

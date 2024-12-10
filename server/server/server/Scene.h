@@ -85,8 +85,8 @@ public:
 
 
 	CMap* map;
-	CSoccerMap soccerMap;
-	CBasketballMap basketballMap;
+	CSoccerMap soccerMapP{};
+	CBasketballMap basketballMap{};
 	CRectangleObject obstacle;		// 장애물
 	CRectangleObject floor;			// 장판
 	bool b_obtacle;

@@ -8,7 +8,7 @@ CPlayScene::CPlayScene()
 	ball.team = Ball;
 	ball.position = { WindowWidth / 2,WindowHeight / 2 };
 	
-	map = &basketballMap;
+	map = &soccerMap;
 }
 
 void CPlayScene::Update()
@@ -24,6 +24,7 @@ void CPlayScene::ChangeMap(E_MAPTYPE maptype)
 	else if(maptype == BASKETBALL){
 		map = &basketballMap;
 	}
+	map->centerCircle.team = Object;
 }
 
 void CPlayScene::Render(HDC& dc, std::array <CPlayer, MAXPLAYER> players)

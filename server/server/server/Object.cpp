@@ -66,20 +66,20 @@ CRim::CRim()
 
 CBackBoard::CBackBoard()
 {
-	size = { 8,128 };
+	size = { 16,128 };
 }
 
 CBasketballGoal::CBasketballGoal(E_TEAMCOLOR team) :team(team)
 {
 	if (team == RED) {
-		XY position = { 126,WindowHeight / 2 };
+		XY position = { backboaredOffset,WindowHeight / 2 };
 		BackBoard.position = position;
 
 		position.x += offset;
 		Rim.position = position;
 	}
 	else if (team == BLUE) {
-		XY position = { WindowWidth - 126,WindowHeight / 2 };
+		XY position = { WindowWidth - backboaredOffset,WindowHeight / 2 };
 		BackBoard.position = position;
 
 		position.x -= offset;
@@ -91,20 +91,20 @@ CBasketballGoal::CBasketballGoal(E_TEAMCOLOR team) :team(team)
 void CBasketballGoal::Reset()
 {
 	if (team == RED) {
-		XY position = { 126,WindowHeight / 2 };
+		XY position = { backboaredOffset,WindowHeight / 2 };
 		BackBoard.position = position;
 
 		position.x += offset;
 		Rim.position = position;
 	}
 	else if (team == BLUE) {
-		XY position = { WindowWidth - 126,WindowHeight / 2 };
+		XY position = { WindowWidth - backboaredOffset,WindowHeight / 2 };
 		BackBoard.position = position;
 
 		position.x -= offset;
 		Rim.position = position;
 	}
-
+	Rim.team = team;
 
 }
 

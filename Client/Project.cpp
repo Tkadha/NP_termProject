@@ -7,7 +7,8 @@
 #define ID_VolleyBall 103
 #define ID_MapEdit 104
 #define ID_MapClear 105
-
+#define ID_EDIT_NAME 106
+#define ID_BUTTON_SEND 107
 
 #define BUTTON_RED 110
 #define BUTTON_BLUE 111
@@ -19,12 +20,13 @@ HINSTANCE g_hInst;
 LPCTSTR lpszClass = L"Window Class Name";
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
-LRESULT CALLBACK SoccerProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK StartProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK LobbyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK SoccerProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
 
-HWND hWnd, lobbyWnd, playWnd;
+HWND hWnd, startWnd, lobbyWnd, playWnd;
 HWND hButtonRed, hButtonBlue, hButtonSoccer, hButtonBasketball, hButtonStart;
-HWND hListBoxRed, hListBoxBlue, hListBoxLobby;
+HWND hListBoxRed, hListBoxBlue, hListBoxObserver;
 HBITMAP hArrowBitmap = NULL;
 std::string playerName;
 
@@ -49,7 +51,7 @@ void ProcessPacket(char* packet)
 			game.players[p->id].team = Red;
 			if (game.pid != p->id) {
 				game.DeleteItemByName(hListBoxBlue, wPlayer.c_str());
-				game.DeleteItemByName(hListBoxLobby, wPlayer.c_str());
+				game.DeleteItemByName(hListBoxObserver, wPlayer.c_str());
 				SendMessage(hListBoxRed, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
 			}
 		}
@@ -57,7 +59,7 @@ void ProcessPacket(char* packet)
 			game.players[p->id].team = Blue;
 			if (game.pid != p->id) {
 				game.DeleteItemByName(hListBoxRed, wPlayer.c_str());
-				game.DeleteItemByName(hListBoxLobby, wPlayer.c_str());
+				game.DeleteItemByName(hListBoxObserver, wPlayer.c_str());
 				SendMessage(hListBoxBlue, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
 			}
 		}
@@ -67,6 +69,14 @@ void ProcessPacket(char* packet)
 	case SC_MAP_CHOICE: {
 		MAP_PACKET* p = reinterpret_cast<MAP_PACKET*>(packet);
 		game.ChangeMap(p->maptype);
+		if(p->maptype == SOCCER){
+			EnableWindow(hButtonSoccer, FALSE);
+			EnableWindow(hButtonBasketball, TRUE);
+		}
+		else if (p->maptype == BASKETBALL) {
+			EnableWindow(hButtonSoccer, TRUE);
+			EnableWindow(hButtonBasketball, FALSE);
+		}
 		break;
 	}
 	case SC_NAME: {
@@ -75,7 +85,7 @@ void ProcessPacket(char* packet)
 		std::string str(game.players[p->id].name);
 		std::wstring wPlayer = game.StringToWString(str);
 		if (game.pid != p->id) {
-			SendMessage(hListBoxLobby, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
+			SendMessage(hListBoxObserver, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
 		}
 		break;
 	}
@@ -182,18 +192,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	FILE* fp;
 	freopen_s(&fp, "CONOUT$", "w", stdout); // 표준 출력 연결
 	freopen_s(&fp, "CONIN$", "r", stdin);  // 표준 입력 연결
-	std::cout << "플레이어 이름을 입력하세요: ";
 
 
-	// 사용자로부터 이름 입력받기
-	std::getline(std::cin, playerName);
-	const char* playerNameCStr = playerName.c_str();
-	game.networkManager.SendNamePacket(playerNameCStr);
-	
-	std::cout << "Welcome, " << playerName << "!" << std::endl;
-
-	
-	
 	MSG Message;
 	WNDCLASSEX WndClass;
 	g_hInst = hInstance;
@@ -212,7 +212,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	WndClass.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 	RegisterClassEx(&WndClass);
 
+	WndClass.lpszClassName = L"StartScene";
+	WndClass.hbrBackground = (HBRUSH)GetStockObject(GRAY_BRUSH);
+	WndClass.lpfnWndProc = (WNDPROC)StartProc;
+	RegisterClassEx(&WndClass);
+
 	WndClass.lpszClassName = L"LobbyScene";
+	WndClass.hbrBackground = (HBRUSH)GetStockObject(GRAY_BRUSH);
 	WndClass.lpfnWndProc = (WNDPROC)LobbyProc;
 	RegisterClassEx(&WndClass);
 
@@ -264,6 +270,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	static int Count;
 
 	std::thread p_thread;
+	
+	RECT childRect, newParentRect;
 
 	// 메시지 처리하기
 	switch (uMsg) {
@@ -282,12 +290,27 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		InitializeCriticalSection(&cs);
 
-		lobbyWnd = CreateWindow(L"LobbyScene", NULL, WS_CHILD | WS_VISIBLE, 0, 0, WindowWidth, WindowHeight, hwnd, NULL, g_hInst, NULL);
+		startWnd = CreateWindow(L"StartScene", NULL, WS_CHILD | WS_VISIBLE, 0, 0, StartWidth, StartHeight, hwnd, NULL, g_hInst, NULL);
+		lobbyWnd = CreateWindow(L"LobbyScene", NULL, WS_CHILD | WS_VISIBLE, 0, 0, LobbyWidth, LobbyHeight, hwnd, NULL, g_hInst, NULL);
 		playWnd = CreateWindow(L"PlayScene", NULL, WS_CHILD | WS_VISIBLE, 0, 0, ScreenWidth, ScreenHeight, hwnd, NULL, g_hInst, NULL);
 
-		game.InitScene();
+		ShowWindow(startWnd, SW_SHOW);
+		ShowWindow(lobbyWnd, SW_HIDE);
+		ShowWindow(playWnd, SW_HIDE);
 
-		//ShowWindow(playWnd, SW_HIDE);
+
+		// 자식 윈도우 크기에 맞춰 부모 윈도우 크기 변경
+		childRect;
+		GetWindowRect(startWnd, &childRect);
+
+		// 부모 윈도우의 클라이언트 영역을 계산
+		newParentRect = { 0, 0, childRect.right - childRect.left, childRect.bottom - childRect.top };
+		AdjustWindowRect(&newParentRect, GetWindowLong(hwnd, GWL_STYLE), FALSE);
+
+		// 부모 윈도우 크기 설정
+		SetWindowPos(hwnd, NULL, 0, 0, newParentRect.right - newParentRect.left, newParentRect.bottom - newParentRect.top,
+			SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+
 		//SetFocus(lobbyWnd);
 		break;
 	case WM_ACTIVATE:
@@ -327,9 +350,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		KeyDownBuffer[wParam] = TRUE;
 		InvalidateRect(hwnd, NULL, FALSE);
 		break;
-	case WM_COMMAND:									// 버튼 메시지 처리?
-		SetFocus(hwnd);
+	case WM_COMMAND: {
+		
 		break;
+	}
 	case WM_SET_FOCUS_TO_PLAY:
 		SetFocus(playWnd);
 		break;
@@ -371,13 +395,7 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	// 메시지 처리하기
 	switch (uMsg) {
 	case WM_CREATE:
-		ZeroMemory(&LogFont, sizeof(LOGFONT));
-		LogFont.lfHeight = 100;
-		LogFont.lfWeight = 100;
-		LogFont.lfCharSet = HANGEUL_CHARSET;
-		LogFont.lfPitchAndFamily = VARIABLE_PITCH | FF_ROMAN;
-		lstrcpy(LogFont.lfFaceName, TEXT("휴먼매직체"));
-
+		
 		SetTimer(hwnd, 1, 5, NULL);
 		break;
 	case WM_TIMER:
@@ -420,9 +438,7 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 
 		if (wParam == VK_RETURN) {
-			ShowWindow(playWnd, SW_HIDE);
-			ShowWindow(lobbyWnd, SW_SHOW);
-			SetFocus(lobbyWnd);
+			//DestroyWindow(hwnd);
 		}
 		InvalidateRect(hwnd, NULL, FALSE);
 		break;
@@ -458,10 +474,11 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 LRESULT CALLBACK LobbyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	
-	
 	HDC hdc;
 	PAINTSTRUCT ps;
+	static LOGFONT LogFont;
+	HFONT hF, oldF;
+
 	int index = 0;
 	
 	switch (uMsg)
@@ -497,7 +514,7 @@ LRESULT CALLBACK LobbyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			250, 270, 140, 150, // Blue 버튼 아래 위치
 			hwnd, (HMENU)121,
 			g_hInst, NULL);
-		hListBoxLobby = CreateWindow(
+		hListBoxObserver = CreateWindow(
 			L"LISTBOX", NULL,
 			WS_VISIBLE | WS_CHILD | WS_BORDER | LBS_STANDARD,
 			100, 440, 290, 150, // Red와 Blue 리스트 아래 위치
@@ -523,18 +540,24 @@ LRESULT CALLBACK LobbyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		hButtonStart = CreateWindow(
 			L"BUTTON", L"START",
 			WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
-			400, 500, 224, 70,
+			550, 500, 230, 70,
 			hwnd, (HMENU)BUTTON_START,
 			g_hInst, NULL);
 		for (int i = 0; i < MAXPLAYER; i++) {
 			std::wstring wPlayer = game.StringToWString(game.players[i].name);
-			std::cout << "받은 이름:" << game.players[i].name << std::endl;
-			std::cout << "팀:" << game.players[i].team << std::endl;
 			if (game.players[i].state == OFFLINE) continue;
 			if(game.players[i].team == Red) SendMessage(hListBoxRed, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
 			else if(game.players[i].team == Blue)SendMessage(hListBoxBlue, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
-			else SendMessage(hListBoxLobby, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
+			else SendMessage(hListBoxObserver, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
 		}
+
+		ZeroMemory(&LogFont, sizeof(LOGFONT));
+		LogFont.lfHeight = 20;
+		LogFont.lfWeight = 20;
+		LogFont.lfCharSet = HANGEUL_CHARSET;
+		LogFont.lfPitchAndFamily = VARIABLE_PITCH | FF_ROMAN;
+		lstrcpy(LogFont.lfFaceName, TEXT("휴먼매직체"));
+
 		break;
 	}
 	case WM_COMMAND: {
@@ -550,7 +573,89 @@ LRESULT CALLBACK LobbyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	case WM_PAINT:
 		hdc = BeginPaint(hwnd, &ps);
+		hF = CreateFontIndirect(&LogFont);
+		oldF = (HFONT)SelectObject(hdc, hF);
+		SetTextColor(hdc, RGB(255, 255, 255));
+		SetBkMode(hdc, 1);
 		TextOut(hdc, 400, 50, L"Lobby Screen", lstrlen(L"Lobby Screen"));
+		SelectObject(hdc, oldF);
+		DeleteObject(hF);
+		EndPaint(hwnd, &ps);
+		break;
+
+	case WM_DESTROY:
+		//PostQuitMessage(0); // 메시지 루프 종료
+		break;
+
+	default:
+		return DefWindowProc(hwnd, uMsg, wParam, lParam);
+	}
+	return 0;
+}
+
+LRESULT CALLBACK StartProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	HDC hdc;
+	PAINTSTRUCT ps;
+	static LOGFONT LogFont;
+	HFONT hF, oldF;
+
+	switch (uMsg)
+	{
+	case WM_CREATE: {
+		CreateWindow(L"EDIT", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER,
+			50, 100, 230, 20, hwnd, (HMENU)ID_EDIT_NAME, g_hInst, NULL);
+		CreateWindow(L"BUTTON", L"OK", WS_CHILD | WS_VISIBLE,
+			300, 100, 50, 20, hwnd, (HMENU)ID_BUTTON_SEND, g_hInst, NULL);
+
+		ZeroMemory(&LogFont, sizeof(LOGFONT));
+		LogFont.lfHeight = 20;
+		LogFont.lfWeight = 20;
+		LogFont.lfCharSet = HANGEUL_CHARSET;
+		LogFont.lfPitchAndFamily = VARIABLE_PITCH | FF_ROMAN;
+		lstrcpy(LogFont.lfFaceName, TEXT("휴먼매직체"));
+
+		break;
+	}
+	case WM_COMMAND: {
+		if (LOWORD(wParam) == ID_BUTTON_SEND) {
+			wchar_t wName[50]; // 유니코드 문자열 저장용
+			GetWindowText(GetDlgItem(hwnd, ID_EDIT_NAME), wName, 50); // EditBox에서 텍스트 읽기
+
+			// 유니코드 -> 멀티바이트 변환
+			char name[50];
+			WideCharToMultiByte(CP_ACP, 0, wName, -1, name, 50, NULL, NULL);
+
+			// 이제 name은 const char* 타입으로 사용 가능
+			const char* playerName = name;
+			game.networkManager.SendNamePacket(playerName);
+
+			// 이름 입력 완료 후 로비로 전환
+			//ShowWindow(lobbyWnd, SW_SHOW);
+			//ShowWindow(hWnd, SW_HIDE);
+			game.InitScene();
+			DestroyWindow(hwnd);
+		}
+
+		break;
+	}
+	case WM_KEYDOWN:
+		if (wParam == VK_RETURN) {
+
+		}
+		break;
+
+	case WM_PAINT:
+		hdc = BeginPaint(hwnd, &ps);
+
+		hF = CreateFontIndirect(&LogFont);
+		oldF = (HFONT)SelectObject(hdc, hF);
+		SetTextColor(hdc, RGB(255, 255, 255));
+		SetBkMode(hdc, 1);
+		TextOut(hdc, StartWidth/2 - 70, 50, L"Start Screen", lstrlen(L"Start Screen"));
+		SelectObject(hdc, oldF);
+		DeleteObject(hF);
+
 		EndPaint(hwnd, &ps);
 		break;
 
