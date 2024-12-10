@@ -83,6 +83,7 @@ void ProcessPacket(int id, char* packet)
 	case CS_NAME: {
 		NAME_PACKET* p = reinterpret_cast<NAME_PACKET*>(packet);
 		strcpy(game.players[id].p.name, p->name);
+		std::cout << "ÀÌ¸§" << p->name << std::endl;
 		for (int i = 0; i < MAXPLAYER; ++i) {
 			if (game.players[i].state == E_OFFLINE) continue;
 			game.players[i].SendNamePacket(id, game.players[id].p.name);

@@ -13,7 +13,11 @@
 #define WindowWidth 1440
 #define WindowHeight 900
 #define ScreenWidth 1280
-#define ScreenHeight  720
+#define ScreenHeight 720
+#define LobbyWidth 1000
+#define LobbyHeight 800
+#define StartWidth 400
+#define StartHeight 200
 
 #define PixelPerMeter 12
 #define MeterPerPixel 1/12
