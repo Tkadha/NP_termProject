@@ -6,6 +6,7 @@
 extern HWND hListBoxRed;
 extern HWND hListBoxBlue;
 extern HWND hListBoxObserver;
+extern HWND hButtonRed, hButtonBlue, hButtonSoccer, hButtonBasketball, hButtonStart;
 extern std::string playerName;
 
 class CGameFramework

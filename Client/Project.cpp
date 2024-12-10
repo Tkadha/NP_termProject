@@ -69,6 +69,14 @@ void ProcessPacket(char* packet)
 	case SC_MAP_CHOICE: {
 		MAP_PACKET* p = reinterpret_cast<MAP_PACKET*>(packet);
 		game.ChangeMap(p->maptype);
+		if(p->maptype == SOCCER){
+			EnableWindow(hButtonSoccer, FALSE);
+			EnableWindow(hButtonBasketball, TRUE);
+		}
+		else if (p->maptype == BASKETBALL) {
+			EnableWindow(hButtonSoccer, TRUE);
+			EnableWindow(hButtonBasketball, FALSE);
+		}
 		break;
 	}
 	case SC_NAME: {

@@ -34,6 +34,8 @@ void CSoccerMap::Reset()
     BlueGoalpost[0].position.y = BlueGoal.position.y - BlueGoal.size.y / 2;
     BlueGoalpost[1].position.x = BlueGoal.position.x - BlueGoal.size.x / 2;
     BlueGoalpost[1].position.y = BlueGoal.position.y + BlueGoal.size.y / 2;
+
+    CenterCircle.team = OBSERVER;
 }
 
 
@@ -41,6 +43,8 @@ void CBasketballMap::Reset()
 {
     RedGoal.Reset();
     BlueGoal.Reset();
+
+    CenterCircle.team = OBSERVER;
 }
 
 

@@ -142,6 +142,7 @@ void PlayerThread(int id)
 	for (int i = 0; i < MAXPLAYER; ++i) {
 		if (game.players[i].state == E_ONLINE && id != i) {
 			game.players[id].SendLoginPacket(i);
+			game.players[id].SendNamePacket(i, game.players[i].p.name);
 			game.players[id].SendPlayerTeamPacket(i, game.players[i].team_color);
 		}
 	}
@@ -149,6 +150,7 @@ void PlayerThread(int id)
 	for (int i = 0; i < MAXPLAYER; ++i) {
 		if (game.players[i].state == E_ONLINE && id != i) {
 			game.players[i].SendLoginPacket(id);
+			game.players[i].SendNamePacket(id, game.players[id].p.name);
 			game.players[i].SendPlayerTeamPacket(id, game.players[id].team_color);
 		}
 	}
