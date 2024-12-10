@@ -212,6 +212,24 @@ BOOL GoalCheck(CEllipseObject& ball, CMap *map)
 	return false;
 }
 
+bool IsInRect(CEllipseObject& obj, CRectangleObject& floor)
+{
+	double rectLeft = floor.position.x - floor.size.x / 2;
+	double rectTop = floor.position.y - floor.size.y / 2;
+	double rectRight = floor.position.x + floor.size.x / 2;
+	double rectBottom = floor.position.y + floor.size.y / 2;
+
+	double ellipseCenterX = obj.position.x;
+	double ellipseCenterY = obj.position.y;
+
+	double ellipseRadiusX = obj.size;
+	double ellipseRadiusY = obj.size;
+
+	return (ellipseCenterX - ellipseRadiusX >= rectLeft) &&
+		(ellipseCenterX + ellipseRadiusX <= rectRight) &&
+		(ellipseCenterY - ellipseRadiusY >= rectTop) &&
+		(ellipseCenterY + ellipseRadiusY <= rectBottom);
+}
 
 CPlayScene::CPlayScene()
 {

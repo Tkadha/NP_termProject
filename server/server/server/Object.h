@@ -63,8 +63,9 @@ class CRectangleObject : public CObject
 public:
 	CRectangleObject() {};
 
-	XY size;
-	//RGB color{ 100,100,100 };
+    XY size;
+    RECT rect;
+    //RGB color{ 100,100,100 };
 };
 
 

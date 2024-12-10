@@ -26,7 +26,8 @@ LRESULT CALLBACK SoccerProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lPar
 
 HWND hWnd, startWnd, lobbyWnd, playWnd;
 HWND hButtonRed, hButtonBlue, hButtonSoccer, hButtonBasketball, hButtonStart;
-HWND hListBoxRed, hListBoxBlue, hListBoxLobby;
+HWND hListBoxRed, hListBoxBlue, hListBoxObserver;
+HBITMAP hArrowBitmap = NULL;
 std::string playerName;
 
 CGameFramework game{};
@@ -49,12 +50,16 @@ void ProcessPacket(char* packet)
 		if (p->teamcolor == RED) {
 			game.players[p->id].team = Red;
 			if (game.pid != p->id) {
+				game.DeleteItemByName(hListBoxBlue, wPlayer.c_str());
+				game.DeleteItemByName(hListBoxObserver, wPlayer.c_str());
 				SendMessage(hListBoxRed, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
 			}
 		}
 		else if (p->teamcolor == BLUE) {
 			game.players[p->id].team = Blue;
 			if (game.pid != p->id) {
+				game.DeleteItemByName(hListBoxRed, wPlayer.c_str());
+				game.DeleteItemByName(hListBoxObserver, wPlayer.c_str());
 				SendMessage(hListBoxBlue, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
 			}
 		}
@@ -69,7 +74,11 @@ void ProcessPacket(char* packet)
 	case SC_NAME: {
 		NAME_PACKET*p = reinterpret_cast<NAME_PACKET*>(packet);
 		strcpy(game.players[p->id].name, p->name);
-		std::cout << game.players[p->id].name << std::endl;
+		std::string str(game.players[p->id].name);
+		std::wstring wPlayer = game.StringToWString(str);
+		if (game.pid != p->id) {
+			SendMessage(hListBoxObserver, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
+		}
 		break;
 	}
 	case SC_LOGIN: {
@@ -470,7 +479,7 @@ LRESULT CALLBACK LobbyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			250, 270, 140, 150, // Blue 버튼 아래 위치
 			hwnd, (HMENU)121,
 			g_hInst, NULL);
-		hListBoxLobby = CreateWindow(
+		hListBoxObserver = CreateWindow(
 			L"LISTBOX", NULL,
 			WS_VISIBLE | WS_CHILD | WS_BORDER | LBS_STANDARD,
 			100, 440, 290, 150, // Red와 Blue 리스트 아래 위치
@@ -499,6 +508,13 @@ LRESULT CALLBACK LobbyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			550, 500, 230, 70,
 			hwnd, (HMENU)BUTTON_START,
 			g_hInst, NULL);
+		for (int i = 0; i < MAXPLAYER; i++) {
+			std::wstring wPlayer = game.StringToWString(game.players[i].name);
+			if (game.players[i].state == OFFLINE) continue;
+			if(game.players[i].team == Red) SendMessage(hListBoxRed, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
+			else if(game.players[i].team == Blue)SendMessage(hListBoxBlue, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
+			else SendMessage(hListBoxObserver, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
+		}
 
 		ZeroMemory(&LogFont, sizeof(LOGFONT));
 		LogFont.lfHeight = 20;

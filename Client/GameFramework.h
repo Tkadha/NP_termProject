@@ -5,7 +5,7 @@
 
 extern HWND hListBoxRed;
 extern HWND hListBoxBlue;
-extern HWND hListBoxLobby;
+extern HWND hListBoxObserver;
 extern std::string playerName;
 
 class CGameFramework
