@@ -214,7 +214,7 @@ void EventThread()
 			std::this_thread::sleep_for(std::chrono::seconds(5));
 			int num = dis(gen);
 
-			if (num < 1) {		 // 바람 이벤트
+			if (num < 33) {		 // 바람 이벤트
 
 				printf("Wind Event On\n");
 				int wind_way = wind(gen);
@@ -234,7 +234,7 @@ void EventThread()
 				}
 			}
 
-			else if (num < 2) { // 장판 이벤트
+			else if (num < 66) { // 장판 이벤트
 
 				printf("floor Event On\n");
 				game.playScene.b_floor = true;
