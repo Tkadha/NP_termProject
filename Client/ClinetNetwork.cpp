@@ -96,18 +96,11 @@ void NetWorkManager::Con() {
 void NetWorkManager::DoRecv()
 {
 	int retval;
-	char remain_buf[BUFSIZE]{};
-	memcpy(remain_buf, recv_buf, remain_data);
-	memset(recv_buf, 0, sizeof(recv_buf));
-	retval = recv(sock, recv_buf, BUFSIZE - remain_data, 0);
-	
-	memcpy(remain_buf + remain_data, recv_buf, retval);
+	retval = recv(sock, recv_buf + remain_data, BUFSIZE - remain_data, 0);
 	remain_data += retval;
-	memcpy(recv_buf, remain_buf, remain_data);
-
 }
 
-bool NetWorkManager::SendColorPacket(E_TEAMCOLOR color) {
+void NetWorkManager::SendColorPacket(E_TEAMCOLOR color) {
 	TEAM_PACKET p;
 	p.size = sizeof(TEAM_PACKET);
 	p.teamcolor = color;
@@ -115,11 +108,8 @@ bool NetWorkManager::SendColorPacket(E_TEAMCOLOR color) {
 	p.id = id;
 	int retval;
 	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
-	if (retval == SOCKET_ERROR) return false;
-
-	return true;
 }
-bool NetWorkManager::SendMapPacket(E_MAPTYPE maptype)
+void NetWorkManager::SendMapPacket(E_MAPTYPE maptype)
 {
 	MAP_PACKET p;
 	p.size = sizeof(TEAM_PACKET);
@@ -127,13 +117,9 @@ bool NetWorkManager::SendMapPacket(E_MAPTYPE maptype)
 	p.type = CS_MAP_CHOICE;
 	int retval;
 	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
-	if (retval == SOCKET_ERROR) return false;
-
-
-	return true;
 }
 
-bool NetWorkManager::SendNamePacket(const char* name)
+void NetWorkManager::SendNamePacket(const char* name)
 {
 	NAME_PACKET p;
 	p.size = sizeof(NAME_PACKET);
@@ -141,13 +127,9 @@ bool NetWorkManager::SendNamePacket(const char* name)
 	p.type = CS_NAME;
 	int retval;
 	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
-	if (retval == SOCKET_ERROR) return false;
-
-
-	return true;
 }
 
-bool NetWorkManager::SendKeyPacket(WPARAM wParam)
+void NetWorkManager::SendKeyPacket(WPARAM wParam)
 {
 	KEY_PACKET p;
 	p.size = sizeof(KEY_PACKET);
@@ -158,31 +140,22 @@ bool NetWorkManager::SendKeyPacket(WPARAM wParam)
 	
 	int retval;
 	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
-	if (retval == SOCKET_ERROR) return false;
-
-	return true;
 }
 
-bool NetWorkManager::SendStartPacket()
+void NetWorkManager::SendStartPacket()
 {
 	START_PACKET p;
 	p.size = sizeof(START_PACKET);
 	p.type = CS_START;
 	int retval;
 	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
-	if (retval == SOCKET_ERROR) return false;
-
-	return true;
 }
 
-bool NetWorkManager::SendExitPacket()
+void NetWorkManager::SendExitPacket()
 {
 	START_PACKET p;
 	p.size = sizeof(START_PACKET);
 	p.type = CS_EXIT;
 	int retval;
 	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
-	if (retval == SOCKET_ERROR) return false;
-
-	return true;
 }

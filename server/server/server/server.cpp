@@ -70,7 +70,6 @@ void ProcessPacket(int id, char* packet)
 		}
 		break;
 	}
-
 	case CS_MAP_CHOICE: {
 		MAP_PACKET* p = reinterpret_cast<MAP_PACKET*>(packet);
 		game.ChangeMap(p->maptype);
@@ -90,7 +89,7 @@ void ProcessPacket(int id, char* packet)
 		}
 		break;
 	}
-	case CS_START: {		// event_ logic 깨우기 작성하기
+	case CS_START: {
 		SetEvent(event_logic);
 		game.SwitchScene(&game.playScene);
 
@@ -99,7 +98,6 @@ void ProcessPacket(int id, char* packet)
 			if (game.players[i].state == E_OFFLINE) continue;
 			game.players[i].SendScenePacket(id, PLAY);
 		}
-
 		break;
 	}
 	case CS_KEY: {
@@ -117,16 +115,13 @@ void ProcessPacket(int id, char* packet)
 void PlayerThread(int id)
 {
 	game.players[id].id = id;
-
 	game.players[id].team_color = OBSERVER;
-
 	game.players[id].SendLoginPacket(id);
 	if(game.IsPlayScene())
 		game.players[id].SendScenePacket(id, PLAY);
 	else
 		game.players[id].SendScenePacket(id, LOBBY);
 	game.players[id].SendPlayerTeamPacket(id, game.players[id].team_color);
-
 	for (int i = 0; i < MAXPLAYER; ++i) {
 		if (game.players[i].state == E_ONLINE && id != i) {
 			game.players[id].SendLoginPacket(i);
@@ -134,15 +129,12 @@ void PlayerThread(int id)
 			game.players[id].SendPlayerTeamPacket(i, game.players[i].team_color);
 		}
 	}
-
 	for (int i = 0; i < MAXPLAYER; ++i) {
 		if (game.players[i].state == E_ONLINE && id != i) {
 			game.players[i].SendLoginPacket(id);
 			game.players[i].SendPlayerTeamPacket(id, game.players[id].team_color);
 		}
 	}
-
-
 	printf("%d make thread\n", id);
 	while (1) {
 		game.players[id].DoRecv();
@@ -166,7 +158,6 @@ void PlayerThread(int id)
 			else break;
 		}
 	}
-
 	if (IsGameEnd()) {
 		game.SwitchScene(&game.lobbyScene);
 
@@ -175,7 +166,6 @@ void PlayerThread(int id)
 			game.players[i].SendScenePacket(id, LOBBY);
 		}
 	}
-
 	game.players[id].ResetSESSION();
 }
 
@@ -188,7 +178,7 @@ void LogicThread()
 		SetEvent(event_event);
 		while (game.IsPlayScene()) {
 			game.Update();
-			Sleep(1);
+			std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		}
 		ResetEvent(event_logic);
 	}
@@ -201,21 +191,17 @@ void EventThread()
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<int> dis(1, 100);
 	std::uniform_int_distribution<int> wind(0, 7);
-
 	std::uniform_int_distribution<int> rect_x(WindowWidth/2 - 300, WindowWidth/2 + 300);
 	std::uniform_int_distribution<int> rect_y(WindowHeight/2 - 200, WindowHeight/2 + 200);
 	while (1)
 	{
 		WaitForSingleObject(event_event, INFINITE);
 		printf("EventThread On\n");
-
 		while (game.IsPlayScene())
 		{
 			std::this_thread::sleep_for(std::chrono::seconds(5));
 			int num = dis(gen);
-
 			if (num < 33) {		 // 바람 이벤트
-
 				printf("Wind Event On\n");
 				int wind_way = wind(gen);
 				WindWay(wind_way);
@@ -225,7 +211,6 @@ void EventThread()
 					game.players[i].SendEventPacket(W, 1);
 				}
 				std::this_thread::sleep_for(std::chrono::seconds(10));
-
 				printf("Wind Event Off\n");
 				WindWay(-1);
 				for (int i = 0; i < MAXPLAYER; ++i) {
@@ -233,7 +218,6 @@ void EventThread()
 					game.players[i].SendEventPacket(W, 0);
 				}
 			}
-
 			else if (num < 66) { // 장판 이벤트
 
 				printf("floor Event On\n");

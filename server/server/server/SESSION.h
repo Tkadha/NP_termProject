@@ -15,7 +15,6 @@ public:
 	char recv_buf[BUFSIZE];
 	E_TEAMCOLOR team_color;
 	int remain_data{};
-
 	CPlayer p{};
 
 public:
@@ -28,14 +27,14 @@ public:
 	}
 	void ResetSESSION();
 	void DoRecv();
-	bool SendLoginPacket(int pid);
-	bool SendLogoutPacket(int pid);
-	bool SendPlayerTeamPacket(int pid, E_TEAMCOLOR color);
-	bool SendMapPacket(int pid, E_MAPTYPE maptype);
-	bool SendNamePacket(int pid, char* names);
-	bool SendStartPacket();
-	bool SendPosPacket(int pid, double x, double y, E_OBJTYPE objtype);
-	bool SendScenePacket(int pid, E_SCENEKIND scene);
-	bool SendEventPacket(E_EVENTTYPE eventtype, char onoff);
+	void SendLoginPacket(int pid);
+	void SendLogoutPacket(int pid);
+	void SendPlayerTeamPacket(int pid, E_TEAMCOLOR color);
+	void SendMapPacket(int pid, E_MAPTYPE maptype);
+	void SendNamePacket(int pid, char* names);
+	void SendStartPacket();
+	void SendPosPacket(int pid, double x, double y, E_OBJTYPE objtype);
+	void SendScenePacket(int pid, E_SCENEKIND scene);
+	void SendEventPacket(E_EVENTTYPE eventtype, char onoff);
 
 };

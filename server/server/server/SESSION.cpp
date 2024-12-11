@@ -14,22 +14,16 @@ void SESSION::ResetSESSION()
 void SESSION::DoRecv()
 {
 	int retval;
-	char remain_buf[BUFSIZE]{};
-	memcpy(remain_buf, recv_buf, remain_data);
-	memset(recv_buf, 0, sizeof(recv_buf));
-	retval = recv(sock, recv_buf, BUFSIZE - remain_data, 0);
+	retval = recv(sock, recv_buf + remain_data, BUFSIZE - remain_data, 0);
 	if (retval == 0 || retval == -1) {
 		state = E_OFFLINE;
 		printf("logout\n");
 		return;
 	}
-	memcpy(remain_buf + remain_data, recv_buf, retval);
 	remain_data += retval;
-	memcpy(recv_buf, remain_buf, remain_data);
-
 }
 
-bool SESSION::SendLoginPacket(int pid)
+void SESSION::SendLoginPacket(int pid)
 {
 	LOGIN_PACKET p;
 	p.size = sizeof(LOGIN_PACKET);
@@ -37,11 +31,9 @@ bool SESSION::SendLoginPacket(int pid)
 	p.id = pid;
 	int retval;
 	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
-	if (retval == SOCKET_ERROR) return false;
-	return true;
 }
 
-bool SESSION::SendLogoutPacket(int pid)
+void SESSION::SendLogoutPacket(int pid)
 {
 	LOGIN_PACKET p;
 	p.size = sizeof(LOGIN_PACKET);
@@ -49,11 +41,9 @@ bool SESSION::SendLogoutPacket(int pid)
 	p.id = pid;
 	int retval;
 	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
-	if (retval == SOCKET_ERROR) return false;
-	return true;
 }
 
-bool SESSION::SendPlayerTeamPacket(int pid, E_TEAMCOLOR color)
+void SESSION::SendPlayerTeamPacket(int pid, E_TEAMCOLOR color)
 {
 	TEAM_PACKET p;
 	p.size = sizeof(TEAM_PACKET);
@@ -63,11 +53,9 @@ bool SESSION::SendPlayerTeamPacket(int pid, E_TEAMCOLOR color)
 	int retval;
 
 	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
-	if (retval == SOCKET_ERROR) return false;
-	return true;
 }
 
-bool SESSION::SendMapPacket(int pid, E_MAPTYPE maptype)
+void SESSION::SendMapPacket(int pid, E_MAPTYPE maptype)
 {
 	MAP_PACKET p;
 	p.size = sizeof(TEAM_PACKET);
@@ -75,11 +63,9 @@ bool SESSION::SendMapPacket(int pid, E_MAPTYPE maptype)
 	p.type = SC_MAP_CHOICE;
 	int retval;
 	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
-	if (retval == SOCKET_ERROR) return false;
-	return true;
 }
 
-bool SESSION::SendNamePacket(int pid, char* names)
+void SESSION::SendNamePacket(int pid, char* names)
 {
 	NAME_PACKET p;
 	p.size = sizeof(NAME_PACKET);
@@ -88,22 +74,18 @@ bool SESSION::SendNamePacket(int pid, char* names)
 	p.id = pid;
 	int retval;
 	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
-	if (retval == SOCKET_ERROR) return false;
-	return true;
 }
 
-bool SESSION::SendStartPacket()
+void SESSION::SendStartPacket()
 {
 	START_PACKET p;
 	p.size = sizeof(START_PACKET);
 	p.type = SC_START;
 	int retval;
 	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
-	if (retval == SOCKET_ERROR) return false;
-	return true;
 }
 
-bool SESSION::SendPosPacket(int pid, double x, double y, E_OBJTYPE objtype)
+void SESSION::SendPosPacket(int pid, double x, double y, E_OBJTYPE objtype)
 {
 	POS_PACKET p;
 	p.size = sizeof(POS_PACKET);
@@ -114,13 +96,10 @@ bool SESSION::SendPosPacket(int pid, double x, double y, E_OBJTYPE objtype)
 	p.objtype = objtype;
 	int retval;
 	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
-	if (retval == SOCKET_ERROR) return false;
-
-	return true;
 }
 
 
-bool SESSION::SendScenePacket(int pid, E_SCENEKIND scene)
+void SESSION::SendScenePacket(int pid, E_SCENEKIND scene)
 {
 	SCENE_PACKET p;
 	p.size = sizeof(SCENE_PACKET);
@@ -128,12 +107,9 @@ bool SESSION::SendScenePacket(int pid, E_SCENEKIND scene)
 	p.scenekind = scene;
 	int retval;
 	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
-	if (retval == SOCKET_ERROR) return false;
-
-	return true;
 }
 
-bool SESSION::SendEventPacket(E_EVENTTYPE eventtype, char onoff)
+void SESSION::SendEventPacket(E_EVENTTYPE eventtype, char onoff)
 {
 	EVENT_PACKET p;
 	p.size = sizeof(EVENT_PACKET);
@@ -142,9 +118,6 @@ bool SESSION::SendEventPacket(E_EVENTTYPE eventtype, char onoff)
 	p.onoff = onoff;
 	int retval;
 	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
-	if (retval == SOCKET_ERROR) return false;
-
-	return true;
 }
 
 

@@ -152,10 +152,8 @@ void ProcessPacket(char* packet)
 
 void PlayerThread()
 {
-	char buffer[BUFSIZE * 2]{0};
 	while (1) {
-		game.networkManager.DoRecv();
-		
+		game.networkManager.DoRecv();	
 		while (game.networkManager.remain_data > 0)
 		{
 			BASE_PACKET* bp = reinterpret_cast<BASE_PACKET*>(game.networkManager.recv_buf);

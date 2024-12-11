@@ -25,10 +25,10 @@ public:
 
 	void DoRecv();
 
-	bool SendColorPacket(E_TEAMCOLOR color);
-	bool SendMapPacket(E_MAPTYPE maptype);
-	bool SendNamePacket(const char* name);
-	bool SendKeyPacket(WPARAM wParam);
-	bool SendStartPacket();
-	bool SendExitPacket();
+	void SendColorPacket(E_TEAMCOLOR color);
+	void SendMapPacket(E_MAPTYPE maptype);
+	void SendNamePacket(const char* name);
+	void SendKeyPacket(WPARAM wParam);
+	void SendStartPacket();
+	void SendExitPacket();
 };
