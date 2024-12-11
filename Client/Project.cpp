@@ -84,9 +84,7 @@ void ProcessPacket(char* packet)
 		strcpy(game.players[p->id].name, p->name);
 		std::string str(game.players[p->id].name);
 		std::wstring wPlayer = game.StringToWString(str);
-		//if (game.pid != p->id) {
-			SendMessage(hListBoxObserver, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
-		//}
+		SendMessage(hListBoxObserver, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
 		break;
 	}
 	case SC_LOGIN: {
