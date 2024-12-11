@@ -21,6 +21,7 @@ void SESSION::DoRecv()
 	if (retval == 0 || retval == -1) {
 		state = E_OFFLINE;
 		printf("logout\n");
+		return;
 	}
 	memcpy(remain_buf + remain_data, recv_buf, retval);
 	remain_data += retval;

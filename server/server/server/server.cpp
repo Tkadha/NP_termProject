@@ -9,7 +9,6 @@
 #define SERVERPORT 9000
 
 int FindRemainID();
-E_TEAMCOLOR GetLessTeam();
 bool IsGameEnd();
 void WindWay(int);
 
@@ -65,7 +64,6 @@ void ProcessPacket(int id, char* packet)
 	case CS_TEAM_CHOICE: {
 		TEAM_PACKET* p = reinterpret_cast<TEAM_PACKET*>(packet);
 		game.players[id].team_color = p->teamcolor;
-		printf("%d", game.players[id].team_color);
 		for (int i = 0; i < MAXPLAYER; ++i) {
 			if (game.players[i].state == E_OFFLINE) continue;
 			game.players[i].SendPlayerTeamPacket(id, game.players[id].team_color);
@@ -104,18 +102,6 @@ void ProcessPacket(int id, char* packet)
 
 		break;
 	}
-	case CS_EXIT: {		// 플레이어가 모두 접속 종료할 경우 로비로 넘어가게 만들기
-		/*START_PACKET* p = reinterpret_cast<START_PACKET*>(packet);
-		game.players[p->id].state = E_OFFLINE;
-		if (UserInGame() == -1) {
-			game.SwitchScene(&game.lobbyScene);
-			break;
-		}
-		for (int i = 0; i < MAXPLAYER; ++i) {
-			if (game.players[i].state == E_OFFLINE) continue;
-		}*/
-		break;
-	}
 	case CS_KEY: {
 		KEY_PACKET* p = reinterpret_cast<KEY_PACKET*>(packet);
 		if (game.players[id].p.KeyDownBuffer[p->key]) {
@@ -131,9 +117,6 @@ void ProcessPacket(int id, char* packet)
 void PlayerThread(int id)
 {
 	game.players[id].id = id;
-	//if (game.isPlaying())
-	//game.players[id].team_color = GetLessTeam();
-	//else
 
 	game.players[id].team_color = OBSERVER;
 
@@ -155,7 +138,6 @@ void PlayerThread(int id)
 	for (int i = 0; i < MAXPLAYER; ++i) {
 		if (game.players[i].state == E_ONLINE && id != i) {
 			game.players[i].SendLoginPacket(id);
-			game.players[i].SendNamePacket(id, game.players[id].p.name);
 			game.players[i].SendPlayerTeamPacket(id, game.players[id].team_color);
 		}
 	}
@@ -172,7 +154,6 @@ void PlayerThread(int id)
 			}
 			break;
 		}
-		//ProcessPacket(id, game.players[id].recv_buf);
 		while (game.players[id].remain_data > 0)
 		{
 			BASE_PACKET* bp = reinterpret_cast<BASE_PACKET*>(game.players[id].recv_buf);
@@ -233,7 +214,7 @@ void EventThread()
 			std::this_thread::sleep_for(std::chrono::seconds(5));
 			int num = dis(gen);
 
-			if (num < 33) {		 // 바람 이벤트
+			if (num < 1) {		 // 바람 이벤트
 
 				printf("Wind Event On\n");
 				int wind_way = wind(gen);
@@ -253,7 +234,7 @@ void EventThread()
 				}
 			}
 
-			else if (num < 66) { // 장판 이벤트
+			else if (num < 2) { // 장판 이벤트
 
 				printf("floor Event On\n");
 				game.playScene.b_floor = true;
@@ -413,28 +394,6 @@ int FindRemainID()
 	return -1;
 }
 
-E_TEAMCOLOR GetLessTeam()
-{
-	const int redplayers = std::count_if(game.players.begin(), game.players.end(), [](SESSION p) {
-		if (p.state == E_OFFLINE)
-			return false;
-		return p.team_color == RED;
-		});
-
-	const int blueplayers = std::count_if(game.players.begin(), game.players.end(), [](SESSION p) {
-		if (p.state == E_OFFLINE)
-			return false;
-		return p.team_color == BLUE;
-		});
-
-	printf("red : %d명\tblue : %d명\n", redplayers, blueplayers);
-
-	if (redplayers > blueplayers)
-		return BLUE;
-	else
-		return RED;
-}
-
 bool IsGameEnd()
 {
 	const int online = std::count_if(game.players.begin(), game.players.end(), [](SESSION p) {
@@ -471,7 +430,6 @@ int main()
 	retval = bind(listen_sock, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
 	if (retval == SOCKET_ERROR) err_quit("bind()");
 
-	// listen()
 	retval = listen(listen_sock, SOMAXCONN);
 	if (retval == SOCKET_ERROR) err_quit("listen()");
 

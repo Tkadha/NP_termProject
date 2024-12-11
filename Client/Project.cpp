@@ -84,9 +84,9 @@ void ProcessPacket(char* packet)
 		strcpy(game.players[p->id].name, p->name);
 		std::string str(game.players[p->id].name);
 		std::wstring wPlayer = game.StringToWString(str);
-		if (game.pid != p->id) {
+		//if (game.pid != p->id) {
 			SendMessage(hListBoxObserver, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
-		}
+		//}
 		break;
 	}
 	case SC_LOGIN: {
@@ -100,6 +100,11 @@ void ProcessPacket(char* packet)
 	case SC_LOGOUT: {
 		LOGIN_PACKET* p = reinterpret_cast<LOGIN_PACKET*>(packet);
 		printf("player %d logout\n", p->id);
+		std::string str(game.players[p->id].name);
+		std::wstring wPlayer = game.StringToWString(str);
+		game.DeleteItemByName(hListBoxBlue, wPlayer);
+		game.DeleteItemByName(hListBoxRed, wPlayer);
+		game.DeleteItemByName(hListBoxObserver, wPlayer);
 		game.players[p->id].state = OFFLINE;
 		break;
 	}
@@ -163,37 +168,12 @@ void PlayerThread()
 				std::memmove(game.networkManager.recv_buf, game.networkManager.recv_buf + packetsize, game.networkManager.remain_data);
 			}
 			else break;
-		}
-
-
-		/*int len = strlen(game.networkManager.recv_buf);
-		memcpy(buffer + remain_data, game.networkManager.recv_buf, len);
-		remain_data += len;
-		char* p = buffer;
-		while (remain_data > 0) {
-			int packet_size = p[0];
-			if (packet_size <= remain_data) {
-				ProcessPacket(p);
-				p += packet_size;
-				remain_data -= packet_size;
-			}
-			else break;
-		}
-		if (remain_data > 0) memcpy(buffer, p, remain_data);*/
-
-		//ProcessPacket(game.networkManager.recv_buf);
+		}		
 	}
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
-{
-
-	AllocConsole();
-	FILE* fp;
-	freopen_s(&fp, "CONOUT$", "w", stdout); // 표준 출력 연결
-	freopen_s(&fp, "CONIN$", "r", stdin);  // 표준 입력 연결
-
-
+{	
 	MSG Message;
 	WNDCLASSEX WndClass;
 	g_hInst = hInstance;
@@ -283,7 +263,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		LogFont.lfCharSet = HANGEUL_CHARSET;
 		LogFont.lfPitchAndFamily = VARIABLE_PITCH | FF_ROMAN;
 		lstrcpy(LogFont.lfFaceName, TEXT("휴먼매직체"));
-		//SetTimer(hwnd, 1, 100, NULL);
 
 		p_thread = std::thread(PlayerThread);
 		p_thread.detach();
@@ -340,9 +319,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		hdc = BeginPaint(hwnd, &ps);
 		memdc = CreateCompatibleDC(hdc);
 
-		//SelectObject(memdc, hBit);
-
-		//BitBlt(hdc, 0, 0, 1442, 831, memdc, 0, 0, SRCCOPY);
 		DeleteDC(memdc);
 		EndPaint(hwnd, &ps);
 		break;
@@ -546,6 +522,7 @@ LRESULT CALLBACK LobbyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		for (int i = 0; i < MAXPLAYER; i++) {
 			std::wstring wPlayer = game.StringToWString(game.players[i].name);
 			if (game.players[i].state == OFFLINE) continue;
+			if (wPlayer.size() == 0) continue;
 			if(game.players[i].team == Red) SendMessage(hListBoxRed, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
 			else if(game.players[i].team == Blue)SendMessage(hListBoxBlue, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
 			else SendMessage(hListBoxObserver, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());

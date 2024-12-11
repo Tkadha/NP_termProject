@@ -53,10 +53,6 @@ BOOL CollisionCheck(CEllipseObject& a, CRectangleObject& b)
 	}
 
 	return TRUE;
-	/*if (nearestX == left) return Left;
-	if (nearestX == right) return Right;
-	if (nearestY == top) return Top;
-	if (nearestY == bottom) return Bottom;*/
 
 }
 
@@ -126,42 +122,24 @@ void CollisionUpdate(CEllipseObject& a, CRectangleObject& b, double repulsion)
 	if(a.position.y >= b.position.y - b.size.y / 2 && a.position.y <= b.position.y + b.size.y / 2){
 		if (a.position.x + a.size > b.position.x - b.size.x / 2 &&
 			a.position.x + a.size < b.position.x + b.size.x / 2) {
-			//a.position.x = b.position.x - b.size.x / 2 - a.size;
 			a.velocity.x *= repulsion;
 		}
 		else if (a.position.x - a.size > b.position.x - b.size.x / 2 &&
 			a.position.x - a.size < b.position.x + b.size.x / 2) {
-			//a.position.x = b.position.x + b.size.x / 2 + a.size;
 			a.velocity.x *= repulsion;
 		}
 	}
 	if (a.position.x >= b.position.x - b.size.x / 2 && a.position.x <= b.position.x + b.size.x / 2) {
 		if (a.position.y + a.size >= b.position.y - b.size.y / 2 &&
 			a.position.y + a.size <= b.position.y + b.size.y / 2) {
-			//a.position.y = b.position.y - b.size.y / 2 - a.size;
 			a.velocity.y *= repulsion;
 		}
 		else if (a.position.y - a.size >= b.position.y - b.size.y / 2 &&
 			a.position.y - a.size <= b.position.y + b.size.y / 2) {
-			//a.position.y = b.position.y + b.size.y / 2 + a.size;
 			a.velocity.y *= repulsion;
 		}
 	}
 
-	/*if (CollisionCheck(a, b)) {
-		if (a.position.y >= b.position.y - b.size.y / 2 &&
-			a.position.y <= b.position.y + b.size.y / 2)
-			a.velocity.x *= -repulsion;
-		if (a.position.x >= b.position.x - b.size.x / 2 &&
-			a.position.x <= b.position.x + b.size.x / 2)
-			a.velocity.y *= -repulsion;
-	}*/
-	/*if (dir == Left || dir == Right) {
-		a.velocity.x *= -repulsion;
-	}
-	if (dir == Top || dir == Bottom) {
-		a.velocity.y *= -repulsion;
-	}*/
 }
 
 void KickOffCheck(CEllipseObject& player, CEllipseObject& circle)
@@ -352,7 +330,7 @@ void CPlayScene::ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players)
 			if (player.state == E_OFFLINE) continue;
 			if (player.team_color == OBSERVER) continue;
 			if (CollisionCheck(player.p, obstacle)) {
-				double repulsion = 1.2;
+				double repulsion = -1.2;
 				CollisionUpdate(player.p, obstacle, repulsion);
 			}
 		}
@@ -479,7 +457,6 @@ void CPlayScene::Reset(std::array <SESSION, MAXPLAYER>& players)
 		if (players[i].state == E_OFFLINE) continue;
 		for (int j = 0; j < MAXPLAYER; ++j) {
 			if (players[j].state == E_OFFLINE) continue;
-			//printf("player %d : { %f, %f }\n", j, players[j].p.position.x, players[j].p.position.y);
 			players[i].SendPosPacket(players[j].id, players[j].p.position.x, players[j].p.position.y, PLAYER);
 		}
 	}
@@ -526,35 +503,7 @@ void PlayInputManager::Update(WPARAM wParam, WPARAM lParam, UINT uMsg) {
 }
 
 void LobbyInputManager::Update(WPARAM wParam, WPARAM lParam, UINT uMsg) {
-	switch (LOWORD(wParam)) {
-	case 110: // Red 버튼 클릭
-		//MessageBox(hWnd, L"Red Team Selected!", L"Button Click", MB_OK);
-		// Red 팀 관련 처리 추가
-		break;
 
-	case 111: // Blue 버튼 클릭
-		//MessageBox(hWnd, L"Blue Team Selected!", L"Button Click", MB_OK);
-		// Blue 팀 관련 처리 추가
-		break;
-
-	case 112: // Soccer 버튼 클릭
-		//MessageBox(hWnd, L"Soccer Mode Selected!", L"Button Click", MB_OK);
-		//gCurrentState = 1; // 축구 모드로 상태 전환
-		//PostQuitMessage(0); // 메시지 루프 종료 -> WinMain에서 새로운 윈도우 생성
-		break;
-
-	case 113: // Basketball 버튼 클릭
-		//MessageBox(hWnd, L"Basketball Mode Selected!", L"Button Click", MB_OK);
-		//gCurrentState = 2; // 농구 모드로 상태 전환
-		//PostQuitMessage(0); // 메시지 루프 종료 -> WinMain에서 새로운 윈도우 생성
-		break;
-
-	case 114: // Start 버튼 클릭
-
-		//DestroyWindow(hwnd);
-		// 게임 시작 로직 구현
-		break;
-	}
 }
 
 
@@ -562,5 +511,4 @@ void LobbyInputManager::Update(WPARAM wParam, WPARAM lParam, UINT uMsg) {
 //----------------------------------------------------------------------------
 void CLobbyScene::Update(std::array <SESSION, MAXPLAYER>& p)
 {
-	//printf("lobby Update\n");
 }
