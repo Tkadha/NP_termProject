@@ -185,11 +185,6 @@ void PlayerThread()
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
-	AllocConsole();
-	FILE* fp;
-	freopen_s(&fp, "CONOUT$", "w", stdout); 
-	freopen_s(&fp, "CONIN$", "r", stdin);
-
 	MSG Message;
 	WNDCLASSEX WndClass;
 	g_hInst = hInstance;

@@ -256,7 +256,8 @@ void EllipseComponent::Render(CEllipseObject& object, HDC& dc, BOOL fill)
 		else if (object.team == Blue)
 			hBrush = CreateSolidBrush(RGB(0, 0, 255));
 		else if (object.team = Observer)
-			hBrush = (HBRUSH)GetStockObject(NULL_BRUSH);
+			//hBrush = (HBRUSH)GetStockObject(NULL_BRUSH);
+			return;
 	}
 	else {
 		hBrush = (HBRUSH)GetStockObject(NULL_BRUSH);

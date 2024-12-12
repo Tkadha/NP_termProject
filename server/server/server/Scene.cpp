@@ -231,10 +231,14 @@ void CPlayScene::Update(std::array <SESSION, MAXPLAYER>& players)
 	ObjectCollisionCheck(players);
 	for (SESSION& player : players) {
 		if (player.state == E_OFFLINE) continue;
-		if (player.team_color == OBSERVER) continue;
 		double px = player.p.position.x;
 		double py = player.p.position.y;
-		player.p.Update(timeElapsed, goal);		// 골이 들어가면 입력으로 인한 속도 변화 X
+		if (player.team_color == OBSERVER) {
+			player.p.position = ball.position;
+		}
+		else {
+			player.p.Update(timeElapsed, goal);		// 골이 들어가면 입력으로 인한 속도 변화 X
+		}
 		if (px != player.p.position.x || py != player.p.position.y) {
 			for (int i = 0; i < MAXPLAYER; ++i) {
 				if (players[i].state == E_OFFLINE) continue;
