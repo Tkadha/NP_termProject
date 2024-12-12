@@ -420,12 +420,10 @@ int main()
 	SOCKET client_sock;
 	struct sockaddr_in clientaddr;
 	int addrlen;
-	std::thread p_thread, logic_thread, event_thread;
+	std::thread p_thread[10], logic_thread, event_thread;
 
 	logic_thread = std::thread(LogicThread);
-	logic_thread.detach();
 	event_thread = std::thread(EventThread);
-	event_thread.detach();
 	while (1) {
 		addrlen = sizeof(clientaddr);
 		client_sock = accept(listen_sock, (struct sockaddr*)&clientaddr, &addrlen);
@@ -438,13 +436,20 @@ int main()
 		}
 		int id = FindRemainID();
 		if (id != -1) {
+			if (p_thread[id].joinable()) {
+				p_thread[id].join();
+			}
 			game.players[id].state = E_ONLINE;
 			game.players[id].sock = client_sock;
-			p_thread = std::thread(PlayerThread, id);
-			p_thread.detach();
+			p_thread[id] = std::thread(PlayerThread, id);
 		}
 	}
+	logic_thread.join();
+	event_thread.join();
+	for (int i = 0; i < 10; ++i) {
+		p_thread[i].join();
 
+	}
 	closesocket(client_sock);
 	closesocket(listen_sock);
 	WSACleanup();

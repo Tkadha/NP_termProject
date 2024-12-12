@@ -26,7 +26,7 @@ LRESULT CALLBACK SoccerProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lPar
 
 HWND hWnd, startWnd, lobbyWnd, playWnd;
 HWND hButtonRed, hButtonBlue, hButtonSoccer, hButtonBasketball, hButtonStart;
-HWND hListBoxRed, hListBoxBlue, hListBoxObserver;
+HWND hListBoxRed, hListBoxBlue, hListBoxObserver;	
 HBITMAP hArrowBitmap = NULL;
 std::string playerName;
 
@@ -43,6 +43,7 @@ void ProcessPacket(char* packet)
 		TEAM_PACKET* p = reinterpret_cast<TEAM_PACKET*>(packet);
 		if (p->id == MAXPLAYER + 1) {
 			game.MapUpdate((E_team)p->teamcolor);
+			//printf("circle : %d\n", p->teamcolor);
 			break;
 		}
 		std::string str(game.players[p->id].name);
@@ -169,7 +170,12 @@ void PlayerThread()
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
-{	
+{
+	AllocConsole();
+	FILE* fp;
+	freopen_s(&fp, "CONOUT$", "w", stdout); 
+	freopen_s(&fp, "CONIN$", "r", stdin);
+
 	MSG Message;
 	WNDCLASSEX WndClass;
 	g_hInst = hInstance;

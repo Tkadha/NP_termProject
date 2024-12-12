@@ -261,6 +261,13 @@ void CPlayScene::Update(std::array <SESSION, MAXPLAYER>& players)
 				if (player.state == E_OFFLINE) continue;
 				player.SendPlayerTeamPacket(MAXPLAYER + 1, map->CenterCircle.team);
 			}
+
+			if (map->CenterCircle.team == RED) {
+				++blueScore;
+			}
+			else if (map->CenterCircle.team == BLUE) {
+				++redScore;
+			}
 		}
 	}
 }
@@ -415,9 +422,13 @@ void CPlayScene::ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players)
 
 void CPlayScene::Enter(std::array <SESSION, MAXPLAYER>& players)
 {
+	redScore = 0;
+	blueScore = 0;
+
 	Reset(players);
 	ChangeMap(maptype);
 	kickOff = false;
+	map->CenterCircle.team = OBSERVER;
 }
 
 void CPlayScene::Reset(std::array <SESSION, MAXPLAYER>& players)

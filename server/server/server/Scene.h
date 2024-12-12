@@ -38,6 +38,7 @@ class CScene
 {
 public:
 	E_MAPTYPE maptype;
+	int redScore{}, blueScore{}, goalScore = 3;
 	
 	virtual void Update(std::array <SESSION, MAXPLAYER>& players) {};
 
@@ -63,7 +64,8 @@ public:
 	void Update(std::array <SESSION, MAXPLAYER>& players);
 	
 	void Enter(std::array <SESSION, MAXPLAYER>& players) {
-		printf("Scene : Lobby\n");
+		redScore = 0;
+		blueScore = 0;
 	};
 	void Exit(std::array <SESSION, MAXPLAYER>& players) {};
 };
@@ -83,7 +85,6 @@ public:
 
 	CBall ball;						// °ø
 
-
 	CMap* map;
 	CSoccerMap soccerMap{};
 	CBasketballMap basketballMap{};
@@ -91,6 +92,7 @@ public:
 	CRectangleObject floor;			// ÀåÆÇ
 	bool b_obtacle;
 	bool b_floor;
+
 
 	void ChangeMap(E_MAPTYPE map);
 	void ObjectCollisionCheck(std::array <SESSION, MAXPLAYER>& players);
