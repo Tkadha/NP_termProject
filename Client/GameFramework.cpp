@@ -30,6 +30,10 @@ void CGameFramework::ChangeMap(E_MAPTYPE maptype)
 {
 	playScene.maptype = maptype;
 }
+E_MAPTYPE CGameFramework::GetMap()
+{
+	return currentScene->maptype;
+}
 
 void CGameFramework::ChangeScene(E_SCENEKIND scene)
 {
@@ -104,6 +108,7 @@ void CGameFramework::InputProcess(WPARAM wParam, WPARAM lParam, UINT uMsg)
 			networkManager.SendColorPacket(RED);
 			EnableWindow(hButtonRed, FALSE);
 			EnableWindow(hButtonBlue, TRUE);
+			EnableWindow(hButtonObserver, TRUE);
 		}
 		break;
 
@@ -115,6 +120,18 @@ void CGameFramework::InputProcess(WPARAM wParam, WPARAM lParam, UINT uMsg)
 			networkManager.SendColorPacket(BLUE);
 			EnableWindow(hButtonBlue, FALSE);
 			EnableWindow(hButtonRed, TRUE);
+			EnableWindow(hButtonObserver, TRUE);
+		}
+		break;
+	case SendTeamObserver:
+		DeleteItemByName(hListBoxRed, wPlayer.c_str());
+		DeleteItemByName(hListBoxBlue, wPlayer.c_str());
+		if (FindItemByName(hListBoxObserver, wPlayer.c_str())) {
+			SendMessage(hListBoxObserver, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
+			networkManager.SendColorPacket(OBSERVER);
+			EnableWindow(hButtonObserver, FALSE);
+			EnableWindow(hButtonRed, TRUE);
+			EnableWindow(hButtonBlue, TRUE);
 		}
 		break;
 	case SendSoccer: {

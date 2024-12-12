@@ -39,6 +39,8 @@ class CScene
 {
 public:
 	E_MAPTYPE maptype{};
+	int redScore{}, blueScore{}, goalScore = 3;
+	
 	virtual ~CScene() {};
 
 	virtual void Enter() {};
@@ -49,7 +51,6 @@ public:
 
 	virtual void CircleUpdate(E_team) {};
 	
-	// 임시로 만듬
 	virtual void SetPos(XY pos) {};
 	virtual void SetBallPos(XY pos) {};
 
@@ -83,7 +84,6 @@ public:
 
 	InputManager* getInputManager() override { return &inputM; };
 
-	// 임시
 	void SetPos(XY pos) {};
 };
 
@@ -103,6 +103,10 @@ public:
 	CBasketballMap basketballMap;
 	CObstacle obstacle;
 	CFloor floor;
+
+	LOGFONT LogFont;
+	HFONT hF, oldF;
+
 	void ChangeMap(E_MAPTYPE maptype);
 
 	void Update();
@@ -115,7 +119,6 @@ public:
 
 	void CircleUpdate(E_team color);
 
-	// 임시
 	void SetPos(XY pos);
 	void SetBallPos(XY pos);
 

@@ -49,6 +49,7 @@ enum NETWORK_EVENT {
 	SendStart,
 	SendTeamBlue,
 	SendTeamRed,
+	SendTeamObserver,
 	SendSoccer,
 	SendBasketball
 };

@@ -6,7 +6,7 @@
 extern HWND hListBoxRed;
 extern HWND hListBoxBlue;
 extern HWND hListBoxObserver;
-extern HWND hButtonRed, hButtonBlue, hButtonSoccer, hButtonBasketball, hButtonStart;
+extern HWND hButtonRed, hButtonBlue, hButtonObserver, hButtonSoccer, hButtonBasketball, hButtonStart;
 extern std::string playerName;
 
 class CGameFramework
@@ -40,14 +40,16 @@ public:
 
 	void MapUpdate(E_team circle);
 	void ChangeMap(E_MAPTYPE maptype);
+	E_MAPTYPE GetMap();
 
-	// юс╫ц
 	void PlayerUpdate(int id, XY pos);
 	void SetPos(XY pos) { currentScene->SetPos(pos); };
 	void SetBallPos(XY pos) { currentScene->SetBallPos(pos); };
 	std::wstring StringToWString(const std::string& str);
 	void DeleteItemByName(HWND hListBox, const std::wstring& itemName);
 	bool FindItemByName(HWND hListBox, const std::wstring& itemName);
+
+	void setScore(int red, int blue) { currentScene->redScore = red; currentScene->blueScore = blue; };
 };
 
 

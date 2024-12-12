@@ -36,5 +36,5 @@ public:
 	void SendPosPacket(int pid, double x, double y, E_OBJTYPE objtype);
 	void SendScenePacket(int pid, E_SCENEKIND scene);
 	void SendEventPacket(E_EVENTTYPE eventtype, char onoff);
-
+	void SendScorePacket(int pid, int red, int blue);
 };

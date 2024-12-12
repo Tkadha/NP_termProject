@@ -119,5 +119,14 @@ void SESSION::SendEventPacket(E_EVENTTYPE eventtype, char onoff)
 	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
 }
 
-
+void SESSION::SendScorePacket(int pid, int red, int blue)
+{
+	SCORE_PACKET p;
+	p.size = sizeof(SCORE_PACKET);
+	p.type = SC_SCORE;
+	p.red = red;
+	p.blue = blue;
+	int retval;
+	retval = send(sock, reinterpret_cast<char*>(&p), p.size, 0);
+}
 

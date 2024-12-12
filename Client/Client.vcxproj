@@ -146,7 +146,17 @@
     <ClInclude Include="Object.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Project.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="resource1.h" />
     <ClInclude Include="Scene.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Bitmap.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="image\BLUE.bmp" />
+    <Image Include="image\RED.bmp" />
+    <Image Include="image\SPECTATOR.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

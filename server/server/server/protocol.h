@@ -11,7 +11,6 @@ constexpr char CS_START = 6;
 constexpr char CS_EXIT = 7;
 
 
-
 constexpr char SC_LOGIN = 1;
 constexpr char SC_TEAM_CHOICE = 2;
 constexpr char SC_MAP_CHOICE = 3;
@@ -21,6 +20,7 @@ constexpr char SC_POS = 6;
 constexpr char SC_SCENE = 7;
 constexpr char SC_LOGOUT = 8;
 constexpr char SC_EVENT = 9;
+constexpr char SC_SCORE = 10;
 
 
 
@@ -80,5 +80,9 @@ class EVENT_PACKET : public BASE_PACKET {
 public:
 	E_EVENTTYPE eventtype;
 	char onoff;	// 1이면 on 0이면 off
+};
+class SCORE_PACKET : public BASE_PACKET {
+public:
+	int red, blue;
 };
 #pragma pack (pop)

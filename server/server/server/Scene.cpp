@@ -257,16 +257,18 @@ void CPlayScene::Update(std::array <SESSION, MAXPLAYER>& players)
 			goal = false;
 			kickOff = true;
 			Reset(players);
-			for (SESSION& player : players) {
-				if (player.state == E_OFFLINE) continue;
-				player.SendPlayerTeamPacket(MAXPLAYER + 1, map->CenterCircle.team);
-			}
 
 			if (map->CenterCircle.team == RED) {
 				++blueScore;
 			}
 			else if (map->CenterCircle.team == BLUE) {
 				++redScore;
+			}
+
+			for (SESSION& player : players) {
+				if (player.state == E_OFFLINE) continue;
+				player.SendPlayerTeamPacket(MAXPLAYER + 1, map->CenterCircle.team);
+				player.SendScorePacket(player.id, redScore, blueScore);
 			}
 		}
 	}

@@ -12,9 +12,10 @@
 
 #define BUTTON_RED 110
 #define BUTTON_BLUE 111
-#define BUTTON_SOCCER 112
-#define BUTTON_BASKETBALL 113
-#define BUTTON_START 114
+#define BUTTON_OBSERVER 112
+#define BUTTON_SOCCER 113
+#define BUTTON_BASKETBALL 114
+#define BUTTON_START 115
 
 HINSTANCE g_hInst;
 LPCTSTR lpszClass = L"Window Class Name";
@@ -25,7 +26,7 @@ LRESULT CALLBACK LobbyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK SoccerProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
 
 HWND hWnd, startWnd, lobbyWnd, playWnd;
-HWND hButtonRed, hButtonBlue, hButtonSoccer, hButtonBasketball, hButtonStart;
+HWND hButtonRed, hButtonBlue, hButtonObserver, hButtonSoccer, hButtonBasketball, hButtonStart;
 HWND hListBoxRed, hListBoxBlue, hListBoxObserver;	
 HBITMAP hArrowBitmap = NULL;
 std::string playerName;
@@ -62,6 +63,14 @@ void ProcessPacket(char* packet)
 				game.DeleteItemByName(hListBoxRed, wPlayer.c_str());
 				game.DeleteItemByName(hListBoxObserver, wPlayer.c_str());
 				SendMessage(hListBoxBlue, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
+			}
+		}
+		else if (p->teamcolor == OBSERVER) {
+			game.players[p->id].team = Observer;
+			if (game.pid != p->id) {
+				game.DeleteItemByName(hListBoxRed, wPlayer.c_str());
+				game.DeleteItemByName(hListBoxBlue, wPlayer.c_str());
+				SendMessage(hListBoxObserver, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
 			}
 		}
 		break;
@@ -146,6 +155,11 @@ void ProcessPacket(char* packet)
 			else game.playScene.obstacle.SetOn(false);
 			std::cout << game.playScene.obstacle.on << std::endl;
 		}
+		break;
+	}
+	case SC_SCORE: {
+		SCORE_PACKET* p = reinterpret_cast<SCORE_PACKET*>(packet);
+		game.setScore(p->red, p->blue);
 		break;
 	}
 	}
@@ -404,8 +418,8 @@ LRESULT CALLBACK SoccerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		camera.y = max(0, min(camera.y, WindowHeight - ScreenHeight));
 
 		BitBlt(hdc, 0, 0, ScreenWidth, ScreenHeight, memdc, camera.x, camera.y, SRCCOPY);
-		DeleteDC(memdc);
 
+		DeleteDC(memdc);
 		EndPaint(hwnd, &ps);
 		break;
 	case WM_KEYDOWN:									// 키입력
@@ -456,32 +470,51 @@ LRESULT CALLBACK LobbyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	PAINTSTRUCT ps;
 	static LOGFONT LogFont;
 	HFONT hF, oldF;
+	HBITMAP hBitmap, oldBimtmap;
 
 	int index = 0;
 	
 	switch (uMsg)
 	{
 	case WM_CREATE: {
+		ZeroMemory(&LogFont, sizeof(LOGFONT));
+		LogFont.lfHeight = 20;
+		LogFont.lfWeight = 20;
+		LogFont.lfCharSet = HANGEUL_CHARSET;
+		LogFont.lfPitchAndFamily = VARIABLE_PITCH | FF_ROMAN;
+		lstrcpy(LogFont.lfFaceName, TEXT("휴먼매직체"));
+
 		// Red 버튼 생성
 		hButtonRed = CreateWindow(
-			L"BUTTON", L"RED",
-			WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
-			100, 200, 140, 60,
-			hwnd, (HMENU)110,
+			L"BUTTON", NULL,
+			WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON | BS_BITMAP,
+			LobbyWidth / 2 - 320, 100, 200, 100,
+			hwnd, (HMENU)BUTTON_RED,
+			g_hInst, NULL);
+		
+		// Observer 버튼 생성
+		hButtonObserver = CreateWindow(
+			L"BUTTON", NULL,
+			WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON | BS_BITMAP,
+			LobbyWidth / 2 - 100, 100, 200, 100,
+			hwnd, (HMENU)BUTTON_OBSERVER,
 			g_hInst, NULL);
 
 		// Blue 버튼 생성
 		hButtonBlue = CreateWindow(
-			L"BUTTON", L"BLUE",
-			WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
-			250, 200, 140, 60,
-			hwnd, (HMENU)111,
+			L"BUTTON",NULL,
+			WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON | BS_BITMAP,
+			LobbyWidth / 2 + 120, 100, 200, 100,
+			hwnd, (HMENU)BUTTON_BLUE,
 			g_hInst, NULL);
+
+		EnableWindow(hButtonObserver, FALSE);
+
 		// Red 플레이어 목록 리스트 박스 생성
 		hListBoxRed = CreateWindow(
 			L"LISTBOX", NULL,
 			WS_VISIBLE | WS_CHILD | WS_BORDER | LBS_STANDARD,
-			100, 270, 140, 150, // Red 버튼 아래 위치
+			LobbyWidth / 2 - 320, 210, 200, 250, // Red 버튼 아래 위치
 			hwnd, (HMENU)120,
 			g_hInst, NULL);
 
@@ -489,38 +522,65 @@ LRESULT CALLBACK LobbyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		hListBoxBlue = CreateWindow(
 			L"LISTBOX", NULL,
 			WS_VISIBLE | WS_CHILD | WS_BORDER | LBS_STANDARD,
-			250, 270, 140, 150, // Blue 버튼 아래 위치
+			LobbyWidth / 2 + 120, 210, 200, 250, // Blue 버튼 아래 위치
 			hwnd, (HMENU)121,
 			g_hInst, NULL);
+
 		hListBoxObserver = CreateWindow(
 			L"LISTBOX", NULL,
 			WS_VISIBLE | WS_CHILD | WS_BORDER | LBS_STANDARD,
-			100, 440, 290, 150, // Red와 Blue 리스트 아래 위치
+			LobbyWidth / 2 - 100, 210, 200, 250, // Red와 Blue 리스트 아래 위치
 			hwnd, (HMENU)122,
 			g_hInst, NULL);
+
+		// 폰트 생성
+		hF = CreateFontIndirect(&LogFont);
+
+		// 리스트 박스에 폰트 설정
+		SendMessage(hListBoxRed, WM_SETFONT, (WPARAM)hF, TRUE);
+		SendMessage(hListBoxBlue, WM_SETFONT, (WPARAM)hF, TRUE);
+		SendMessage(hListBoxObserver, WM_SETFONT, (WPARAM)hF, TRUE);
+
 		// Soccer 버튼 생성
 		hButtonSoccer = CreateWindow(
 			L"BUTTON", L"SOCCER",
-			WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
-			450, 300, 230, 120,
-			hwnd, (HMENU)112,
+			WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON ,
+			LobbyWidth / 2 - 320, 500, 200, 100,
+			hwnd, (HMENU)BUTTON_SOCCER,
 			g_hInst, NULL);
 
 		// Basketball 버튼 생성
 		hButtonBasketball = CreateWindow(
 			L"BUTTON", L"BASKETBALL",
-			WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
-			700, 300, 230, 120,
-			hwnd, (HMENU)113,
+			WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON ,
+			LobbyWidth / 2 - 100, 500, 200, 100,
+			hwnd, (HMENU)BUTTON_BASKETBALL,
 			g_hInst, NULL);
+
+		if (game.GetMap() == SOCCER) {
+			EnableWindow(hButtonSoccer, FALSE);
+			EnableWindow(hButtonBasketball, TRUE);
+		}
+		else if (game.GetMap() == BASKETBALL) {
+			EnableWindow(hButtonSoccer, TRUE);
+			EnableWindow(hButtonBasketball, FALSE);
+		}
 
 		// Start 버튼 생성
 		hButtonStart = CreateWindow(
 			L"BUTTON", L"START",
 			WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
-			550, 500, 230, 70,
+			LobbyWidth / 2 + 120, 500, 200, 100,
 			hwnd, (HMENU)BUTTON_START,
 			g_hInst, NULL);
+
+		hBitmap = (HBITMAP)LoadBitmap(g_hInst, MAKEINTRESOURCE(IDB_BITMAP1));
+		SendMessage(hButtonBlue, BM_SETIMAGE, 0, (LPARAM)hBitmap);
+		hBitmap = (HBITMAP)LoadBitmap(g_hInst, MAKEINTRESOURCE(IDB_BITMAP2));
+		SendMessage(hButtonRed, BM_SETIMAGE, 0, (LPARAM)hBitmap);
+		hBitmap = (HBITMAP)LoadBitmap(g_hInst, MAKEINTRESOURCE(IDB_BITMAP3));
+		SendMessage(hButtonObserver, BM_SETIMAGE, 0, (LPARAM)hBitmap);
+
 		for (int i = 0; i < MAXPLAYER; i++) {
 			std::wstring wPlayer = game.StringToWString(game.players[i].name);
 			if (game.players[i].state == OFFLINE) continue;
@@ -529,13 +589,6 @@ LRESULT CALLBACK LobbyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			else if(game.players[i].team == Blue)SendMessage(hListBoxBlue, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
 			else SendMessage(hListBoxObserver, LB_ADDSTRING, 0, (LPARAM)wPlayer.c_str());
 		}
-
-		ZeroMemory(&LogFont, sizeof(LOGFONT));
-		LogFont.lfHeight = 20;
-		LogFont.lfWeight = 20;
-		LogFont.lfCharSet = HANGEUL_CHARSET;
-		LogFont.lfPitchAndFamily = VARIABLE_PITCH | FF_ROMAN;
-		lstrcpy(LogFont.lfFaceName, TEXT("휴먼매직체"));
 
 		break;
 	}
@@ -556,7 +609,9 @@ LRESULT CALLBACK LobbyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		oldF = (HFONT)SelectObject(hdc, hF);
 		SetTextColor(hdc, RGB(255, 255, 255));
 		SetBkMode(hdc, 1);
-		TextOut(hdc, 400, 50, L"Lobby Screen", lstrlen(L"Lobby Screen"));
+		SIZE textSize;
+		GetTextExtentPoint32(hdc, L"Lobby Screen", lstrlen(L"Lobby Screen"), &textSize);
+		TextOut(hdc, LobbyWidth / 2 - textSize.cx / 2, 50, L"Lobby Screen", lstrlen(L"Lobby Screen"));
 		SelectObject(hdc, oldF);
 		DeleteObject(hF);
 		EndPaint(hwnd, &ps);

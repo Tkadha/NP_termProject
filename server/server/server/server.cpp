@@ -117,6 +117,7 @@ void PlayerThread(int id)
 	game.players[id].id = id;
 	game.players[id].team_color = OBSERVER;
 	game.players[id].SendLoginPacket(id);
+	game.players[id].SendMapPacket(id, game.mode);
 	if(game.IsPlayScene())
 		game.players[id].SendScenePacket(id, PLAY);
 	else
