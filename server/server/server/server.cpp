@@ -444,6 +444,8 @@ int main()
 			game.players[id].sock = client_sock;
 			p_thread[id] = std::thread(PlayerThread, id);
 		}
+		else { closesocket(client_sock); }
+
 	}
 	logic_thread.join();
 	event_thread.join();
